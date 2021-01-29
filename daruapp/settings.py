@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'account',
+    'dashboard',
+    'daru_wheel',
+    'mpesa_api.core',
+    'mpesa_api.util',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +87,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -118,3 +125,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+AUTH_USER_MODEL = 'users.User'
+
+# email backend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # fix 4 production
+
+# login/logout redirect
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/users/login'

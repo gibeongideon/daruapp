@@ -1,0 +1,80 @@
+
+{% extends "dashboard/layouts/base.html" %}
+{% block content %}
+
+
+
+
+        <div class="row">
+          <div class="col-md-8">
+            <div class="card">
+
+              <form role="form" method="post" action="">
+              
+                {% csrf_token %} 
+
+                <div class="card-header">
+                  <h5 class="title"></h5>
+
+                  <h6 class="card-category">
+                      {% if msg %}
+                        <span class="text-danger">{{ msg }}</span>
+                      {% else %}
+                        Add your credentials or <a href="{% url 'users:login' %}" >authenticate</a> with an existing account.
+                      {% endif %}  
+                  </h6>
+                </div>
+
+              {% if success %}
+
+                <p>
+                  Please <a href="{% url 'users:login' %}">authenticate</a> using the new account.
+                </p>  
+
+              {% else %}
+
+                <div class="card-body">
+
+                  {% for field in form %}
+                  <p>
+
+
+                  <div class="row">
+                    <div class="col-md-3 px-md-1">
+                      <div class="form-group">
+                        <label>{{field.label}}</label>
+                        {{ field }}
+                      </div>
+                    </div>
+                  </div>
+                  {% if field.errors %}
+                  <span class="text-danger">{{ field.errors|join:'<br />' }}</span>
+                  {% endif %}
+
+                  {% if field.help_text %}
+                  <span class="help-block text-muted">
+                    <small>{{ field.help_text }}</small>
+                  </span>
+                  {% endif %}
+  
+                  </p>
+          
+                {% endfor %}
+
+                </div>
+                <div class="card-footer">
+                  <button type="submit" name="register" class="btn btn-fill btn-primary">Register</button>
+                  &nbsp; &nbsp;
+                  Have an account? <a href="{% url 'users:login' %}" class="text-primary">Login</a>
+                </div>
+
+              {% endif %} 
+
+              </form>
+
+            </div>
+          </div>
+      </div>
+
+
+{% endblock content %}

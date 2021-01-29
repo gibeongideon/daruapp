@@ -1,0 +1,42 @@
+
+
+
+
+DARUAPP _App for betting with real cash
+
+This is a CASINO kinda application implemented with Django-python ,HTML & Javascript-FroantEnd.Planning to implement froatEnd with React.JS.
+
+Apps:
+  daru_wheel
+     Real time spinning wheel implemented with Django channels/Redis
+      Features:
+      Outcome can be Red or Yellow:
+      _OutCome is determine by Betting Pool Algorithms/Ensure fair Randomness??
+      
+  Payment:
+  _Mpesa intergrated
+  _Paypall Intergrated
+  _Stripe integrated_using DJSTRIPE
+  
+ 
+ 
+ 
+ 
+ 
+ Running in your Local Server:
+ 
+ 
+ run redis server : you know how to do it if you are here  ...cd redis/src and  run 
+ $ ./redis-server
+ 
+ run beat.sh     ie 
+ $ ./beat.sh
+ 
+ run workers     ie 
+ $ ./worker.sh   
+ 
+ then run 
+ 
+ $ ./manage.py runserver 
+ 
+ 

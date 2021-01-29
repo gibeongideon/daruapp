@@ -1,0 +1,387 @@
+{% extends "dashboard/layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/wheel/css/main.css" type="text/css" />
+<link href="/static/assets/css/login-register.css" rel="stylesheet" />
+<link href="/static/assets/css/bootstrap.css" rel="stylesheet" />
+
+
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6 col-md-12">
+    <div class="card card-chart">
+
+      <div align="center">
+        <h7>Market:<span id="market"></span></h7>
+        <p class='text-info'>Next Spin<h1><span id="dtim"></span></h1></p>
+        <table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td width="438" height="572" class="the_wheel" align="center" valign="center">
+              <canvas id="canvas" width="434" height="434">
+                <p align="center">Sorry, your browser doesn't support daru wheel.Please try another.</p>
+              </canvas>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="col-sm-4"> </div>
+
+    </div>
+
+    <div class="container"> <!-- bet button-->
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4">
+        <a class="btn big-login" data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();">Place Stake</a>
+      </div>
+      
+      <div class="modal fade login" id="loginModal">
+        <div class="modal-dialog login animated">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">Enter Amount and Submit</h4>
+            </div>
+            <div class="modal-body">
+              <div class="box">
+                <div class="content">
+                  <div class="error"></div>
+                  <div class="form loginBox">
+
+                    <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
+                      {% csrf_token %}
+                      <div>
+                        <div> {{"Selection:"}}</div>
+                        <div>{{stake_form.marketselection}}</div>
+                        <div>{{"Amount:"}}</div>
+                        <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
+                      </div>
+                      <button type="submit">Place Stake</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  <!-- end bet button -->
+    <div class="card-body">  </div>
+</div>  <!-- raw -->
+
+
+
+
+
+
+      
+      
+      <div class="col-lg-6 col-md-12">
+        <div class="card ">
+          <div class="card-header">
+            <h4 class="card-title"> Stake History</h4>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table tablesorter " id="">
+                <thead class=" text-primary">
+                  <tr>
+                    <th>
+                      Time
+                    </th>
+                    <th>
+                      Market
+                    </th>
+                    <th>
+                      Selection
+                    </th>
+                    <th>
+                      Amount
+                    </th>
+                    <th class="text-center">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%for trans in trans_logz%}
+
+                  <tr>
+                    <td>
+                      {{trans.created_at}}
+                    </td>
+                    <td>
+                      {{trans.market}}
+                    </td>
+                    <td>
+                      {{trans.marketselection}}
+                    </td>
+                    <td>
+                      {{trans.amount}}
+                    </td>
+                    <td class="text-center">
+                      {{trans.status}}
+                    </td>
+                  </tr>
+                  {%endfor%}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- next -->
+
+<!-- 
+    <div class="row">
+        
+        <div class="col-lg-6 col-md-12">
+          <div class="card ">
+            <div class="card-header">
+              <h4 class="card-title"> Simple Table</h4>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table tablesorter " id="">
+                  <thead class=" text-primary">
+                    <tr>
+                      <th>
+                        Name
+                      </th>
+                      <th>
+                        Country
+                      </th>
+                      <th>
+                        City
+                      </th>
+                      <th class="text-center">
+                        Salary
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        Dakota Rice
+                      </td>
+                      <td>
+                        Niger
+                      </td>
+                      <td>
+                        Oud-Turnhout
+                      </td>
+                      <td class="text-center">
+                        $36,738
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+
+      
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="/static/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
+<script src="/static/assets/js/bootstrap.js" type="text/javascript"></script>
+<script src="/static/assets/js/login-register.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="/static/wheel/js/Winwheel.js"></script>
+<script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
+
+<script> 
+    
+    
+    const spinSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/spinchannel/'
+            // + roomName
+            + '/'
+        );
+
+        spinSocket.onmessage = function(e) {
+            
+            const data = JSON.parse(e.data);
+
+
+            if (data.pointer){
+                
+                // console.log(data.pointer)
+
+                startSpinB(data.pointer);
+   
+            }
+            if (data.secondvalu){
+                
+                // console.log(data.secondvalu)
+                var minn = (data.secondvalu/60).toPrecision(1);
+                var secc = minn*60
+                var secc = data.secondvalu;
+
+                document.getElementById('dtim').textContent =data.secondvalu;
+                document.getElementById('dmin').textContent =minn;
+                // document.getElementById('dsec').textContent = data.secondvalu -secc;   
+ 
+            }
+            if (data.market){
+              //  console.log(data.mssg);
+               const mrkt = data.market;
+               document.getElementById('market').textContent = mrkt;
+            }
+
+                 
+            // document.querySelector('#spin-log').value += (data.pointer + '\n');
+        };
+
+        spinSocket.onclose = function(e) {
+            console.error('spin socket closed unexpectedly');
+        };
+
+        // document.querySelector('#spin-pointer-input').focus();
+        
+        // document.querySelector('#spin-pointer-input').onkeyup = function(e) {
+        //     if (e.keyCode === 13) {  // enter, return
+        //         document.querySelector('#spin-pointer-submit').click();
+        //     }
+        // };
+
+        // document.querySelector('#spin-pointer-submit').onclick = function(e) {
+        //     const pointerInputDom = document.querySelector('#spin-pointer-input');
+        //     const pointer = pointerInputDom.value;
+        //     spinSocket.send(JSON.stringify({
+        //         'pointer': pointer
+        //     }));
+        //     pointerInputDom.value = '';
+        // };
+
+    // Create new wheel object specifying the parameters at creation time.
+    let theWheel = new Winwheel({
+        'outerRadius'     : 212,        // Set outer radius so wheel fits inside the background.
+        'innerRadius'     : 45,   
+        'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
+        'textFontSize'    : 24,         // Set default font size for the segments.
+        'textOrientation' : 'vertical', // Make text vertial so goes down from the outside of wheel.
+        'textAlignment'   : 'outer',    // Align text to outside of wheel.
+        'numSegments'     : 28,         // Specify number of segments.
+        'segments'        :             // Define segments including colour and text.
+        [                               // font size and test colour overridden on backrupt segments.
+
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#ffffff', 'text' :  'AVARAGE', 'textFontSize' : 16, 'textFillStyle' : '#00000'},// WHITE
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},                  
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            
+            {'fillStyle' : '#000000', 'text' : 'BLACK HOLE', 'textFontSize' : 12, 'textFillStyle' : '#ffffff'},
+            
+
+        ],
+        'animation' :           // Specify the animation to use.
+        {
+            'type'     : 'spinToStop',
+            'duration' : 15,    // Duration in seconds.
+            'spins'    : 6,     // Default number of complete spins.
+            // 'callbackFinished' : alertPrize,
+            'callbackSound'    : playSound,   // Function to call when the tick sound is to be triggered.
+            'soundTrigger'     : 'pin'   ,     // Specify pins are to trigger the sound, the other option is 'segment'.
+            // 'callbackAfter' : 'drawTriangle()'
+        },
+        'pins' :				// Turn pins on.
+        {
+            'number'     : 28,
+            'fillStyle'  : 'silver',
+            'outerRadius': 4,
+        }
+    });
+
+    // Loads the tick audio sound in to an audio object.
+    let audio = new Audio('/static/wheel/sounds/tick.mp3');
+
+    // This function is called when the sound is to be played.
+    function playSound()
+    {
+        // Stop and rewind the sound if it already happens to be playing.
+        audio.pause();
+        audio.currentTime = 0;
+
+        // Play the sound.
+        audio.play();
+    }
+
+    // Vars used by the code in this page to do power controls.
+    let wheelPower    = 10;
+    let wheelSpinning = false;
+
+
+    function startSpin()
+    {
+        // Stop any current animation.
+        theWheel.stopAnimation(false);
+        // Reset the rotation angle to less than or equal to 360 so spinning again
+        // works as expected. Setting to modulus (%) 360 keeps the current position.
+        theWheel.rotationAngle = 0;//theWheel.rotationAngle % 360;
+        // Start animation.
+        theWheel.startAnimation();
+
+    }
+
+    function startSpinB(seg){
+        theWheel.stopAnimation(false);
+        theWheel.rotationAngle = 0;
+        segmentNumber = seg;
+        let stopAt = theWheel.getRandomForSegment(segmentNumber);
+        theWheel.animation.stopAngle = stopAt;
+
+        theWheel.startAnimation();
+        
+        }
+
+</script>
+
+
+{% endblock javascripts %}

@@ -1,0 +1,98 @@
+
+
+    <div class="sidebar">
+      <div class="sidebar-wrapper">
+        
+        <div class="logo">
+          <a target="_blank" 
+             href="https://www.daruandwheel.com" class="simple-text logo-mini">
+            
+          </a>
+          <a target="_blank" 
+             href="https://www.daruandwheel.com" class="simple-text logo-normal">
+            Daru Casino
+          </a>
+        </div>
+
+        {% if user.is_authenticated %}
+        <ul class="nav">
+          <li class="active ">
+            <a href="/">
+              <i class="tim-icons icon-align-center"></i>
+              <p>Home</p>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'daru_wheel:daru_spin' %}">
+              <i class="tim-icons icon-support-17"></i>
+              <p>Daru Wheel</p>
+            </a>
+          </li>
+
+          <li>
+            <a href= "{% url 'users:mine_users' %}">
+              <i class="tim-icons icon-badge"></i>
+              <p>My Users</p>
+            </a>
+          </li>
+          <li>
+            <a href= "{% url 'account:refer_credit' %}">
+              <i class="tim-icons icon-badge"></i>
+              <p>My Users Income</p>
+            </a>
+          </li>
+          <li>
+
+            <a href="{% url 'account:trans_log' %}">
+              <i class="tim-icons icon-bullet-list-67"></i>
+              <p>Transactions Log</p>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'dashboard:icons' %}">
+              <i class="tim-icons icon-wallet-43"></i>
+              <p>Wallet</p>
+            </a>
+          </li>
+
+
+          <li>
+            <a href="{% url 'users:notification' %}">
+              <i class="tim-icons icon-bell-55"></i>
+              <p>Notifications</p>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'dashboard:topo' %}">
+              <i class="tim-icons icon-align-center"></i>
+              <p>Share</p>
+            </a>
+          </li>
+          
+          <li>
+            <a href="{% url 'users:user_page' %}">
+              <i class="tim-icons icon-single-02"></i>
+              <p>User Profile</p>
+            </a>
+          </li>
+
+          <li class="active-pro">
+            <a href="{% url 'users:logout' %}" >
+              <i class="tim-icons icon-user-run"></i>
+              <p>Logout</p>
+            </a>
+          </li>
+
+          <!-- <li class="active-pro">
+            <a target="_blank" 
+               href="https://www.creative-tim.com/product/black-dashboard-django">
+              <i class="tim-icons icon-spaceship"></i>
+              <p>See product</p>
+            </a>
+          </li> -->
+        </ul>
+        {% endif %}
+        
+      </div>
+    </div>
