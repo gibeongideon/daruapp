@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,6 +76,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'daruapp.wsgi.application'
+ASGI_APPLICATION = 'daruapp.asgi.application'  # AD
 
 
 # Database
@@ -85,6 +88,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# P
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': config('DB_NAME'),
+#         'USER': config('DB_USER'),
+#         'PASSWORD': config('DB_PASSWORD'),
+#         'HOST': config('DB_HOST'),
+#         'PORT': config('DB_PORT'),  # Set to empty string for default.
+#     }
+# }
 
 
 
@@ -130,8 +145,40 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'users.User'
 
 # email backend
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # fix 4 production
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # login/logout redirect
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/users/login'
+LOGOUT_REDIRECT_URL = '/user/login'
+
+
+# CHANNELS
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+    }
+}
+
+
+# CELERY
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+CELERY_BEAT_SCHEDULE = {
+
+    'create_spin_wheel_market': {
+         'task': 'daru_wheel.tasks.create_spinwheel',
+         'schedule': crontab(minute=[
+             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+        },
+    'run_count_down_timer': {
+         'task': 'daru_wheel.tasks.start_count_down',
+         'schedule': crontab(minute=[
+             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+        }
+}

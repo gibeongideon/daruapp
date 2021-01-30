@@ -6,8 +6,6 @@ import math
 from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
 
-set_up ={}
-
 
 class TimeStamp(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,blank =True,null=True)
@@ -16,7 +14,21 @@ class TimeStamp(models.Model):
 
     class Meta:
         abstract = True
-        
+
+class AccountSetting(TimeStamp):
+    curr_unit = models.FloatField(default=0, blank=True, null=True)
+    # min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
+
+    class Meta:
+        db_table = "d_accounts_setup"
+
+
+try:
+    set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
+except Exception as ce:
+    print("COUNtttt", ce) 
+
+
 class Account(TimeStamp):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     token_count = models.IntegerField(default=0)
@@ -79,7 +91,7 @@ class Account(TimeStamp):
 class Curr_Variable(TimeStamp):
     """Store currencies with specified name and rate to token amount."""
 
-    name = models.CharField(max_length=30,blank =True,null=True)
+    name = models.CharField(max_length=30, blank =True,null=True)
     curr_unit = models.DecimalField(max_digits=12, decimal_places=5,default= 1)
 
     def __str__(self):
@@ -155,8 +167,6 @@ class Currency(TimeStamp):
             
     @property
     def to_token_rate(self):
-        print('Check')
-        print(set_up['curr_unit'])
         try:
             return 1/(float(self.amount_equip_to_one_ksh) * float(self.common_var.curr_unit))
         except Exception as e:

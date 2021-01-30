@@ -1,6 +1,43 @@
 from django.contrib import admin
 from .models import (
-    Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType, OutCome)
+    Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType,
+    OutCome, MarketType, Selection, DaruWheelSetting)
+
+
+class DaruWheelSettingAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'return_val', 'min_redeem_refer_credit',
+        'refer_per', 'closed_at', 'results_at', 'wheelspin_id',
+        'created_at', 'updated_at',)
+    list_display_links = ('id',)
+    list_editable = (
+        'return_val', 'min_redeem_refer_credit', 'refer_per',
+        'closed_at', 'results_at', 'wheelspin_id',)
+
+
+admin.site.register(DaruWheelSetting, DaruWheelSettingAdmin) 
+
+class MarketTypeAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'name', 'this_market_selection_id_list',
+        'this_market_selection_verbose_list', 'created_at', 'updated_at',)
+
+    list_display_links = ('id',)
+    # list_editable = ('closed',)
+
+
+admin.site.register(MarketType, MarketTypeAdmin)
+
+
+class SelectionAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'market_id', 'odds', 'name', 'created_at','updated_at')
+    list_display_links = ('name',)
+    search_fields = ('name',)
+    list_filter = ('mrtype', 'odds')
+
+
+admin.site.register(Selection, SelectionAdmin)
 
 
 class WheelSpinAdmin(admin.ModelAdmin):
@@ -22,7 +59,7 @@ class WheelSpinAdmin(admin.ModelAdmin):
         'get_result_active',)
 
 
-admin.site.register(WheelSpin, WheelSpinAdmin) 
+admin.site.register(WheelSpin, WheelSpinAdmin)
 
 
 class StakeAdmin(admin.ModelAdmin):

@@ -1,7 +1,7 @@
 
 from time import sleep
 from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 
 def countD(n, str1="Market Active till {} count down is ZERO."):
     countDown = n
@@ -15,6 +15,7 @@ def countD(n, str1="Market Active till {} count down is ZERO."):
             countDown = countDown - 1
         else:
             break 
+
 
 def countC(n):
     countDown = n
@@ -32,26 +33,28 @@ def countC(n):
             break 
 
 def spin_manager():
-    from gwheel.models import WheelSpin
-    from gwheel.models import WheelSpin ,OutCome
-    from core.models import BetSettingVar
+    print('MAKO POLLO')
+    from .models import WheelSpin
+    from .models import WheelSpin, OutCome
+    # from core.models import BetSettingVar
 
     try:
         id = max([obj.id for obj in WheelSpin.objects.all()])
-    except:
-        WheelSpin.objects.update_or_create(id=1) #happens once DB creation
+    except Exception as e:
+        print(e)
+        WheelSpin.objects.update_or_create(id=1) # happens once DB creation
 
     try:
         try:
-            OutCome.objects.create(market_id = id)  #  process result of last ma
+            OutCome.objects.create(market_id=id)  #  process result of last ma
         except Exception as e:
             pass
         sleep(2)
-        WheelSpin.objects.create(id = id+1) # create WheeSpin of id current +1
+        WheelSpin.objects.create(id=id+1) # create WheeSpin of id current +1
   
-        id =id +1
+        id = id + 1
     except Exception as e:
-        print('CONTROL ERROR',e)
+        print('CONTROL ERROR', e)
         return e
 
 
@@ -68,3 +71,26 @@ def channeled_timer(secondvalu):
             "secondvalu": secondvalu,
         }
     )
+
+
+def market_create():
+    print('DATO ZOLLO')
+    from .models import WheelSpin, OutCome
+    # from core.models import BetSettingVar
+
+    try:
+        id = max([obj.id for obj in WheelSpin.objects.all()])
+    except Exception as e:
+        print(e)
+        WheelSpin.objects.update_or_create(id=1) # happens once DB creation
+
+    try:
+        try:
+            OutCome.objects.create(market_id=id)  #  process result of last ma
+        except Exception as e:
+            print(f'Outcometask:{e}')
+            pass
+  
+    except Exception as e:
+        print('CONTROL ERROR', e)
+        return e

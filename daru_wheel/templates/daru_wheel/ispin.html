@@ -73,7 +73,20 @@
           </div>
         </div>
       </div>
-    </div>  <!-- end bet button -->
+    </div>  
+    <!-- end bet button -->
+
+
+        <div>
+          <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" onClick="startSpinX();" />
+          <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+          <input id="spin-pointer-input" type="text" size="10"><br>
+          <input id="spin-pointer-submit" type="button" value="serverSpin">
+
+        </div>
+
+
+
     <div class="card-body">  </div>
 </div>  <!-- raw -->
 
@@ -223,6 +236,7 @@
 
 
             if (data.pointer){
+              document.querySelector('#chat-log').value += (data.pointer + '\n');
                 
                 // console.log(data.pointer)
 
@@ -255,22 +269,22 @@
             console.error('spin socket closed unexpectedly');
         };
 
-        // document.querySelector('#spin-pointer-input').focus();
+        document.querySelector('#spin-pointer-input').focus();
         
-        // document.querySelector('#spin-pointer-input').onkeyup = function(e) {
-        //     if (e.keyCode === 13) {  // enter, return
-        //         document.querySelector('#spin-pointer-submit').click();
-        //     }
-        // };
+        document.querySelector('#spin-pointer-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#spin-pointer-submit').click();
+            }
+        };
 
-        // document.querySelector('#spin-pointer-submit').onclick = function(e) {
-        //     const pointerInputDom = document.querySelector('#spin-pointer-input');
-        //     const pointer = pointerInputDom.value;
-        //     spinSocket.send(JSON.stringify({
-        //         'pointer': pointer
-        //     }));
-        //     pointerInputDom.value = '';
-        // };
+        document.querySelector('#spin-pointer-submit').onclick = function(e) {
+            const pointerInputDom = document.querySelector('#spin-pointer-input');
+            const pointer = pointerInputDom.value;
+            spinSocket.send(JSON.stringify({
+                'pointer': pointer
+            }));
+            pointerInputDom.value = '';
+        };
 
     // Create new wheel object specifying the parameters at creation time.
     let theWheel = new Winwheel({
@@ -381,6 +395,16 @@
         
         }
 
+        function startSpinX(){
+        theWheel.stopAnimation(false);
+        theWheel.rotationAngle = 0;
+        segmentNumber = 13;
+        let stopAt = theWheel.getRandomForSegment(segmentNumber);
+        theWheel.animation.stopAngle = stopAt;
+
+        theWheel.startAnimation();
+        
+        }
 </script>
 
 
