@@ -1,38 +1,64 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Sum
-from datetime import timedelta,datetime
+from datetime import timedelta, datetime
 from random import randint
 from django.utils import timezone
 try:
     from account.models import RefCredit
-    from account.models import update_account_bal_of,current_account_bal_of ,log_record,refer_credit_create
+    from account.models import (
+        update_account_bal_of, current_account_bal_of,
+        log_record, refer_credit_create)
 except ImportError as e:
     pass
+
 from django.contrib.auth import get_user_model
-User = get_user_model() #make apps independent
-
-set_up ={'return_val':0,'min_redeem_refer_credit':5000,'refer_per':5,'closed_at':4.7,'results_at':4.8,'wheelspin_id':1,'curr_unit':10}
-
+User = get_user_model() # make apps independent
+# from .tasks import create_market
 
 class TimeStamp(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,blank =True,null=True)
-    updated_at = models.DateTimeField(auto_now=True,blank =True,null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     # is_active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
 
+class DaruWheelSetting(TimeStamp):
+    return_val = models.FloatField(default=0, blank=True, null=True)
+    min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
+    refer_per = models.FloatField(default=0, blank=True, null=True)
+    closed_at = models.FloatField(
+        help_text='sensitive settings value.Dont edit',
+        default=4.7, blank=True, null=True)
+    results_at = models.FloatField(
+        help_text='sensitive settings value.Dont edit',
+        default=4.8, blank=True, null=True)
+    wheelspin_id = models.IntegerField(
+        help_text='super critical setting value.DONT EDIT!',
+        default=1, blank=True, null=True)
+    curr_unit = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    
+    class Meta:
+        db_table = "d_daruwheel_setup"
+
+
+try:
+    ''' remove no such table on make migrations'''
+    set_up, created = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
+except Exception as me:
+    print("MEMEMEMEMEM ME:",me)
+    pass
 
 class Market(models.Model):
     '''Market place '''
-    open_at = models.DateTimeField(default=timezone.now, blank =True,null=True) 
-    closed_at = models.DateTimeField(blank =True,null=True)                
-    results_at = models.DateTimeField(blank =True,null=True)
+    open_at = models.DateTimeField(default=timezone.now, blank=True, null=True) 
+    closed_at = models.DateTimeField(blank=True, null=True)                
+    results_at = models.DateTimeField(blank=True, null=True)
 
-    updated_at = models.DateTimeField(auto_now=True,blank =True,null=True)
-    active = models.BooleanField(default=True,blank =True,null= True)
-    receive_results = models.BooleanField(default=False,blank =True,null= True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    active = models.BooleanField(default=True, blank=True, null=True)
+    receive_results = models.BooleanField(default=False, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -49,7 +75,7 @@ class Market(models.Model):
     @property
     def get_result_active(self):
         try:
-            if timezone.now() > self.results_at:# and timezone.now() > self.closed_at:
+            if timezone.now() > self.results_at:
                 return True
             return False
         except Exception as e:
@@ -58,23 +84,25 @@ class Market(models.Model):
 
 
 class MarketType(TimeStamp):
-    name = models.CharField(max_length=100,default='M', blank =True,null=True)
+    name = models.CharField(max_length=100, default='M', blank=True, null=True)
 
     def __str__(self):
-        return '{0}:{1}'.format(self.id,self.name)
+        return '{0}:{1}'.format(self.id, self.name)
 
     def all_selection(self):
-        return Selection.objects.filter(mrtype_id = self.id).all()
+        return Selection.objects.filter(mrtype_id=self.id).all()
 
     def this_market_selection_id_list(self):
         return [_mselect.id for _mselect in self.all_selection() ]
 
     def this_market_selection_verbose_list(self):
-        return [(_mselect.id,_mselect.name,_mselect.odds) for _mselect in self.all_selection()]
+        return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
 
 
 class Selection(TimeStamp):
-    mrtype = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='mrtypes',blank =True,null= True)
+    mrtype = models.ForeignKey(
+        MarketType, on_delete=models.CASCADE,
+        related_name='mrtypes', blank=True, null= True)
     name = models.CharField(max_length=100, blank =True,null=True)
     odds = models.FloatField(max_length=10 ,blank =True,null=True )
 
@@ -83,40 +111,6 @@ class Selection(TimeStamp):
 
     def market_id(self):
         return self.mrtype
-
-
-# class Subselection(TimeStamp):
-#     selection = models.ForeignKey(Selection,on_delete=models.CASCADE,related_name='selections',blank =True,null= True)
-#     name = models.CharField(max_length=100, blank =True,null=True)
-#     odds = models.FloatField(max_length=10 ,blank =True,null=True )
-
-#     def __str__(self):
-#         return '{0}SubSelect:{1}'.format(self.selection.name,self.name)
-
-#     def market_id(self):
-#         return self.selection
-
-
-class SettingsVar(TimeStamp):
-    return_val = models.FloatField(default = 0,blank =True,null= True)
-    min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
-    refer_per = models.FloatField(default = 0,blank =True,null= True)
-    closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
-    results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
-    wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
-    curr_unit= models.DecimalField(max_digits=6, decimal_places=2,blank=True,null= True)
-    
-    def save(self, *args, **kwargs):
-
-        set_up['curr_unit'] = self.curr_unit
-        set_up['return_val'] = self.return_val
-        set_up['min_redeem_refer_credit'] = self.min_redeem_refer_credit
-        set_up['refer_per'] = self.refer_per
-        set_up['curr_unit'] = self.curr_unit
-
-            
-        super().save(*args, **kwargs)
-
 
 class WheelSpin(Market): 
     market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
@@ -196,13 +190,14 @@ class WheelSpin(Market):
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on staking  '''
-        self.closed_at = self.open_at + timedelta(minutes = set_up['closed_at'])
-        self.results_at = self.open_at + timedelta(minutes =set_up['results_at'])
+        
+        self.closed_at = self.open_at + timedelta(minutes = set_up.closed_at)
+        self.results_at = self.open_at + timedelta(minutes =set_up.results_at)
 
         if self.active and not self.place_stake_is_active:
             self.active = False
         try:
-            self.market,_ = MarketType.objects.get_or_create( id= int(set_up['wheelspin_id'] ) )#get_or_create return a tuple/
+            self.market,_ = MarketType.objects.get_or_create( id= int(set_up.wheelspin_id ) )#get_or_create return a tuple/
         except:
             self.market,_ = MarketType.objects.get_or_create( id= 1)
             
@@ -219,8 +214,8 @@ class Stake (TimeStamp):
 
     def __str__(self):
         return 'Stake:{0} for:{1}'.format(self.amount,self.user)  
-        
-        
+
+
     @classmethod
     def per_market_bets(cls,market_id):
         return cls.objects.filter(market_id = market_id)
@@ -259,6 +254,13 @@ class Stake (TimeStamp):
             market_id = max((obj.id for obj in WheelSpin.objects.all())) #  check if generator can help #ER/empty gen
             this_wheelspin = WheelSpin.objects.get(id =market_id )
 
+            # create on demand
+            if not this_wheelspin.place_stake_is_active:
+                WheelSpin.objects.create(id = market_id+1)
+                this_wheelspin = WheelSpin.objects.get(id =market_id+1 )
+                
+            # end create market on demand
+
             if this_wheelspin.place_stake_is_active:# 
 
                 self.market = this_wheelspin
@@ -272,12 +274,12 @@ class Stake (TimeStamp):
                             self.stake_placed = True
                     
                     else: 
-                        raise Exception ('No cash')
+                        raise Exception ('insufficient funds')
                         # return 'Not enough balance to stake'
 
                 except Exception as e:
                     print('STAKE:',e)
-                    return
+                    return e
             else:
                 print('INACTIVE MARKET!')
                 return # no saving record if market is inactive
@@ -342,7 +344,7 @@ class OutCome(TimeStamp):
             
     @property
     def segment(self):
-        return self.result_to_segment(results = self.result)# ,segment = 29) fro settings
+        return self.result_to_segment(results = self.result)# ,segment = 29) from settings
 
     def save(self, *args, **kwargs):
         if not self.closed:
@@ -431,8 +433,8 @@ class Result(TimeStamp):
         if this_user_stak_obj.marketselection_id == self.resu:
             amount = float(this_user_stak_obj.amount)
             odds = float(this_user_stak_obj.marketselection.odds)
-            per_for_referer = set_up['refer_per']  # Settings
-            print('REFFC:{per_for_referer}')
+            per_for_referer = set_up.refer_per  # Settings
+            print(f'REFFC:{per_for_referer}')
             win_amount = amount *odds
 
             if per_for_referer > 100: # Enforce 0<=p<=100 TODO
