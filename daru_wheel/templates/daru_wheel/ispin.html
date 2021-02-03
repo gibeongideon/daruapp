@@ -20,8 +20,6 @@
     <div class="card card-chart">
 
       <div align="center">
-        <h7>Market:<span id="market"></span></h7>
-        <p class='text-info'>Next Spin<h1><span id="dtim"></span></h1></p>
         <table cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td width="438" height="572" class="the_wheel" align="center" valign="center">
@@ -79,7 +77,7 @@
 
         <div>
           <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" onClick="startSpinX();" />
-
+          <textarea id="chat-log" cols="100" rows="20"></textarea><br>
           <input id="spin-pointer-input" type="text" size="10"><br>
           <input id="spin-pointer-submit" type="button" value="serverSpin">
 
@@ -225,7 +223,7 @@
     const spinSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/daru_wheel/'
+            + '/ws/ispin_wheel/'
             // + roomName
             + '/'
         );
@@ -235,29 +233,12 @@
             const data = JSON.parse(e.data);
 
 
-            if (data.pointer){
+            if (data.ipointer){
                 
                 // console.log(data.pointer)
 
-                startSpinB(data.pointer);
+                startSpinB(data.ipointer);
    
-            }
-            if (data.secondvalu){
-                
-                // console.log(data.secondvalu)
-                var minn = (data.secondvalu/60).toPrecision(1);
-                var secc = minn*60
-                var secc = data.secondvalu;
-
-                document.getElementById('dtim').textContent =data.secondvalu;
-                document.getElementById('dmin').textContent =minn;
-                // document.getElementById('dsec').textContent = data.secondvalu -secc;   
- 
-            }
-            if (data.market){
-              //  console.log(data.mssg);
-               const mrkt = data.market;
-               document.getElementById('market').textContent = mrkt;
             }
 
                  
@@ -278,9 +259,9 @@
 
         document.querySelector('#spin-pointer-submit').onclick = function(e) {
             const pointerInputDom = document.querySelector('#spin-pointer-input');
-            const pointer = pointerInputDom.value;
+            const ipointer = pointerInputDom.value;
             spinSocket.send(JSON.stringify({
-                'pointer': pointer
+                'ipointer': ipointer
             }));
             pointerInputDom.value = '';
         };
