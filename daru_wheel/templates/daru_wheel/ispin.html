@@ -6,10 +6,6 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/wheel/css/main.css" type="text/css" />
-<link href="/static/assets/css/login-register.css" rel="stylesheet" />
-<link href="/static/assets/css/bootstrap.css" rel="stylesheet" />
-
-
 <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 
 {% endblock stylesheets %}
@@ -20,8 +16,6 @@
     <div class="card card-chart">
 
       <div align="center">
-        <h7>Market:<span id="market"></span></h7>
-        <p class='text-info'>Next Spin<h1><span id="dtim"></span></h1></p>
         <table cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td width="438" height="572" class="the_wheel" align="center" valign="center">
@@ -40,172 +34,126 @@
     <div class="container"> <!-- bet button-->
       <div class="col-sm-4"></div>
       <div class="col-sm-4">
-        <a class="btn big-login" data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();">Place Stake</a>
+        <li class="search-bar input-group">
+
+          <button class="btn big-login" id="search-button" data-toggle="modal" data-target="#betModal"><i class="tim-icons icon-coins" ></i>
+            <span class="d-lg-none d-md-block">Bet</span>
+          </button>
+
+        </li>
+        
       </div>
       
-      <div class="modal fade login" id="loginModal">
-        <div class="modal-dialog login animated">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title">Enter Amount and Submit</h4>
-            </div>
-            <div class="modal-body">
-              <div class="box">
-                <div class="content">
-                  <div class="error"></div>
-                  <div class="form loginBox">
-
-                    <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
-                      {% csrf_token %}
-                      <div>
-                        <div> {{"Selection:"}}</div>
-                        <div>{{stake_form.marketselection}}</div>
-                        <div>{{"Amount:"}}</div>
-                        <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
-                      </div>
-                      <button type="submit">Place Stake</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>  
     <!-- end bet button -->
 
 
         <div>
           <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" onClick="startSpinX();" />
-          <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+          <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
           <input id="spin-pointer-input" type="text" size="10"><br>
           <input id="spin-pointer-submit" type="button" value="serverSpin">
 
         </div>
 
-
-
     <div class="card-body">  </div>
 </div>  <!-- raw -->
 
 
-
-
-
-
-      
-      
-      <div class="col-lg-6 col-md-12">
-        <div class="card ">
-          <div class="card-header">
-            <h4 class="card-title"> Stake History</h4>
+<div class="modal modal-search fade" id="betModal" tabindex="-1" role="dialog" aria-labelledby="betModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="card card-chart">
+        <div class="card-body">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <i class="tim-icons icon-simple-remove"></i>
+            </button>
+            <h4 class="text-info">Enter Amount and Submit</h4>
           </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table tablesorter " id="">
-                <thead class=" text-primary">
-                  <tr>
-                    <th>
-                      Time
-                    </th>
-                    <th>
-                      Market
-                    </th>
-                    <th>
-                      Selection
-                    </th>
-                    <th>
-                      Amount
-                    </th>
-                    <th class="text-center">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {%for trans in trans_logz%}
-
-                  <tr>
-                    <td>
-                      {{trans.created_at}}
-                    </td>
-                    <td>
-                      {{trans.market}}
-                    </td>
-                    <td>
-                      {{trans.marketselection}}
-                    </td>
-                    <td>
-                      {{trans.amount}}
-                    </td>
-                    <td class="text-center">
-                      {{trans.status}}
-                    </td>
-                  </tr>
-                  {%endfor%}
-                </tbody>
-              </table>
+          <div class="modal-body">
+            <div class="box">
+              <div class="content">
+                <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
+                  {% csrf_token %}
+                  <div>
+                    <div class="text-info"> {{"Selection:"}}</div>
+                    <div>{{stake_form.marketselection}}</div>
+                    <div class="text-info">{{"Amount:"}}</div>
+                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                      <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
+                    </div>
+                  </div>
+                  <button type="submit">Place Stake</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
 
-    <!-- next -->
 
-<!-- 
-    <div class="row">
-        
-        <div class="col-lg-6 col-md-12">
-          <div class="card ">
-            <div class="card-header">
-              <h4 class="card-title"> Simple Table</h4>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table tablesorter " id="">
-                  <thead class=" text-primary">
-                    <tr>
-                      <th>
-                        Name
-                      </th>
-                      <th>
-                        Country
-                      </th>
-                      <th>
-                        City
-                      </th>
-                      <th class="text-center">
-                        Salary
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        Dakota Rice
-                      </td>
-                      <td>
-                        Niger
-                      </td>
-                      <td>
-                        Oud-Turnhout
-                      </td>
-                      <td class="text-center">
-                        $36,738
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
+     
+      
+<div class="col-lg-6 col-md-12">
+  <div class="card ">
+    <div class="card-header">
+      <h4 class="card-title"> Stake History</h4>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table tablesorter " id="">
+          <thead class=" text-primary">
+            <tr>
+              <th>
+                Time
+              </th>
+              <th>
+                Market
+              </th>
+              <th>
+                Selection
+              </th>
+              <th>
+                Amount
+              </th>
+              <th class="text-center">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {%for trans in trans_logz%}
 
+            <tr>
+              <td>
+                {{trans.created_at}}
+              </td>
+              <td>
+                {{trans.market}}
+              </td>
+              <td>
+                {{trans.marketselection}}
+              </td>
+              <td>
+                {{trans.amount}}
+              </td>
+              <td class="text-center">
+                {{trans.status}}
+              </td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 
       
 {% endblock content %}
@@ -220,12 +168,12 @@
 <script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
 
 <script> 
-    
-    
-    const spinSocket = new WebSocket(
+
+
+     const spinSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/daru_wheel/'
+            + '/ws/ispin_wheel/'
             // + roomName
             + '/'
         );
@@ -235,30 +183,13 @@
             const data = JSON.parse(e.data);
 
 
-            if (data.pointer){
-              document.querySelector('#chat-log').value += (data.pointer + '\n');
+            if (data.ipointer){
+              document.querySelector('#chat-log').value += (data.ipointer + '\n');
                 
                 // console.log(data.pointer)
 
-                startSpinB(data.pointer);
+                startSpinB(data.ipointer);
    
-            }
-            if (data.secondvalu){
-                
-                // console.log(data.secondvalu)
-                var minn = (data.secondvalu/60).toPrecision(1);
-                var secc = minn*60
-                var secc = data.secondvalu;
-
-                document.getElementById('dtim').textContent =data.secondvalu;
-                document.getElementById('dmin').textContent =minn;
-                // document.getElementById('dsec').textContent = data.secondvalu -secc;   
- 
-            }
-            if (data.market){
-              //  console.log(data.mssg);
-               const mrkt = data.market;
-               document.getElementById('market').textContent = mrkt;
             }
 
                  
@@ -279,9 +210,9 @@
 
         document.querySelector('#spin-pointer-submit').onclick = function(e) {
             const pointerInputDom = document.querySelector('#spin-pointer-input');
-            const pointer = pointerInputDom.value;
+            const ipointer = pointerInputDom.value;
             spinSocket.send(JSON.stringify({
-                'pointer': pointer
+                'ipointer': ipointer
             }));
             pointerInputDom.value = '';
         };

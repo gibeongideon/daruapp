@@ -50,8 +50,13 @@ def spin_manager():
         except Exception as e:
             pass
         sleep(2)
-        WheelSpin.objects.create(id=id+1) # create WheeSpin of id current +1
-  
+        this_wheelspin = WheelSpin.objects.get(id=id )
+            #  create on demand
+        if not this_wheelspin.place_stake_is_active:
+            print('NOTTTTT')
+            WheelSpin.objects.create(id=id+1)
+
+        # WheelSpin.objects.create(id=id+1) # create WheeSpin of id current +1  
         id = id + 1
     except Exception as e:
         print('CONTROL ERROR', e)

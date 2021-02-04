@@ -59,7 +59,8 @@ def update_user_withrawable_balance_onstake(sender, instance, created, **kwargs)
 @receiver(post_save, sender=CashWithrawal)
 def update_user_withrawable_balance_onwithraw(sender, instance, created, **kwargs):
     try:
-        if created:  # and instance.active=False:
+        if created and instance.withrawned:  # and instance.active=False:
+      
             now_withrawable = float(Account.objects.get(user_id=instance.user_id).withrawable_balance)
             print(f'now_withrawableW:{now_withrawable}')
             deduct_amount = float(instance.amount)

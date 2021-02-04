@@ -80,6 +80,6 @@ class CashWithrawalAdmin(admin.ModelAdmin):
     search_fields = ('user',)
     list_filter =('user','approved','active')
     readonly_fields =('withrawned','has_record','active','user_account','created_at','updated_at')
-
+    list_editable = ('approved',)
 
 admin.site.register(CashWithrawal, CashWithrawalAdmin)
