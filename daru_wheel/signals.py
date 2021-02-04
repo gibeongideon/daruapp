@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from .models import Result, OutCome, CumulativeGain
+from .models import Result, OutCome, CumulativeGain ,WheelSpin
 from channels.layers import get_channel_layer
 # from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
@@ -52,3 +52,14 @@ def on_results_save(sender, instance, **kwargs):
     except Exception as re:
         print(f'REESignal error:{re}')  # debug
         pass  # results later/manual by admin incase 
+
+
+@receiver(post_save, sender=WheelSpin)
+def create_outcome_on_market_save(sender, instance, **kwargs):
+    
+    print(f'Creatin Outcome for Outcome id {instance.id}')
+    try:
+        OutCome.objects.create(market_id=instance.id-1)
+    except Exception as e:
+        print('NEWWWWSinal', e)
+        pass
