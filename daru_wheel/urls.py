@@ -1,10 +1,10 @@
-from .temp_views import daru_spin, i_spin
+from .import temp_views as views
 from django.urls import path
 
 
 app_name = 'daru_wheel'
 
 urlpatterns = [
-    path('', daru_spin, name="daru_spin"),
-    path('ispin', i_spin, name="i_spin"),
+    path('', views.daru_spin, name="daru_spin"),
+    path('ispin', views.i_spin, name="i_spin"),
 ]

@@ -378,7 +378,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
             return 0
         else:
             return 0
-
+    @property
     def withraw_status(self):
         if not self.approved:
             return 'pending'
