@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType,
-    OutCome, MarketType, Selection, DaruWheelSetting)
+    OutCome, MarketType, Selection, DaruWheelSetting, Istake, IoutCome)
 
 
 class DaruWheelSettingAdmin(admin.ModelAdmin):
@@ -107,3 +107,34 @@ class ResultAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Result, ResultAdmin)
+
+
+
+
+class IstakeAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'user', 'marketselection',
+        'amount', 'stake_placed', 'has_record',
+        'created_at', 'updated_at')
+
+    list_display_links = ('user',)
+    search_fields = ('user',)
+    # list_editable = ('outcome',)
+    list_filter =('user', 'marketselection')
+    # readonly_fields = ('current_bal',)
+
+
+admin.site.register(Istake, IstakeAdmin)
+
+
+class IoutComeAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'stake', 'closed', 'inbank', 'outbank', 'result', 'pointer',
+        'determine_result_algo', 'segment', 'created_at', 'updated_at')
+
+    list_display_links = ('id',)
+    readonly_fields = ('closed', 'result', 'pointer')
+
+
+admin.site.register(IoutCome, IoutComeAdmin)
+ 
