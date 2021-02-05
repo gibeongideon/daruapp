@@ -1,6 +1,7 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from .models import Result, OutCome, CumulativeGain ,WheelSpin
+from .models import (
+    Result, OutCome, CumulativeGain, WheelSpin, Istake, IoutCome)
 from channels.layers import get_channel_layer
 # from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
@@ -63,3 +64,35 @@ def create_outcome_on_market_save(sender, instance, **kwargs):
     except Exception as e:
         print('NEWWWWSinal', e)
         pass
+
+
+@receiver(post_save, sender=Istake)
+def create_ioutcome_on_istake_save(sender, instance, **kwargs):
+    
+    print(f'Creatin Outcome for Outcome id {instance.id}')
+    try:
+        IoutCome.objects.create(stake_id=instance.id)
+    except Exception as e:
+        print('NEWWWWSinal', e)
+        pass    
+
+@receiver(post_save, sender=IoutCome)
+def on_oucome_save(sender, instance, **kwargs):
+
+    ipointer_val = instance.pointer  # fix id
+ 
+    try:
+        channel_layer = get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            "i_spin",
+            {
+                "type": "ispin_pointer",
+                "ipointer": ipointer_val,
+              
+            }
+        )
+
+    except Exception as ce:
+        print(f'IChannel error:{ce}')  # debug
+        pass  # issues with channel shouldn't inter normal business from being done    

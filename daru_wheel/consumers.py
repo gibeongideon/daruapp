@@ -81,7 +81,64 @@ class SpinConsumer(AsyncWebsocketConsumer):
         }))
 
 
-class IspinConsumer(WebsocketConsumer):
+
+class IspinConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        # self.spin_name = self.scope['url_route']['kwargs']['spin_name']
+        self.spin_group_name = 'i_spin'
+
+        # Join spin group
+        await self.channel_layer.group_add(
+            self.spin_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+       
+        await self.channel_layer.group_discard(
+            self.spin_group_name,
+            self.channel_name
+        )
+
+    # Receive pointer from WebSocket
+    async def receive(self, text_data): # not needed if FrontEnd is not communicating/Our case
+        text_data_json = json.loads(text_data)
+        ipointer = text_data_json['ipointer']
+
+        print(f'I_MESWEB{ipointer}')
+
+        # Send pointer to spin group
+        await self.channel_layer.group_send(
+            self.spin_group_name,
+            {
+                'type': 'ispin_pointer',
+                'ipointer': ipointer,
+            }
+        )
+
+    # Receive pointer from spin group
+    async def ispin_pointer(self, event):
+        ipointer = event['ipointer']
+        # secondvalu = event['secondvalu']
+
+        print(f'I_SPINNER{ ipointer}')
+
+        # Send pointer to WebSocket
+        await self.send(text_data=json.dumps({
+            'ipointer': ipointer,
+            # 'second_valu':secondvalu
+        }))
+
+
+
+
+
+
+
+
+class QspinConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
 
