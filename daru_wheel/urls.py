@@ -5,6 +5,9 @@ from django.urls import path
 app_name = 'daru_wheel'
 
 urlpatterns = [
-    path('', views.daru_spin, name="daru_spin"),
-    path('ispin', views.i_spin, name="i_spin"),
+
+    path('', views.spin, name="spin"),
+    path('spin', views.daru_spin, name="daru_spin"),
+    
+    
 ]

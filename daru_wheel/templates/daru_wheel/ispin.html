@@ -31,7 +31,7 @@
 
     </div>
 
-    <div class="container"> <!-- bet button-->
+    <!-- <div class="container"> 
       <div class="col-sm-4"></div>
       <div class="col-sm-4">
         <li class="search-bar input-group">
@@ -44,12 +44,53 @@
         
       </div>
       
-    </div>  
+    </div>   -->
 
         <div>
+          <form action="{% url 'daru_wheel:spin' %}" method="post">
+            {% csrf_token %}
+
+
+            <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+
+              <label class="btn btn-sm btn-primary btn-simple" id="0">
+                <input type="radio" class="d-none d-sm-none" name="marketselection">                
+                <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">WRed</span>
+                <span class="d-block d-sm-none">
+                  <i class="tim-icons icon-gift-2"></i>
+                </span>
+              </label>
+      
+       
+              <label class="btn btn-sm btn-info btn-simple" id="1">
+                <input type="radio" class="d-none" name="marketselection">
+                <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">WYellow</span>
+                <span class="d-block d-sm-none">
+                  <i class="tim-icons icon-tap-02"></i>
+                </span>
+              </label>
+
+              
+            </div>
+
+
+            
+
+           <select name "marketselection" required="id_marketselection">
+             <option value selected>Click to Select--</option>
+             <option value="1">Yellow</option>
+             <option value="1">Red</option>
+
+           </select>
+            
+            <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
+            <!-- <input id="spin-pointer-input" type="text" size="10"> -->
+            <button class="btn big-login" type="submit">Bet & Spin</button>
+             
+          </form>
           <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" onClick="startSpinX();" />
-          <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br> -->
-          <input id="spin-pointer-input" type="text" size="10"><br>
+          <!-- <textarea id="chat-log" cols="7" rows="5"></textarea><br> -->
+          <!-- <input id="spin-pointer-input" type="text" size="10"><br> -->
           <input id="spin-pointer-submit" type="button" value="serverSpin">
 
         </div>
@@ -57,7 +98,7 @@
     <div class="card-body">  </div>
 </div>  <!-- raw -->
 
-
+<!-- 
 <div class="modal modal-search fade" id="betModal" tabindex="-1" role="dialog" aria-labelledby="betModal" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -72,7 +113,7 @@
           <div class="modal-body">
             <div class="box">
               <div class="content">
-                <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
+                <form action="{% url 'daru_wheel:spin' %}" method="post">
                   {% csrf_token %}
                   <div>
                     <div class="text-info"> {{"Selection:"}}</div>
@@ -91,7 +132,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 
 
@@ -159,8 +200,6 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script src="/static/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
-<script src="/static/assets/js/bootstrap.js" type="text/javascript"></script>
-<script src="/static/assets/js/login-register.js" type="text/javascript"></script>
 
 <script type="text/javascript" src="/static/wheel/js/Winwheel.js"></script>
 <script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
@@ -182,7 +221,7 @@
 
 
             if (data.ipointer){
-              document.querySelector('#chat-log').value += (data.ipointer + '\n');
+              // document.querySelector('#chat-log').value += (data.ipointer + '\n');
                 
                 // console.log(data.pointer)
 
@@ -198,22 +237,22 @@
             console.error('spin socket closed unexpectedly');
         };
 
-        document.querySelector('#spin-pointer-input').focus();
+        // document.querySelector('#spin-pointer-input').focus();
         
-        document.querySelector('#spin-pointer-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#spin-pointer-submit').click();
-            }
-        };
+        // document.querySelector('#spin-pointer-input').onkeyup = function(e) {
+        //     if (e.keyCode === 13) {  // enter, return
+        //         document.querySelector('#spin-pointer-submit').click();
+        //     }
+        // };
 
-        document.querySelector('#spin-pointer-submit').onclick = function(e) {
-            const pointerInputDom = document.querySelector('#spin-pointer-input');
-            const ipointer = pointerInputDom.value;
-            spinSocket.send(JSON.stringify({
-                'ipointer': ipointer
-            }));
-            pointerInputDom.value = '';
-        };
+        // document.querySelector('#spin-pointer-submit').onclick = function(e) {
+        //     const pointerInputDom = document.querySelector('#spin-pointer-input');
+        //     const ipointer = pointerInputDom.value;
+        //     spinSocket.send(JSON.stringify({
+        //         'ipointer': ipointer
+        //     }));
+        //     pointerInputDom.value = '';
+        // };
 
     // Create new wheel object specifying the parameters at creation time.
     let theWheel = new Winwheel({

@@ -513,3 +513,58 @@ class Result(TimeStamp):
 
         else:
             return
+
+
+class Istake (TimeStamp):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_istakes',blank =True,null=True)
+    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections')
+    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    stake_placed = models.BooleanField(blank =True,null=True)
+    has_record = models.BooleanField(blank =True,null=True)
+
+    def __str__(self):
+        return f'Istake:{self.amount} for:{self.user}'
+        
+class IoutCome(TimeStamp):
+    stake  = models.OneToOneField(Istake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
+    inbank = models.DecimalField(('inbank'), max_digits=12, decimal_places=2, default=0)
+    outbank = models.DecimalField(('outbank'), max_digits=12, decimal_places=2, default=0)
+    result = models.IntegerField(blank =True,null= True)
+    pointer = models.IntegerField(blank =True,null= True)
+    closed = models.BooleanField(default = False,blank =True,null= True)
+
+    @property
+    def determine_result_algo(self):  # fix this
+        if self.outbank > (3*self.stake.amount) and  self.stake.amount <100:  ##TO IMPLEMENT
+            return 1
+        return 2
+
+    @staticmethod
+    def result_to_segment(results = None, segment=29):
+        from random import randint, randrange
+        if results is None:
+            results = randint(1,2)
+        if results ==1:
+            return randrange(1,segment,2) # odd no b/w 1 to segment(29)
+        else:
+            return randrange(2,segment,2) # even no b/w 2 to segment(29)
+            
+    @property
+    def segment(self):
+        return self.result_to_segment(results = self.result)# ,segment = 29) from settings
+
+    def save(self, *args, **kwargs):
+        if not self.closed:
+            # if self.market.place_stake_is_active == False:
+                self.result = self.determine_result_algo
+                if self.determine_result_algo ==1:
+                    self.outbank = self.outbank-self.stake.amount*2
+                else:
+                    self.outbank = self.outbank+self.stake.amount    
+                self.pointer = self.segment
+                self.closed =True
+
+                super().save(*args, **kwargs)
+        else:
+            return
+          
