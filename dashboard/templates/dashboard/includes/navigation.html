@@ -55,7 +55,7 @@
                   </p>
                 </a>
                 <ul class="dropdown-menu dropdown-navbar">
-                  <li class="nav-link"><a href="{% url 'users:user_page' %}" class="nav-item dropdown-item"><h5 class="text-info">Profile</h5></a></li>
+                  <li class="nav-link"><a href="{% url 'users:user_page' %}" class="nav-item dropdown-item"><h5 class="text-info">Profile ({{request.user.username}})</h5></a></li>
                   <li class="dropdown-divider"></li>
                   <li class="nav-link"><a href="{% url 'users:logout' %}" class="nav-item dropdown-item"><h5 class="text-danger">Log out</h5></a></li>
                 </ul>
