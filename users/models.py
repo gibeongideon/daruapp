@@ -29,7 +29,7 @@ class User(AbstractUser):
                 and len(mobile) == 9:
             return "254"+mobile
         else:
-            return mobile+"invalid"
+            return mobile+"-invalid"
 
     def save(self, *args, **kwargs):
         if not self.pk:
