@@ -6,8 +6,6 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/wheel/css/main.css" type="text/css" />
-<!-- <link href="/static/assets/css/login-register.css" rel="stylesheet" /> -->
-<!-- <link href="/static/assets/css/bootstrap.css" rel="stylesheet" /> -->
 
 
 <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
@@ -158,10 +156,6 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-<script src="/static/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
-<script src="/static/assets/js/bootstrap.js" type="text/javascript"></script>
-<script src="/static/assets/js/login-register.js" type="text/javascript"></script>
-
 <script type="text/javascript" src="/static/wheel/js/Winwheel.js"></script>
 <script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
 
@@ -235,7 +229,7 @@
     let theWheel = new Winwheel({
         'outerRadius'     : 212,        // Set outer radius so wheel fits inside the background.
         'innerRadius'     : 45,   
-        'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
+        'responsive'      : false, // Make wheel hollow so segments don't go all way to center.
         'textFontSize'    : 24,         // Set default font size for the segments.
         'textOrientation' : 'vertical', // Make text vertial so goes down from the outside of wheel.
         'textAlignment'   : 'outer',    // Align text to outside of wheel.
