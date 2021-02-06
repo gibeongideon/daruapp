@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'channels',
+    'functional_tests',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -87,7 +88,7 @@ ASGI_APPLICATION = 'daruapp.asgi.application'  # AD
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'), # BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'), # BASE_DIR / 'db.sqlite3',
     }
 }
 

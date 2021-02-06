@@ -1,30 +1,30 @@
 import os
 import time
+# import pytest
+
 import io
-import pytest
-
-
-from django.conf import settings
 from django.core import management
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+# from .server_tools import reset_database ,create_session_on_server
 from .management.commands.create_session import (
     create_pre_authenticated_session
 )
 
-
+executable_path = "/home/gai/Desktop/Dev/tdd_python/geckodriver"
 MAX_WAIT = 10
-
-
-def reset_database_on_server(): # revisit
-    management.call_command('flush', verbosity=0, interactive=False)
-
 
 def create_session_on_server(username): # revisit
     out = io.StringIO()
-    management.call_command('create_session', f'--username={username}', stdout=out)
+    management.call_command(
+        'create_session', f'--username={username}', stdout=out)
     return out.getvalue()
+
+
+def reset_database_on_server():  # revisit
+    management.call_command('flush', verbosity=0, interactive=False)
 
 
 def get_staging_server(): # revisit
@@ -49,13 +49,15 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def setUp(self):
 
-        self.live_server_url = get_staging_server()
-        if not self.live_server_url:
-            pytest.exit('Now running functional tests in only possible '
-                        'with staging server')
+        self.live_server_url = self.live_server_url  #get_staging_server()
+        # if not self.live_server_url:
+        #     pytest.exit('Now running functional tests in only possible '
+        #                 'with staging server')
 
+        # Reset database
+        reset_database_on_server()
         # Run browser
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.Firefox(executable_path=executable_path)
 
     def tearDown(self):
         self.browser.quit()

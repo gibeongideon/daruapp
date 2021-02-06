@@ -1,0 +1,3 @@
+sed "s/SITENAME/daruapp.com/g" \
+source/deploy_tools/nginx.template.conf \
+| sudo tee /etc/nginx/sites-available/daruapp.com

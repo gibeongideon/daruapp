@@ -47,7 +47,7 @@ try:
     ''' remove no such table on make migrations'''
     set_up, created = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
 except Exception as me:
-    print("MEMEMEMEMEM ME:",me)
+    print("MEE",me)
     pass
 
 class Market(models.Model):
@@ -111,6 +111,19 @@ class Selection(TimeStamp):
 
     def market_id(self):
         return self.mrtype
+        
+
+# selection_created = False        
+# try:    
+#     if not selection_created:
+#         print('CREATIN SELE')
+#         marktype=MarketType.objects.get_or_create(id=1,name="RY")
+#         Selection.objects.get_or_create(id=1, name="Red",odds=2)
+#         Selection.objects.get_or_create(id=2, name="Yellow",odds=2)
+#         selection_created= True
+# except Exception as se:
+#     print(se)
+#     pass    
 
 class WheelSpin(Market): 
     market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
@@ -251,9 +264,13 @@ class Stake (TimeStamp):
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on staking  '''
         if not self.stake_placed:
-            market_id = max((obj.id for obj in WheelSpin.objects.all())) #  check if generator can help #ER/empty gen
-            this_wheelspin = WheelSpin.objects.get(id =market_id )
-
+            try:
+                market_id = max((obj.id for obj in WheelSpin.objects.all()))
+                this_wheelspin = WheelSpin.objects.get(id =market_id )
+            except Exception as mae:
+                this_wheelspin,_ = WheelSpin.objects.get_or_create(id =1)
+                pass
+                  
             # create on demand
             if not this_wheelspin.place_stake_is_active:
                 WheelSpin.objects.create(id = market_id+1)
