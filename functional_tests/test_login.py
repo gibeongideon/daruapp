@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep
 
 
-class LoginTest(FunctionalTestCase):
+class LoginTestCase(FunctionalTestCase):
 
     @wait_to_load
     def wait_to_be_logged_in(self):
@@ -35,9 +35,9 @@ class LoginTest(FunctionalTestCase):
 
         # Then he enter account credentials
         self.browser.find_element_by_name('username').send_keys(TEST_USERNAME)
-        sleep(2)
+        # sleep(2)
         self.browser.find_element_by_name('password').send_keys(TEST_PASSWORD)
-        sleep(2)
+        # sleep(2)
         self.browser.find_element_by_name('password').send_keys(Keys.ENTER)
 
         # John is logged in
