@@ -30,5 +30,5 @@ class UserTestCase(TestCase):
         self.assertEqual(self.usera.phone_number, "254710087634")
         self.assertEqual(self.userb.phone_number, "254181008768")
         self.assertEqual(self.userc.phone_number, "254181008773")
-        self.assertEqual(self.userd.phone_number, "2548773invalid")# pone verification later
+        self.assertEqual(self.userd.phone_number, "2548773-invalid")# pone verification later
        
