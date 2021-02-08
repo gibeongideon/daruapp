@@ -1,7 +1,9 @@
 from django.test import TestCase  #, Client
 from django.urls import reverse
 from .models import User
-
+from django.http import HttpRequest
+from django.template.loader import render_to_string
+from .template_views import register
 
 class UserTestCase(TestCase):
     def setUp(self):
@@ -32,3 +34,10 @@ class UserTestCase(TestCase):
         self.assertEqual(self.userc.phone_number, "254181008773")
         self.assertEqual(self.userd.phone_number, "2548773-invalid")# pone verification later
        
+
+class UserCorrecTemplate(TestCase):
+    def test_omepage_returns_correct_html(self):
+        response = self.client.get('/')
+        print('RES',response)
+        self.assertTemplateUsed(response, 'daru_spin.html')
+           
