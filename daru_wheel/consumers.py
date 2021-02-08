@@ -137,7 +137,7 @@ class IspinConsumer(AsyncWebsocketConsumer):
 
 
 
-
+from .models import IoutCome
 class QspinConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
@@ -145,25 +145,29 @@ class QspinConsumer(WebsocketConsumer):
     def disconnect(self, close_code):
         pass
 
+    # Receive pointer from spin group
+    def return_pointer(self):#user_id):
+        # slist =IoutCome.objects.filter(user_id=user_id)
+        # act_l=[slval in slist if slval.active=True]
+        # if len(act_l)==0:
+        #     return ""
+        # else:
+        #     act_l[0].active = False  # update field/
+        #     return act_l[0].ipointer    
+
+
+
+        return IoutCome.objects.get(id=5).pointer
+
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         ipointer = text_data_json['ipointer']
-        print(f'QQMESWEB{ipointer}')
-        #     # Send pointer to spin group
-        self.send(
-            {
-                # 'type': 'ispin_pointer',
-                'ipointer': ipointer,
-            }
-        )
+        ipointer = self.return_pointer()
 
-    # # # Receive pointer from spin group
-    # def ispin_pointer(self, event):
-    #     ipointer = event['ipointer']
-    #     print(f'QQSPINNER{ ipointer}')
 
-    # #     # Send pointer to WebSocket
-    #     self.send(text_data=json.dumps(
-    #         {
-    #             'ipointer': ipointer,
-    #         }))
+        self.send(text_data=json.dumps({
+            'ipointer': ipointer
+        }))
+        
+
+        #normal ttp request return no of available spins//
