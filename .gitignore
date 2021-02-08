@@ -6,8 +6,8 @@ darulogfile
 
 
 #DigitalOcean
-erp_api.sock
-erp_apienv/
+daruapp.sock
+daruenv/
 
 
 .DS_Store
