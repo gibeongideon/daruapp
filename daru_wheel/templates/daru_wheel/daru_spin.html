@@ -60,30 +60,68 @@
     <div class="modal-content">
       <div class="card card-chart">
         <div class="card-body">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <i class="tim-icons icon-simple-remove"></i>
-            </button>
-            <h4 class="text-info">Enter Amount and Submit</h4>
-          </div>
-          <div class="modal-body">
-            <div class="box">
-              <div class="content">
-                <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
-                  {% csrf_token %}
-                  <div>
-                    <div class="text-info"> {{"Selection:"}}</div>
-                    <div>{{stake_form.marketselection}}</div>
-                    <div class="text-info">{{"Amount:"}}</div>
-                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                      <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
-                    </div>
+          <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
+            {% csrf_token %}
+    
+    
+           <div class="row">
+            
+            <div class="col-lg-4">
+              <div class="card card-chart">
+                <div class="text-info">{{"Select one"}}</div>
+    
+                <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" required="id_marketselection" >
+                  {% if stake_form.errors %}
+                  <div class='text-danger'>
+                    {{stake_form.errors}}
                   </div>
-                  <button type="submit">Place Stake</button>
-                </form>
+                  {% endif %}
+    
+                  <label class="btn btn-sm btn-primary btn-simple">
+                    <input type="radio" class="d-none d-sm-none" name="marketselection" value="1" required="id_marketselection">                
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Red</span>
+                    <span class="d-block d-sm-none">
+                      <i class="tim-icons icon-gift-2"></i>
+                    </span>
+                  </label>
+          
+           
+                  <label class="btn btn-sm btn-info btn-simple" >
+                    <input type="radio" class="d-none" name="marketselection" value="2" required="id_marketselection">
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Yellow</span>
+                    <span class="d-block d-sm-none">
+                      <i class="tim-icons icon-tap-02"></i>
+                    </span>
+                  </label>
+                  
+               
+                </div>
+    
               </div>
             </div>
-          </div>
+    
+            <div class="col-lg-4">
+              <div class="card card-chart">
+    
+                <div class="text-info">Amount to bet ( min:5 )</div>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                  <input id="amount_id" class="form-control" type="form" placeholder="amount" name="amount" required="id_amount" >
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="col-lg-4">
+              <div class="card card-chart">
+                <button class="btn btn-fill btn-success" type="submit">Place Bet</button>
+    
+              </div>
+            </div>
+    
+           </div>
+         </form>
+
+
         </div>
       </div>
     </div>

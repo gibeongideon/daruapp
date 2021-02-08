@@ -10,16 +10,16 @@
           </a>
           <a target="_blank" 
              href="https://www.daruandwheel.com" class="simple-text logo-normal">
-            Daru Casino
+            Daru Menu
           </a>
         </div>
 
         {% if user.is_authenticated %}
         <ul class="nav">
           <li class="active ">
-            <a href="/">
+            <a href="{% url 'daru_wheel:daru_spin' %}">
               <i class="tim-icons icon-align-center"></i>
-              <p>Home</p>
+              <p>Daru Wheel</p>
             </a>
           </li>
 
@@ -30,12 +30,12 @@
             </a>
           </li>
 
-          <li>
+          <!-- <li>
             <a href="{% url 'daru_wheel:daru_spin' %}">
               <i class="tim-icons icon-support-17"></i>
               <p>Daru Wheel</p>
             </a>
-          </li>
+          </li> -->
 
           <li>
             <a href= "{% url 'users:mine_users' %}">
