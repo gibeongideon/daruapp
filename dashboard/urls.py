@@ -12,8 +12,8 @@ urlpatterns = [
     re_path(r'^.*\.html', views.pages, name='pages'),
 
     # The home page
-    # path('', daru_spin, name='index'),
-    path('', views.index, name='index'),
+    path('', daru_spin, name='index'),
+    # path('', views.index, name='index'),
     path('icons', views.icons, name='icons'),
     path('maps', views.maps, name='maps'),
     path('topo', views.topo, name='topo'),
