@@ -246,3 +246,159 @@ Watching for file changes with StatReloader
 HTTP/2 support not enabled (install the http2 and tls Twisted extras)
 Configuring endpoint tcp:port=8000:interface=0.0.0.0
 Listening on TCP address 0.0.0.0:8000
+Watching for file changes with StatReloader
+HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+Configuring endpoint tcp:port=8000:interface=0.0.0.0
+Listening on TCP address 0.0.0.0:8000
+[32mHTTP GET / 302 [0.48, 127.0.0.1:54940][0m
+[mHTTP GET /user/login?next=/ 200 [0.70, 127.0.0.1:54940][0m
+[mHTTP GET /static/assets/css/nucleo-icons.css 200 [0.02, 127.0.0.1:54940][0m
+[mHTTP GET /static/assets/css/black-dashboard.css 200 [0.08, 127.0.0.1:54944][0m
+[mHTTP GET /static/assets/js/core/jquery.min.js 200 [0.09, 127.0.0.1:54952][0m
+[mHTTP GET /static/assets/js/core/popper.min.js 200 [0.11, 127.0.0.1:54956][0m
+[mHTTP GET /static/assets/js/core/bootstrap.min.js 200 [0.15, 127.0.0.1:54960][0m
+[mHTTP GET /static/assets/js/plugins/perfect-scrollbar.jquery.min.js 200 [0.19, 127.0.0.1:54964][0m
+[mHTTP GET /static/assets/js/plugins/chartjs.min.js 200 [0.22, 127.0.0.1:54940][0m
+[mHTTP GET /static/assets/js/plugins/bootstrap-notify.js 200 [0.24, 127.0.0.1:54944][0m
+[mHTTP GET /static/assets/js/black-dashboard.min.js 200 [0.26, 127.0.0.1:54952][0m
+[mHTTP GET /static/assets/fonts/nucleo.woff2 200 [0.05, 127.0.0.1:54952][0m
+[mHTTP GET /static/assets/img/favicon.png 200 [0.02, 127.0.0.1:54952][0m
+[mHTTP POST /user/login 200 [0.24, 127.0.0.1:54952][0m
+[32mHTTP POST /user/login 302 [1.22, 127.0.0.1:54952][0m
+[mHTTP GET / 200 [0.33, 127.0.0.1:54952][0m
+[mHTTP GET /static/wheel/css/main.css 200 [0.05, 127.0.0.1:54952][0m
+[mHTTP GET /static/assets/img/emilyz.png 200 [0.05, 127.0.0.1:54944][0m
+[mHTTP GET /static/wheel/js/Winwheel.js 200 [0.07, 127.0.0.1:54952][0m
+[mHTTP GET /static/wheel/js/TweenMax.min.js 200 [0.11, 127.0.0.1:54940][0m
+[mHTTP GET /static/wheel/css/wheel_back.png 200 [0.05, 127.0.0.1:54952][0m
+WebSocket HANDSHAKING /ws/daru_wheel// [127.0.0.1:55036]
+[mHTTP GET /static/wheel/sounds/tick.mp3 200 [0.03, 127.0.0.1:54952][0m
+Exception inside application: 'NoneType' object has no attribute 'group_add'
+Traceback (most recent call last):
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/staticfiles.py", line 44, in __call__
+    return await self.application(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/routing.py", line 71, in __call__
+    return await application(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/security/websocket.py", line 37, in __call__
+    return await self.application(scope, send, receive)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/sessions.py", line 47, in __call__
+    return await self.inner(dict(scope, cookies=cookies), receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/sessions.py", line 254, in __call__
+    return await self.inner(wrapper.scope, receive, wrapper.send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/auth.py", line 181, in __call__
+    return await super().__call__(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/middleware.py", line 26, in __call__
+    return await self.inner(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/routing.py", line 160, in __call__
+    send,
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/consumer.py", line 94, in app
+    return await consumer(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/consumer.py", line 62, in __call__
+    await await_many_dispatch([receive], self.dispatch)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/utils.py", line 51, in await_many_dispatch
+    await dispatch(result)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/consumer.py", line 73, in dispatch
+    await handler(message)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/generic/websocket.py", line 175, in websocket_connect
+    await self.connect()
+  File "/home/gai/Desktop/projects/darusite/daru_staging/daruapp/daru_wheel/consumers.py", line 13, in connect
+    await self.channel_layer.group_add(
+AttributeError: 'NoneType' object has no attribute 'group_add'
+WebSocket DISCONNECT /ws/daru_wheel// [127.0.0.1:55036]
+[mHTTP GET /user/user_page 200 [0.07, 127.0.0.1:54952][0m
+[mHTTP GET /user/user_page 200 [0.03, 127.0.0.1:54952][0m
+[mHTTP GET /user/user_page 200 [0.03, 127.0.0.1:54952][0m
+[mHTTP GET /icons 200 [0.06, 127.0.0.1:54952][0m
+[mHTTP GET /account/trans_log/ 200 [0.08, 127.0.0.1:54952][0m
+[mHTTP GET /account/refer_credit/ 200 [0.12, 127.0.0.1:54952][0m
+[mHTTP GET /user/mine_users/ 200 [0.07, 127.0.0.1:54952][0m
+[mHTTP GET /user/mine_users/ 200 [0.03, 127.0.0.1:54952][0m
+[mHTTP GET /daru_wheel/ 200 [0.29, 127.0.0.1:54952][0m
+[mHTTP GET /static/wheel/img/spin_img/spin_on.png 200 [0.02, 127.0.0.1:54952][0m
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.27, 127.0.0.1:54952][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55066]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55066]
+[mHTTP GET /static/assets/img/apple-icon.png 200 [0.02, 127.0.0.1:54952][0m
+[mHTTP GET /daru_wheel/ 200 [0.05, 127.0.0.1:55302][0m
+WebSocket DISCONNECT /ws/ispin_wheel// [127.0.0.1:55066]
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.02, 127.0.0.1:55302][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55310]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55310]
+[mHTTP GET /static/assets/img/favicon.png 200 [0.01, 127.0.0.1:55302][0m
+/home/gai/Desktop/projects/darusite/daru_staging/daruapp/daruapp/settings.py changed, reloading.
+Watching for file changes with StatReloader
+HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+Configuring endpoint tcp:port=8000:interface=0.0.0.0
+Listening on TCP address 0.0.0.0:8000
+/home/gai/Desktop/projects/darusite/daru_staging/daruapp/daruapp/settings.py changed, reloading.
+Watching for file changes with StatReloader
+HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+Configuring endpoint tcp:port=8000:interface=0.0.0.0
+Listening on TCP address 0.0.0.0:8000
+[mHTTP GET /daru_wheel/ 200 [0.13, 127.0.0.1:55502][0m
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.05, 127.0.0.1:55502][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55514]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55514]
+[mHTTP GET /daru_wheel/ 200 [0.07, 127.0.0.1:55502][0m
+WebSocket DISCONNECT /ws/ispin_wheel// [127.0.0.1:55514]
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.02, 127.0.0.1:55502][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55586]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55586]
+[mHTTP GET /static/assets/img/favicon.png 200 [0.01, 127.0.0.1:55502][0m
+[mHTTP GET /daru_wheel/ 200 [0.09, 127.0.0.1:55502][0m
+WebSocket DISCONNECT /ws/ispin_wheel// [127.0.0.1:55586]
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.02, 127.0.0.1:55502][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55648]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55648]
+[mHTTP GET /daru_wheel/ 200 [0.05, 127.0.0.1:55502][0m
+WebSocket DISCONNECT /ws/ispin_wheel// [127.0.0.1:55648]
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.03, 127.0.0.1:55502][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55688]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55688]
+[mHTTP GET /account/trans_log/ 200 [0.08, 127.0.0.1:55502][0m
+WebSocket DISCONNECT /ws/ispin_wheel// [127.0.0.1:55688]
+[mHTTP GET /account/trans_log/ 200 [0.05, 127.0.0.1:55502][0m
+[mHTTP GET /account/refer_credit/ 200 [0.05, 127.0.0.1:55502][0m
+[mHTTP GET /user/mine_users/ 200 [0.04, 127.0.0.1:55502][0m
+[mHTTP GET /daru_wheel/spin 200 [0.09, 127.0.0.1:55502][0m
+WebSocket HANDSHAKING /ws/daru_wheel// [127.0.0.1:55706]
+Exception inside application: 'NoneType' object has no attribute 'group_add'
+Traceback (most recent call last):
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/staticfiles.py", line 44, in __call__
+    return await self.application(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/routing.py", line 71, in __call__
+    return await application(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/security/websocket.py", line 37, in __call__
+    return await self.application(scope, send, receive)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/sessions.py", line 47, in __call__
+    return await self.inner(dict(scope, cookies=cookies), receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/sessions.py", line 254, in __call__
+    return await self.inner(wrapper.scope, receive, wrapper.send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/auth.py", line 181, in __call__
+    return await super().__call__(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/middleware.py", line 26, in __call__
+    return await self.inner(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/routing.py", line 160, in __call__
+    send,
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/consumer.py", line 94, in app
+    return await consumer(scope, receive, send)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/consumer.py", line 62, in __call__
+    await await_many_dispatch([receive], self.dispatch)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/utils.py", line 51, in await_many_dispatch
+    await dispatch(result)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/consumer.py", line 73, in dispatch
+    await handler(message)
+  File "/home/gai/Desktop/Dev/projects/backend/scenv/lib/python3.7/site-packages/channels/generic/websocket.py", line 175, in websocket_connect
+    await self.connect()
+  File "/home/gai/Desktop/projects/darusite/daru_staging/daruapp/daru_wheel/consumers.py", line 13, in connect
+    await self.channel_layer.group_add(
+AttributeError: 'NoneType' object has no attribute 'group_add'
+WebSocket DISCONNECT /ws/daru_wheel// [127.0.0.1:55706]
+[mHTTP GET /daru_wheel/ 200 [0.07, 127.0.0.1:55798][0m
+[33mHTTP GET /static/assets/js/jquery-1.10.2.js 404 [0.02, 127.0.0.1:55798][0m
+WebSocket HANDSHAKING /ws/ispin_wheel// [127.0.0.1:55806]
+WebSocket CONNECT /ws/ispin_wheel// [127.0.0.1:55806]
+Watching for file changes with StatReloader
+HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+Configuring endpoint tcp:port=8000:interface=0.0.0.0
+Listen failure: Couldn't listen on 0.0.0.0:8000: [Errno 98] Address already in use.

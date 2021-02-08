@@ -67,6 +67,9 @@
     </div> -->
     
 
+
+    <!-- <input id="spin-pointer-submit" type="button" value="serverSpin"> -->
+    
     <div class="card-body">
       
       <form action="{% url 'daru_wheel:spin' %}" method="post">
@@ -75,7 +78,7 @@
 
        <div class="row">
         
-        <div class="col-lg-4">
+        <div class="col-lg-4">{% url 'dashboard:topo' %}
           <div class="card card-chart">
             <div class="text-info">{{"Select one"}}</div>
 
@@ -128,6 +131,10 @@
 
        </div>
      </form>
+
+     <img id="spin-pointer-submit" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" />
+     <!-- <textarea id="chat-log" cols="5" rows="4"></textarea><br> -->
+     <!-- <input id="spin-pointer-input" type="text" size="10"><br> -->
      
     
     </div>
@@ -280,14 +287,14 @@
         //     }
         // };
 
-        // document.querySelector('#spin-pointer-submit').onclick = function(e) {
-        //     const pointerInputDom = document.querySelector('#spin-pointer-input');
-        //     const ipointer = pointerInputDom.value;
-        //     spinSocket.send(JSON.stringify({
-        //         'ipointer': ipointer
-        //     }));
-        //     pointerInputDom.value = '';
-        // };
+        document.querySelector('#spin-pointer-submit').onclick = function(e) {
+            // const pointerInputDom = document.querySelector('#spin-pointer-input');
+            const ipointer = '';
+            spinSocket.send(JSON.stringify({
+                'ipointer': ipointer
+            }));
+            pointerInputDom.value = '';
+        };
 
     // Create new wheel object specifying the parameters at creation time.
     let theWheel = new Winwheel({
@@ -376,7 +383,8 @@
 
 
     function startSpin()
-    {
+    { 
+      if (wheelSpinning == false) {
         // Stop any current animation.
         theWheel.stopAnimation(false);
         // Reset the rotation angle to less than or equal to 360 so spinning again
@@ -384,10 +392,14 @@
         theWheel.rotationAngle = 0;//theWheel.rotationAngle % 360;
         // Start animation.
         theWheel.startAnimation();
+        wheelSpinning = true;
+      }
 
     }
 
     function startSpinB(seg){
+      if (wheelSpinning == false) {
+
         theWheel.stopAnimation(false);
         theWheel.rotationAngle = 0;
         segmentNumber = seg;
@@ -395,7 +407,9 @@
         theWheel.animation.stopAngle = stopAt;
 
         theWheel.startAnimation();
-        
+        wheelSpinning = true;
+
+        }
         }
 
         function startSpinX(){
