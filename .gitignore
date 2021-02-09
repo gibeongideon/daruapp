@@ -251,9 +251,9 @@ venv.bak/
 
 # Ignore Migrations (Disabled on production only)
 
-*/migrations/*.py
-*/migrations/*.pyc
-*/*/migrations/*.py
-*/*/migrations/*.pyc
-*/*/*/migrations/*.py
-*/*/*/migrations/*.pyc
+# */migrations/*.py
+# */migrations/*.pyc
+# */*/migrations/*.py
+# */*/migrations/*.pyc
+# */*/*/migrations/*.py
+# */*/*/migrations/*.pyc
