@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import (
     AsyncWebsocketConsumer, WebsocketConsumer)
 from asgiref.sync import async_to_sync
+from random import randint
 
 
 class SpinConsumer(AsyncWebsocketConsumer):
@@ -153,11 +154,10 @@ class QspinConsumer(WebsocketConsumer):
         #     return ""
         # else:
         #     act_l[0].active = False  # update field/
-        #     return act_l[0].ipointer    
-
-
-
-        return 13#IoutCome.objects.get(id=5).pointer
+        #     return act_l[0].ipointer   
+        # 
+        #  
+        return randint(1, 28)  #IoutCome.objects.get(id=5).pointer
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
