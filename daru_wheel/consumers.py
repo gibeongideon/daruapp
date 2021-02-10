@@ -157,7 +157,7 @@ class QspinConsumer(WebsocketConsumer):
 
 
 
-        return IoutCome.objects.get(id=5).pointer
+        return 13#IoutCome.objects.get(id=5).pointer
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
