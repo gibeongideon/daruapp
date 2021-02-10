@@ -256,3 +256,5 @@ venv.bak/
 */*/migrations/*.pyc
 */*/*/migrations/*.py
 */*/*/migrations/*.pyc
+
+logfile
