@@ -7,7 +7,7 @@ from django.utils import timezone
 try:
     from account.models import RefCredit
     from account.models import (
-        update_account_bal_of, current_account_bal_of,
+        update_account_bal_of,
         log_record, refer_credit_create)
 except ImportError as e:
     pass
@@ -15,6 +15,32 @@ except ImportError as e:
 from django.contrib.auth import get_user_model
 User = get_user_model() # make apps independent
 # from .tasks import create_market
+
+
+def current_account_bal_of(user_id): #F2
+    from account.models import Account
+    try:
+        return float(Account.objects.get(user_id =user_id).balance)
+    except Exception as e:
+        return e
+
+def current_account_trialbal_of(user_id): #F2
+    from account.models import Account
+    try:
+        return float(Account.objects.get(user_id =user_id).trial_balance)
+    except Exception as e:
+        return e
+
+def update_account_trialbal_of(user_id,new_bal): #F3
+    from account.models import Account
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(trial_balance= new_bal)
+        else:
+            log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
 
 class TimeStamp(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -38,6 +64,7 @@ class DaruWheelSetting(TimeStamp):
         help_text='super critical setting value.DONT EDIT!',
         default=1, blank=True, null=True)
     curr_unit = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    min_bet = models.DecimalField(max_digits=5,default=45.9, decimal_places=2, blank=True, null=True)
     
     class Meta:
         db_table = "d_daruwheel_setup"
@@ -126,7 +153,7 @@ class Selection(TimeStamp):
 #     pass    
 
 class WheelSpin(Market): 
-    market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
+    market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets', blank =True, null= True)   
     # per_relief = models.FloatField(blank =True,null= True)
     per_retun = models.FloatField(default = 0,blank =True,null= True)
     class Meta:
@@ -140,7 +167,7 @@ class WheelSpin(Market):
 
     def total_bet_amount_per_marktinstance(self):
         try:
-            total_amount = Stake.objects.filter(market_id = self.id ).aggregate(bet_amount =Sum('amount'))
+            total_amount = Stake.objects.filter(market_id =self.id ).aggregate(bet_amount=Sum('amount'))
             return  total_amount.get('bet_amount')
 
         except Exception as e:
@@ -219,7 +246,7 @@ class WheelSpin(Market):
 class Stake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
     market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='wheelspins',blank =True,null=True)
-    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections')
+    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections',blank =True,null=True)
     current_bal = models.FloatField(max_length=10,default=0 )#R
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     stake_placed = models.BooleanField(blank =True,null=True)
@@ -534,14 +561,59 @@ class Result(TimeStamp):
 
 class Istake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_istakes',blank =True,null=True)
-    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections')
+    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections',blank =True,null=True)#
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
-    stake_placed = models.BooleanField(blank =True,null=True)
-    has_record = models.BooleanField(blank =True,null=True)
+    stake_placed = models.BooleanField(blank =True,null=True)#
+    has_record = models.BooleanField(blank =True,null=True) #
+    bet_on_real_account = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Istake:{self.amount} for:{self.user}'
+
+    @property
+    def could_bet(self):
+        if self.amount> set_up.min_bet: # unti neative values
+            if not self.bet_on_real_account:
+                try:
+                    if self.user.user_accounts.trial_balance >=self.amount:
+                        return True
+                    return False
+                except Exception as e:
+                    return e    
+
+            else:
+                try:
+                    if self.user.user_accounts.balance >=self.amount:
+                        return True
+                    return False
+                except Exception as e:
+                    return e
+        else:
+            return False
         
+
+    def deduct_amount_from_account(self):
+        if not self.bet_on_real_account:
+            new_bal = current_account_trialbal_of(self.user_id) - float(self.amount)
+            update_account_trialbal_of(self.user_id,new_bal)# F3
+        else:
+            new_bal = current_account_bal_of(self.user_id) - float(self.amount)
+            update_account_bal_of(self.user_id,new_bal)# F3
+
+                            
+    def save(self, *args, **kwargs):
+        ''' Bet could only be registered if
+            user got enoug real or trial balance
+        '''
+        print("CB",self.could_bet) #Debug
+        if self.could_bet ==True:
+            self.deduct_amount_from_account()
+ 
+            super().save(*args, **kwargs)
+        else:
+            return            
+
+      
 class IoutCome(TimeStamp):
     stake  = models.OneToOneField(Istake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
     inbank = models.DecimalField(('inbank'), max_digits=12, decimal_places=2, default=0)

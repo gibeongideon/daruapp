@@ -7,12 +7,12 @@ from .models import (
 class DaruWheelSettingAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'return_val', 'min_redeem_refer_credit',
-        'refer_per', 'closed_at', 'results_at', 'wheelspin_id',
+        'refer_per', 'closed_at', 'results_at','min_bet', 'wheelspin_id',
         'created_at', 'updated_at',)
     list_display_links = ('id',)
     list_editable = (
         'return_val', 'min_redeem_refer_credit', 'refer_per',
-        'closed_at', 'results_at', 'wheelspin_id',)
+        'closed_at', 'results_at','min_bet', 'wheelspin_id',)
 
 
 admin.site.register(DaruWheelSetting, DaruWheelSettingAdmin) 
@@ -114,14 +114,13 @@ admin.site.register(Result, ResultAdmin)
 class IstakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user', 'marketselection',
-        'amount', 'stake_placed', 'has_record',
+        'amount', 'bet_on_real_account','could_bet', 'stake_placed', 'has_record',
         'created_at', 'updated_at')
 
     list_display_links = ('user',)
     search_fields = ('user',)
-    # list_editable = ('outcome',)
     list_filter =('user', 'marketselection')
-    # readonly_fields = ('current_bal',)
+
 
 
 admin.site.register(Istake, IstakeAdmin)
