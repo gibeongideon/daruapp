@@ -30,45 +30,7 @@
       <div class="col-sm-4"> </div>
 
     </div>
-    <!-- <div>
-      <form action="{% url 'daru_wheel:spin' %}" method="post">
-        {% csrf_token %}
-        <div class="text-info">{{"Select One:"}}</div>
-        <div class="btn-group btn-group-toggle float-left" data-toggle="buttons"required="id_marketselection" >
-          <label class="btn btn-sm btn-primary btn-simple">
-            <input type="radio" class="d-none d-sm-none" name="marketselection" value="1" required="id_marketselection">                
-            <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Red</span>
-            <span class="d-block d-sm-none">
-              <i class="tim-icons icon-gift-2"></i>
-            </span>
-          </label>
-  
-   
-          <label class="btn btn-sm btn-info btn-simple" >
-            <input type="radio" class="d-none" name="marketselection" value="2" required="id_marketselection">
-            <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Yellow</span>
-            <span class="d-block d-sm-none">
-              <i class="tim-icons icon-tap-02"></i>
-            </span>
-          </label>
-        </div>
 
-        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-          <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
-        </div>
-        <button class="btn btn-fill btn-info" type="submit">Place Stake</button>
-
-      </form>
-
-
-          <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" onClick="startSpinX();" />
-          <input id="spin-pointer-submit" type="button" value="serverSpin">
-
-    </div> -->
-    
-
-    <!-- <input id="spin-pointer-submit" type="button" value="serverSpin"> -->
-    
     <div class="card-body">
       
       <form action="{% url 'daru_wheel:spin' %}" method="post">
@@ -77,7 +39,7 @@
 
        <div class="row">
         
-        <div class="col-lg-4">{% url 'dashboard:topo' %}
+        <div class="col-lg-4">
           <div class="card card-chart">
             <div class="text-info">{{"Select one"}}</div>
 
@@ -131,7 +93,7 @@
        </div>
      </form>
 
-     <img id="spin-pointer-submit" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" />
+     <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" />
      <!-- <textarea id="chat-log" cols="5" rows="4"></textarea><br> -->
      <!-- <input id="spin-pointer-input" type="text" size="10"><br> -->
      
@@ -154,9 +116,9 @@
                 <th>
                   Time
                 </th>
-                <th>
+                <!-- <th>
                   Market
-                </th>
+                </th> -->
                 <th>
                   Selection
                 </th>
@@ -175,9 +137,9 @@
                 <td>
                   {{trans.created_at}}
                 </td>
-                <td>
+                <!-- <td>
                   {{trans.market}}
-                </td>
+                </td> -->
                 <td>
                   {{trans.marketselection}}
                 </td>
@@ -262,7 +224,13 @@
 
 
             if (data.ipointer){
-              document.querySelector('#chat-log').value += (data.ipointer + '\n');
+              if (data.spinet){
+                // Light up the spin button by changing it's source image and adding a clickable class to it.
+                // document.getElementById('spin_button').src = "/static/wheel/img/spin_img/spin_off.png";
+                // document.getElementById('spin_button').className = "clickable";
+              }
+
+              // document.querySelector('#chat-log').value += (data.ipointer + '\n');
                 
                 // console.log(data.pointer)
 
@@ -286,7 +254,7 @@
         //     }
         // };
 
-        document.querySelector('#spin-pointer-submit').onclick = function(e) {
+        document.querySelector('#spin_button').onclick = function(e) {
             // const pointerInputDom = document.querySelector('#spin-pointer-input');
             const ipointer = '';
             spinSocket.send(JSON.stringify({
@@ -363,7 +331,7 @@
     });
 
     // Loads the tick audio sound in to an audio object.
-    let audio = new Audio('/static/wheel/sounds/tick.mp3');
+    let audio = new Audio('/static/wheel/sounds/ticko.mp3');
 
     // This function is called when the sound is to be played.
     function playSound()
@@ -404,6 +372,9 @@
         segmentNumber = seg;
         let stopAt = theWheel.getRandomForSegment(segmentNumber);
         theWheel.animation.stopAngle = stopAt;
+        // Disable the spin button so can't click again while wheel is spinning.
+        // document.getElementById('spin_button').src       = "/static/wheel/img/spin_img/spin_off.png";
+        // document.getElementById('spin_button').className = "";
 
         theWheel.startAnimation();
         wheelSpinning = true;

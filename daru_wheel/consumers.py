@@ -154,19 +154,22 @@ class QspinConsumer(WebsocketConsumer):
         #     return ""
         # else:
         #     act_l[0].active = False  # update field/
-        #     return act_l[0].ipointer   
+        #     return act_l[0].ipointer  
         # 
-        #  
-        return randint(1, 28)  #IoutCome.objects.get(id=5).pointer
+   
+      
+        return randint(1,28) #IoutCome.objects.get(id=5).pointer
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         ipointer = text_data_json['ipointer']
         ipointer = self.return_pointer()
+        # spinet = self.return_pointer()
 
 
         self.send(text_data=json.dumps({
-            'ipointer': ipointer
+            'ipointer': ipointer,
+            # 'spinet': spinet
         }))
         
 
