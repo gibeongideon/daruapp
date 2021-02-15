@@ -1,1 +1,1 @@
-web: gunicorn daruapp.wsgi --log-file -
+web: daphne chat.asgi:channel_layer --port $PORT --bind 0.0.0.0 -v2
