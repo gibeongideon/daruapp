@@ -298,10 +298,10 @@ class Stake (TimeStamp):
                 this_wheelspin,_ = WheelSpin.objects.get_or_create(id =1)
                 pass
                   
-            # create on demand
-            if not this_wheelspin.place_stake_is_active:
-                WheelSpin.objects.create(id = market_id+1)
-                this_wheelspin = WheelSpin.objects.get(id =market_id+1 )
+            # create your market if worker is asleep!aja alale!
+            # if not this_wheelspin.place_stake_is_active:
+            #     WheelSpin.objects.create(id = market_id+1)
+            #     this_wheelspin = WheelSpin.objects.get(id =market_id+1 )
                 
             # end create market on demand
 
@@ -571,7 +571,7 @@ class Istake (TimeStamp):
         return f'Istake:{self.amount} for:{self.user}'
 
     @property
-    def could_bet(self):
+    def this_user_has_cash_to_bet(self):
         if self.amount> set_up.min_bet: # unti neative values
             if not self.bet_on_real_account:
                 try:
@@ -592,7 +592,7 @@ class Istake (TimeStamp):
             return False
         
 
-    def deduct_amount_from_account(self):
+    def deduct_amount_from_this_user_account(self):
         if not self.bet_on_real_account:
             new_bal = current_account_trialbal_of(self.user_id) - float(self.amount)
             update_account_trialbal_of(self.user_id,new_bal)# F3
@@ -605,28 +605,59 @@ class Istake (TimeStamp):
         ''' Bet could only be registered if
             user got enoug real or trial balance
         '''
-        print("CB",self.could_bet) #Debug
-        if self.could_bet ==True:
-            self.deduct_amount_from_account()
- 
-            super().save(*args, **kwargs)
-        else:
-            return            
+        print("CB",self.this_user_has_cash_to_bet) #Debug
 
-      
+        if self.this_user_has_cash_to_bet: #then
+            self.deduct_amount_from_this_user_account()
+ 
+            super().save(*args, **kwargs) # create a db record
+        else:
+            return # no db table record to create!            
+
+
+class CashStore(models.Model):
+    give_away =  models.DecimalField(('give_away'), max_digits=12, decimal_places=2, default=0)
+    to_keep =  models.DecimalField(('to_keep'), max_digits=12, decimal_places=2, default=0)
+
+
 class IoutCome(TimeStamp):
     stake  = models.OneToOneField(Istake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
+    cashstore =models.ForeignKey(CashStore,on_delete=models.CASCADE,related_name='cashstores',blank =True,null= True)
     inbank = models.DecimalField(('inbank'), max_digits=12, decimal_places=2, default=0)
     outbank = models.DecimalField(('outbank'), max_digits=12, decimal_places=2, default=0)
     result = models.IntegerField(blank =True,null= True)
     pointer = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(default = False,blank =True,null= True)
 
+
+
+
+    # @classmethod
+    # def set_store(cls):
+    #     try:
+    #        cashstore_,_=CashStore.objects.get_or_create(id =1)
+    #        cls.objects.update(cashstore=cashstore_)
+    #     except Exception as e:
+    #         pass
+    @property
+    def current_update_give_away(self):
+        return float(CashStore.objects.get(id =1).give_away)
+
+    def update_give_away(self,new_bal):
+        CashStore.objects.filter(id =1).update(give_away= new_bal)
+
+
+    def give_away(self):
+        try:
+            return self.cashstore.give_away
+        except Exception as e:
+            return e    
+
     @property
     def determine_result_algo(self):  # fix this
-        if self.outbank > (3*self.stake.amount) and  self.stake.amount <100:  ##TO IMPLEMENT
-            return 1
-        return 2
+        if  self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
+            return True
+        return False
 
     @staticmethod
     def result_to_segment(results = None, segment=29):
@@ -642,18 +673,49 @@ class IoutCome(TimeStamp):
     def segment(self):
         return self.result_to_segment(results = self.result)# ,segment = 29) from settings
 
+    def update_user_account(self):
+        this_user= self.stake.user_id
+
+        if self.determine_result_algo is True:
+            current_bal=current_account_bal_of(this_user)  #F1
+            new_bal = current_bal +float(self.amount)
+            update_account_bal_of(this_user_id,new_bal) #with new_bal
+        else:         
+            current_bal=current_account_bal_of(this_user)  #F1
+            new_bal = current_bal -float(self.amount)
+            update_account_bal_of(this_user_id,new_bal) #with new_bal
+
+
     def save(self, *args, **kwargs):
         if not self.closed:
-            # if self.market.place_stake_is_active == False:
-                self.result = self.determine_result_algo
-                if self.determine_result_algo ==1:
-                    self.outbank = self.outbank-self.stake.amount*2
-                else:
-                    self.outbank = self.outbank+self.stake.amount    
-                self.pointer = self.segment
-                self.closed =True
+            mstore,_ = CashStore.objects.get_or_create(id =1)
+            self.cashstore = mstore
+            self.result = self.determine_result_algo
+            if self.determine_result_algo is True:
+                current_bal = self.current_update_give_away
+                print(f'CBW:{current_bal} ')
+                print(f'STW:{self.stake.amount} ')
+                new_bal = current_bal - float(self.stake.amount)
+                print(new_bal)
+                self.update_give_away(new_bal)
 
-                super().save(*args, **kwargs)
+                # self.cashstore.give_away = self.cashstore.give_away - self.stake.amount
+ 
+            else:
+                current_bal = self.current_update_give_away
+                print(f'CB:{current_bal} ')
+                print(f'ST:{self.stake.amount} ')
+                new_bal = current_bal + float(self.stake.amount)
+                print(new_bal)
+                self.update_give_away(new_bal)
+                # self.cashstore.give_away = self.cashstore.give_away + self.stake.amount
+
+            self.pointer = self.segment
+            self.closed =True
+
+            super().save(*args, **kwargs)            
+
+
         else:
             return
           

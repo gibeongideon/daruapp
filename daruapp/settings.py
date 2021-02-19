@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 from celery.schedules import crontab
 import dj_database_url
@@ -152,17 +152,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # login/logout redirect
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/user/login'
+##### Channels-specific settings
 
 
-# CHANNELS
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+# Channel layer definitions
+# http://channels.readthedocs.io/en/latest/topics/channel_layers.html
 
 # CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [('localhost', 6379)],
+#     "default": {
+#         # This example app uses the Redis channel layer implementation channels_redis
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [(redis_host, 6379)],
 #         },
-#     }
+#     },
 # }
 
 
@@ -217,4 +221,12 @@ DATABASES['default'].update(db_from_env)
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MIN_BET=10
+MIN_BET = 10  # R
+
+# CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION': '127.0.0.1:11211',
+#    }
+# }
+

@@ -35,9 +35,9 @@ class UserTestCase(TestCase):
         self.assertEqual(self.userd.phone_number, "2548773-invalid")# pone verification later
        
 
-class UserCorrecTemplate(TestCase):
-    def test_omepage_returns_correct_html(self):
-        response = self.client.get('/')
-        print('RES',response)
-        self.assertTemplateUsed(response, 'daru_spin.html')
+# class UserCorrecTemplate(TestCase):
+#     def test_omepage_returns_correct_html(self):
+#         response = self.client.get('/')
+#         print('RES',response)
+#         self.assertTemplateUsed(response, 'daru_spin.html')
            

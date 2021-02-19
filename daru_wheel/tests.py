@@ -1,7 +1,8 @@
 from django.test import TestCase
 from users.models import User
-from .models import Istake
-from account.models import  Account,CashDeposit
+from .models import Istake, CashStore, IoutCome
+from account.models import Account, CashDeposit
+
 
 # Create your tests here.
 
@@ -41,3 +42,40 @@ class IstakeTestCase(TestCase):
         stakecount = Istake.objects.count()
         self.assertEqual(stakecount, 2)
 
+    def test_store_bank_mat(self):
+        # CashStore.objects.create(id=1)
+        Istake.objects.create(user=self.user, amount=1000)
+        # give_away = IoutCome.objects.get(stake=stak).cashstore.give_away
+        cas = CashStore.objects.get(id=1)
+        
+        self.assertEqual(cas.give_away, 1000)
+
+        Istake.objects.create(user=self.user, amount=1000)
+        cas = CashStore.objects.get(id=1)
+
+        self.assertEqual(cas.give_away, 2000)
+
+        Istake.objects.create(user=self.user, amount=1000)
+        cas = CashStore.objects.get(id=1)
+
+        self.assertEqual(cas.give_away, 3000)
+
+        Istake.objects.create(user=self.user, amount=1000)
+        cas = CashStore.objects.get(id=1)
+
+        self.assertEqual(cas.give_away, 2000)        
+
+        Istake.objects.create(user=self.user, amount=100)
+        cas = CashStore.objects.get(id=1)
+
+        self.assertEqual(cas.give_away, 1900)
+
+        Istake.objects.create(user=self.user, amount=500)
+        cas = CashStore.objects.get(id=1)
+
+        self.assertEqual(cas.give_away, 1400)
+
+        Istake.objects.create(user=self.user, amount=1100)
+        cas = CashStore.objects.get(id=1)
+
+        self.assertEqual(cas.give_away, 2500)        

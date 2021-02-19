@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType,
-    OutCome, MarketType, Selection, DaruWheelSetting, Istake, IoutCome)
+    OutCome, MarketType, Selection, DaruWheelSetting, Istake, IoutCome ,CashStore)
 
 
 class DaruWheelSettingAdmin(admin.ModelAdmin):
@@ -114,7 +114,7 @@ admin.site.register(Result, ResultAdmin)
 class IstakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user', 'marketselection',
-        'amount', 'bet_on_real_account','could_bet', 'stake_placed', 'has_record',
+        'amount', 'bet_on_real_account','this_user_has_cash_to_bet', 'stake_placed', 'has_record',
         'created_at', 'updated_at')
 
     list_display_links = ('user',)
@@ -128,7 +128,7 @@ admin.site.register(Istake, IstakeAdmin)
 
 class IoutComeAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'stake', 'closed', 'inbank', 'outbank', 'result', 'pointer',
+        'id', 'stake', 'closed','give_away', 'result', 'pointer',
         'determine_result_algo', 'segment', 'created_at', 'updated_at')
 
     list_display_links = ('id',)
@@ -136,4 +136,7 @@ class IoutComeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(IoutCome, IoutComeAdmin)
+
+
+admin.site.register(CashStore)
  

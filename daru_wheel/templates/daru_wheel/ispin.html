@@ -35,20 +35,22 @@
       
       <form action="{% url 'daru_wheel:spin' %}" method="post">
         {% csrf_token %}
+<!-- 
+        {% if stake_form.errors %}
+        <div class='text-danger'>
+          {{stake_form.errors}}
+        </div>
+        {% endif %} -->
 
 
        <div class="row">
-        
+                 
         <div class="col-lg-4">
+          <div class="text-info">{{"Select one"}}</div>
           <div class="card card-chart">
-            <div class="text-info">{{"Select one"}}</div>
+            <!-- <div class="text-info">{{"Select one"}}</div> -->
 
             <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" required="id_marketselection" >
-              {% if stake_form.errors %}
-              <div class='text-danger'>
-                {{stake_form.errors}}
-              </div>
-              {% endif %}
 
               <label class="btn btn-sm btn-primary btn-simple">
                 <input type="radio" class="d-none d-sm-none" name="marketselection" value="1" required="id_marketselection">                
@@ -73,9 +75,11 @@
         </div>
 
         <div class="col-lg-4">
+          <div class="text-info">Amount to bet ( min:5 )</div>
+          
           <div class="card card-chart">
 
-            <div class="text-info">Amount to bet ( min:5 )</div>
+            <!-- <div class="text-info">Amount to bet ( min:5 )</div> -->
             <div class="input-group mb-2 mr-sm-2 mb-sm-0">
               <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
             </div>
@@ -84,6 +88,7 @@
         </div>
 
         <div class="col-lg-4">
+          Bet Real Money: {{ stake_form.bet_on_real_account}}
           <div class="card card-chart">
             <button class="btn btn-fill btn-success" type="submit">Place Bet</button>
 
@@ -117,16 +122,16 @@
                   Time
                 </th>
                 <th>
-                  Market
-                </th>
-                <th>
-                  Selection
+                  Choice
                 </th>
                 <th>
                   Amount
                 </th>
                 <th class="text-center">
                   Status
+                </th>
+                <th>
+                  Real
                 </th>
               </tr>
             </thead>
@@ -138,9 +143,6 @@
                   {{trans.created_at}}
                 </td>
                 <td>
-                  {{trans.market}}
-                </td>
-                <td>
                   {{trans.marketselection}}
                 </td>
                 <td>
@@ -148,6 +150,12 @@
                 </td>
                 <td class="text-center">
                   {{trans.status}}
+                </td>
+                <td>
+
+                <!-- </td> class="action-checkbox"> -->
+                  <!-- <input type="checkbox" name="_selected_action" value={{trans.bet_on_real_account}} class="action-select"> -->
+                  {{trans.bet_on_real_account}}
                 </td>
               </tr>
               {%endfor%}
@@ -275,41 +283,75 @@
         'segments'        :             // Define segments including colour and text.
         [                               // font size and test colour overridden on backrupt segments.
 
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x3 300'},
+            {'fillStyle' : '#fff200', 'text' : 'x1 100'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x0 000'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
 
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
 
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x5 500'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
             {'fillStyle' : '#ffffff', 'text' :  'AVARAGE', 'textFontSize' : 16, 'textFillStyle' : '#00000'},// WHITE
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
 
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x1 100'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200', 'textFontSize' : 12, 'textFillStyle' : '#e70697'},
 
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},                  
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2 200', 'textFontSize' : 16, 'textFillStyle' : '#3cb878'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x7 700'},                  
+            {'fillStyle' : '#fff200', 'text' : 'x2 200'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x8 800'},
 
-            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
-            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2 200'},
+            {'fillStyle' : '#fff200', 'text' : 'x0 000'},
             
-            {'fillStyle' : '#000000', 'text' : 'BLACK HOLE', 'textFontSize' : 12, 'textFillStyle' : '#ffffff'},
-            
+            {'fillStyle' : '#000000', 'text' : '9999', 'textFontSize' : 12, 'textFillStyle' : '#3cb878'},
+
+                  //  {'fillStyle' : '#ee1c24', 'text' : '1000'},
+                  //  {'fillStyle' : '#3cb878', 'text' : '450'},
+                  //  {'fillStyle' : '#f6989d', 'text' : '600'},
+                  //  {'fillStyle' : '#e70697', 'text' : '3000'},
+                  //  {'fillStyle' : '#000000', 'text' : 'ZERO', 'textFontSize' : 16, 'textFillStyle' : '#ffffff'},
+
+                  //  {'fillStyle' : '#e70697', 'text' : '3000'},
+                  //  {'fillStyle' : '#fff200', 'text' : '600'},
+                  //  {'fillStyle' : '#f6989d', 'text' : '700'},
+                  //  {'fillStyle' : '#00aef0', 'text' : '650'},
+
+                  //  {'fillStyle' : '#ee1c24', 'text' : '1000'},
+                  //  {'fillStyle' : '#3cb878', 'text' : '450'},
+                  //  {'fillStyle' : '#f6989d', 'text' : '600'},
+                  //  {'fillStyle' : '#e70697', 'text' : '3000'},
+                  //  {'fillStyle' : '#000000', 'text' : 'ZEROD', 'textFontSize' : 16, 'textFillStyle' : '#ffffff'},
+
+                  //  {'fillStyle' : '#e70697', 'text' : '3000'},
+                  //  {'fillStyle' : '#fff200', 'text' : '600'},
+                  //  {'fillStyle' : '#f6989d', 'text' : '700'},
+                  //  {'fillStyle' : '#00aef0', 'text' : '650'},
+
+
+                  //  {'fillStyle' : '#ee1c24', 'text' : '1000'},
+                  //  {'fillStyle' : '#3cb878', 'text' : '450'},
+                  //  {'fillStyle' : '#f6989d', 'text' : '600'},
+                  //  {'fillStyle' : '#e70697', 'text' : '3000'},
+                  //  {'fillStyle' : '#000000', 'text' : 'ZEROD', 'textFontSize' : 16, 'textFillStyle' : '#ffffff'},
+
+                  //  {'fillStyle' : '#e70697', 'text' : '3000'},
+                  //  {'fillStyle' : '#fff200', 'text' : '600'},
+                  //  {'fillStyle' : '#f6989d', 'text' : '700'},
+                  //  {'fillStyle' : '#00aef0', 'text' : '650'},
+                  //  {'fillStyle' : '#ffffff', 'text' : 'LOOSE TURN', 'textFontSize' : 12},
 
         ],
         'animation' :           // Specify the animation to use.
