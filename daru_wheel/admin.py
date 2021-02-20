@@ -114,7 +114,8 @@ admin.site.register(Result, ResultAdmin)
 class IstakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user', 'marketselection',
-        'amount', 'bet_on_real_account','this_user_has_cash_to_bet', 'stake_placed', 'has_record',
+        'amount', 'bet_on_real_account','this_user_has_cash_to_bet',
+        'stake_placed', 'has_record','bet_status',
         'created_at', 'updated_at')
 
     list_display_links = ('user',)
@@ -129,7 +130,7 @@ admin.site.register(Istake, IstakeAdmin)
 class IoutComeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'stake', 'closed','give_away', 'result', 'pointer',
-        'determine_result_algo', 'segment', 'created_at', 'updated_at')
+        'determine_result_algo', 'segment','real_bet', 'created_at', 'updated_at')
 
     list_display_links = ('id',)
     readonly_fields = ('closed', 'result', 'pointer')
@@ -137,6 +138,12 @@ class IoutComeAdmin(admin.ModelAdmin):
 
 admin.site.register(IoutCome, IoutComeAdmin)
 
+class CashStoreAdmin(admin.ModelAdmin):
+    list_display = ('id', 'give_away', 'to_keep',)
 
-admin.site.register(CashStore)
- 
+    list_display_links = ('id',)
+    # readonly_fields = ('closgive_away',)
+
+
+admin.site.register(CashStore, CashStoreAdmin)
+
