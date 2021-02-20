@@ -33,6 +33,7 @@ def get_staging_server(): # revisit
 
 
 def wait_to_load(fn):
+    '''wait webdriver to load page '''
     def deco_fn(*args, **kwargs):
         start_time = time.time()
         while True:

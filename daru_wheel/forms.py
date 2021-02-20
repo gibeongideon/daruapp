@@ -11,4 +11,4 @@ class StakeForm(forms.ModelForm):
 class IstakeForm(forms.ModelForm):
     class Meta:
         model = Istake
-        fields = ('user', 'marketselection', 'amount',)
+        fields = ('user', 'marketselection', 'amount', 'bet_on_real_account')

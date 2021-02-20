@@ -18,9 +18,9 @@ def daru_spin(request):
                
         data = {}
         data['user'] = request.user
-        data['marketselection'] = request.POST['marketselection']
-        data['amount'] = request.POST['amount'] 
-
+        data['marketselection'] = request.POST.get('marketselection')
+        data['amount'] = request.POST.get('amount')
+        
         stake_form = StakeForm(data=data)
   
         if stake_form.is_valid():
@@ -47,13 +47,14 @@ def spin(request):
     if request.method == 'POST':   
         data = {}
         data['user'] = request.user
-        data['marketselection'] = request.POST['marketselection']
-        data['amount'] = request.POST['amount'] 
+        data['marketselection'] = request.POST.get('marketselection')
+        data['amount'] = request.POST.get('amount')
+        data['bet_on_real_account'] = request.POST.get("bet_on_real_account")
 
         stake_form = IstakeForm(data=data)
-  
-        if stake_form.is_valid():
 
+        if stake_form.is_valid():
+ 
             stake_form.save()
         else:
             print(stake_form.errors)
