@@ -575,7 +575,7 @@ class Istake (TimeStamp):
         if self.amount> set_up.min_bet: # unti neative values
             if not self.bet_on_real_account:
                 try:
-                    if self.user.user_accounts.trial_balance >=self.amount:
+                    if current_account_trialbal_of(self.user_id) >=self.amount:
                         return True
                     return False
                 except Exception as e:
@@ -583,7 +583,7 @@ class Istake (TimeStamp):
 
             else:
                 try:
-                    if self.user.user_accounts.balance >=self.amount:
+                    if current_account_bal_of(self.user_id) >=self.amount:
                         return True
                     return False
                 except Exception as e:
@@ -599,7 +599,13 @@ class Istake (TimeStamp):
         else:
             new_bal = current_account_bal_of(self.user_id) - float(self.amount)
             update_account_bal_of(self.user_id,new_bal)# F3
-
+            
+    def bet_status(self):
+        try:
+            return IoutCome.objects.get(stake_id=self.id).win_status
+        except  Exception as e:
+            print(f'daru_STATUS ERROR:{e}')
+            return 'pending'
                             
     def save(self, *args, **kwargs):
         ''' Bet could only be registered if
@@ -629,9 +635,6 @@ class IoutCome(TimeStamp):
     pointer = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(default = False,blank =True,null= True)
 
-
-
-
     # @classmethod
     # def set_store(cls):
     #     try:
@@ -639,11 +642,13 @@ class IoutCome(TimeStamp):
     #        cls.objects.update(cashstore=cashstore_)
     #     except Exception as e:
     #         pass
+
     @property
     def current_update_give_away(self):
         return float(CashStore.objects.get(id =1).give_away)
 
-    def update_give_away(self,new_bal):
+    @staticmethod
+    def update_give_away(new_bal):
         CashStore.objects.filter(id =1).update(give_away= new_bal)
 
 
@@ -651,13 +656,20 @@ class IoutCome(TimeStamp):
         try:
             return self.cashstore.give_away
         except Exception as e:
-            return e    
+            return e 
+
+    @property
+    def real_bet(self):
+        return self.stake.bet_on_real_account
 
     @property
     def determine_result_algo(self):  # fix this
-        if  self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
-            return True
-        return False
+        # if not self.real_bet:
+        #     return randint(1,2)        
+
+        if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
+            return 1
+        return 2
 
     @staticmethod
     def result_to_segment(results = None, segment=29):
@@ -673,47 +685,60 @@ class IoutCome(TimeStamp):
     def segment(self):
         return self.result_to_segment(results = self.result)# ,segment = 29) from settings
 
-    def update_user_account(self):
+    def update_user_trial_account(self):
         this_user= self.stake.user_id
+        current_bal=current_account_trialbal_of(this_user)  #F1
+        new_bal = current_bal +float(self.stake.amount*2)
+        update_account_trialbal_of(this_user,new_bal) #with new_bal
 
-        if self.determine_result_algo is True:
-            current_bal=current_account_bal_of(this_user)  #F1
-            new_bal = current_bal +float(self.amount)
-            update_account_bal_of(this_user_id,new_bal) #with new_bal
-        else:         
-            current_bal=current_account_bal_of(this_user)  #F1
-            new_bal = current_bal -float(self.amount)
-            update_account_bal_of(this_user_id,new_bal) #with new_bal
+
+    def update_user_real_account(self):
+        this_user= self.stake.user_id
+        current_bal=current_account_bal_of(this_user)  #F1
+        new_bal = current_bal +float(self.stake.amount*2) # ard Code odds
+        update_account_bal_of(this_user,new_bal) #with new_bal
+
+
+    def update_give_away_bank(self):
+
+        if self.determine_result_algo == 1:
+            current_bal = self.current_update_give_away
+            new_bal = current_bal - float(self.stake.amount) 
+            print(new_bal)
+            self.update_give_away(new_bal)
+
+        else:
+            current_bal = self.current_update_give_away
+            new_bal = current_bal + float(self.stake.amount)
+            print(new_bal)
+            self.update_give_away(new_bal)
+       
+    @property
+    def win_status(self):
+        if self.result==1:
+            return 'win'
+        return 'loss' 
 
 
     def save(self, *args, **kwargs):
         if not self.closed:
-            mstore,_ = CashStore.objects.get_or_create(id =1)
-            self.cashstore = mstore
-            self.result = self.determine_result_algo
-            if self.determine_result_algo is True:
-                current_bal = self.current_update_give_away
-                print(f'CBW:{current_bal} ')
-                print(f'STW:{self.stake.amount} ')
-                new_bal = current_bal - float(self.stake.amount)
-                print(new_bal)
-                self.update_give_away(new_bal)
-
-                # self.cashstore.give_away = self.cashstore.give_away - self.stake.amount
- 
-            else:
-                current_bal = self.current_update_give_away
-                print(f'CB:{current_bal} ')
-                print(f'ST:{self.stake.amount} ')
-                new_bal = current_bal + float(self.stake.amount)
-                print(new_bal)
-                self.update_give_away(new_bal)
-                # self.cashstore.give_away = self.cashstore.give_away + self.stake.amount
-
-            self.pointer = self.segment
-            self.closed =True
-
-            super().save(*args, **kwargs)            
+            try:
+                mstore,_ = CashStore.objects.get_or_create(id =1)
+                self.cashstore = mstore
+                self.result = self.determine_result_algo
+                if self.real_bet:
+                    if self.result ==1:
+                        self.update_user_real_account()
+                    self.update_give_away_bank()
+                else:
+                    if self.determine_result_algo ==1:
+                        self.update_user_trial_account()
+                self.pointer = self.segment
+                self.closed =True
+                super().save(*args, **kwargs)
+                
+            except Exception as e:
+                print(f'IoutCome {e}' )                            
 
 
         else:
