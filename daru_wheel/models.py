@@ -7,7 +7,7 @@ from django.utils import timezone
 try:
     from account.models import RefCredit
     from account.models import (
-        update_account_bal_of, current_account_bal_of,
+        update_account_bal_of,
         log_record, refer_credit_create)
 except ImportError as e:
     pass
@@ -15,6 +15,32 @@ except ImportError as e:
 from django.contrib.auth import get_user_model
 User = get_user_model() # make apps independent
 # from .tasks import create_market
+
+
+def current_account_bal_of(user_id): #F2
+    from account.models import Account
+    try:
+        return float(Account.objects.get(user_id =user_id).balance)
+    except Exception as e:
+        return e
+
+def current_account_trialbal_of(user_id): #F2
+    from account.models import Account
+    try:
+        return float(Account.objects.get(user_id =user_id).trial_balance)
+    except Exception as e:
+        return e
+
+def update_account_trialbal_of(user_id,new_bal): #F3
+    from account.models import Account
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(trial_balance= new_bal)
+        else:
+            log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
 
 class TimeStamp(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -38,6 +64,7 @@ class DaruWheelSetting(TimeStamp):
         help_text='super critical setting value.DONT EDIT!',
         default=1, blank=True, null=True)
     curr_unit = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    min_bet = models.DecimalField(max_digits=5,default=45.9, decimal_places=2, blank=True, null=True)
     
     class Meta:
         db_table = "d_daruwheel_setup"
@@ -126,7 +153,7 @@ class Selection(TimeStamp):
 #     pass    
 
 class WheelSpin(Market): 
-    market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
+    market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets', blank =True, null= True)   
     # per_relief = models.FloatField(blank =True,null= True)
     per_retun = models.FloatField(default = 0,blank =True,null= True)
     class Meta:
@@ -140,7 +167,7 @@ class WheelSpin(Market):
 
     def total_bet_amount_per_marktinstance(self):
         try:
-            total_amount = Stake.objects.filter(market_id = self.id ).aggregate(bet_amount =Sum('amount'))
+            total_amount = Stake.objects.filter(market_id =self.id ).aggregate(bet_amount=Sum('amount'))
             return  total_amount.get('bet_amount')
 
         except Exception as e:
@@ -219,7 +246,7 @@ class WheelSpin(Market):
 class Stake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
     market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='wheelspins',blank =True,null=True)
-    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections')
+    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections',blank =True,null=True)
     current_bal = models.FloatField(max_length=10,default=0 )#R
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     stake_placed = models.BooleanField(blank =True,null=True)
@@ -271,10 +298,10 @@ class Stake (TimeStamp):
                 this_wheelspin,_ = WheelSpin.objects.get_or_create(id =1)
                 pass
                   
-            # create on demand
-            if not this_wheelspin.place_stake_is_active:
-                WheelSpin.objects.create(id = market_id+1)
-                this_wheelspin = WheelSpin.objects.get(id =market_id+1 )
+            # create your market if worker is asleep!aja alale!
+            # if not this_wheelspin.place_stake_is_active:
+            #     WheelSpin.objects.create(id = market_id+1)
+            #     this_wheelspin = WheelSpin.objects.get(id =market_id+1 )
                 
             # end create market on demand
 
@@ -534,25 +561,113 @@ class Result(TimeStamp):
 
 class Istake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_istakes',blank =True,null=True)
-    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections')
+    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections',blank =True,null=True)#
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
-    stake_placed = models.BooleanField(blank =True,null=True)
-    has_record = models.BooleanField(blank =True,null=True)
+    stake_placed = models.BooleanField(blank =True,null=True)#
+    has_record = models.BooleanField(blank =True,null=True) #
+    bet_on_real_account = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Istake:{self.amount} for:{self.user}'
+
+    @property
+    def this_user_has_cash_to_bet(self):
+        if self.amount> set_up.min_bet: # unti neative values
+            if not self.bet_on_real_account:
+                try:
+                    if current_account_trialbal_of(self.user_id) >=self.amount:
+                        return True
+                    return False
+                except Exception as e:
+                    return e    
+
+            else:
+                try:
+                    if current_account_bal_of(self.user_id) >=self.amount:
+                        return True
+                    return False
+                except Exception as e:
+                    return e
+        else:
+            return False
         
+
+    def deduct_amount_from_this_user_account(self):
+        if not self.bet_on_real_account:
+            new_bal = current_account_trialbal_of(self.user_id) - float(self.amount)
+            update_account_trialbal_of(self.user_id,new_bal)# F3
+        else:
+            new_bal = current_account_bal_of(self.user_id) - float(self.amount)
+            update_account_bal_of(self.user_id,new_bal)# F3
+            
+    def bet_status(self):
+        try:
+            return IoutCome.objects.get(stake_id=self.id).win_status
+        except  Exception as e:
+            print(f'daru_STATUS ERROR:{e}')
+            return 'pending'
+                            
+    def save(self, *args, **kwargs):
+        ''' Bet could only be registered if
+            user got enoug real or trial balance
+        '''
+        print("CB",self.this_user_has_cash_to_bet) #Debug
+
+        if self.this_user_has_cash_to_bet: #then
+            self.deduct_amount_from_this_user_account()
+ 
+            super().save(*args, **kwargs) # create a db record
+        else:
+            return # no db table record to create!            
+
+
+class CashStore(models.Model):
+    give_away =  models.DecimalField(('give_away'), max_digits=12, decimal_places=2, default=0)
+    to_keep =  models.DecimalField(('to_keep'), max_digits=12, decimal_places=2, default=0)
+
+
 class IoutCome(TimeStamp):
     stake  = models.OneToOneField(Istake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
+    cashstore =models.ForeignKey(CashStore,on_delete=models.CASCADE,related_name='cashstores',blank =True,null= True)
     inbank = models.DecimalField(('inbank'), max_digits=12, decimal_places=2, default=0)
     outbank = models.DecimalField(('outbank'), max_digits=12, decimal_places=2, default=0)
     result = models.IntegerField(blank =True,null= True)
     pointer = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(default = False,blank =True,null= True)
 
+    # @classmethod
+    # def set_store(cls):
+    #     try:
+    #        cashstore_,_=CashStore.objects.get_or_create(id =1)
+    #        cls.objects.update(cashstore=cashstore_)
+    #     except Exception as e:
+    #         pass
+
+    @property
+    def current_update_give_away(self):
+        return float(CashStore.objects.get(id =1).give_away)
+
+    @staticmethod
+    def update_give_away(new_bal):
+        CashStore.objects.filter(id =1).update(give_away= new_bal)
+
+
+    def give_away(self):
+        try:
+            return self.cashstore.give_away
+        except Exception as e:
+            return e 
+
+    @property
+    def real_bet(self):
+        return self.stake.bet_on_real_account
+
     @property
     def determine_result_algo(self):  # fix this
-        if self.outbank > (3*self.stake.amount) and  self.stake.amount <100:  ##TO IMPLEMENT
+        # if not self.real_bet:
+        #     return randint(1,2)        
+
+        if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
             return 1
         return 2
 
@@ -570,18 +685,62 @@ class IoutCome(TimeStamp):
     def segment(self):
         return self.result_to_segment(results = self.result)# ,segment = 29) from settings
 
+    def update_user_trial_account(self):
+        this_user= self.stake.user_id
+        current_bal=current_account_trialbal_of(this_user)  #F1
+        new_bal = current_bal +float(self.stake.amount*2)
+        update_account_trialbal_of(this_user,new_bal) #with new_bal
+
+
+    def update_user_real_account(self):
+        this_user= self.stake.user_id
+        current_bal=current_account_bal_of(this_user)  #F1
+        new_bal = current_bal +float(self.stake.amount*2) # ard Code odds
+        update_account_bal_of(this_user,new_bal) #with new_bal
+
+
+    def update_give_away_bank(self):
+
+        if self.determine_result_algo == 1:
+            current_bal = self.current_update_give_away
+            new_bal = current_bal - float(self.stake.amount) 
+            print(new_bal)
+            self.update_give_away(new_bal)
+
+        else:
+            current_bal = self.current_update_give_away
+            new_bal = current_bal + float(self.stake.amount)
+            print(new_bal)
+            self.update_give_away(new_bal)
+       
+    @property
+    def win_status(self):
+        if self.result==1:
+            return 'win'
+        return 'loss' 
+
+
     def save(self, *args, **kwargs):
         if not self.closed:
-            # if self.market.place_stake_is_active == False:
+            try:
+                mstore,_ = CashStore.objects.get_or_create(id =1)
+                self.cashstore = mstore
                 self.result = self.determine_result_algo
-                if self.determine_result_algo ==1:
-                    self.outbank = self.outbank-self.stake.amount*2
+                if self.real_bet:
+                    if self.result ==1:
+                        self.update_user_real_account()
+                    self.update_give_away_bank()
                 else:
-                    self.outbank = self.outbank+self.stake.amount    
+                    if self.determine_result_algo ==1:
+                        self.update_user_trial_account()
                 self.pointer = self.segment
                 self.closed =True
-
                 super().save(*args, **kwargs)
+                
+            except Exception as e:
+                print(f'IoutCome {e}' )                            
+
+
         else:
             return
           

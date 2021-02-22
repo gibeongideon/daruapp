@@ -35,9 +35,9 @@ class LoginTestCase(FunctionalTestCase):
 
         # Then he enter account credentials
         self.browser.find_element_by_name('username').send_keys(TEST_USERNAME)
-        # sleep(2)
+        sleep(1)
         self.browser.find_element_by_name('password').send_keys(TEST_PASSWORD)
-        # sleep(2)
+        sleep(1)
         self.browser.find_element_by_name('password').send_keys(Keys.ENTER)
 
         # John is logged in

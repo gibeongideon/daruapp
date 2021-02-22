@@ -34,7 +34,6 @@ def countC(n):
 
 def spin_manager():
     print('MAKO POLLO')
-    from .models import WheelSpin
     from .models import WheelSpin, OutCome
     # from core.models import BetSettingVar
 

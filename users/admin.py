@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import User
 
 
-class DuserAdmin(admin.ModelAdmin):
+class DuserAdmin(UserAdmin):
 
     list_display = (
         'id', 'username', 'phone_number','email', 'first_name', 'last_name',
