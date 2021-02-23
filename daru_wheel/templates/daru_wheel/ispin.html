@@ -6,7 +6,7 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="/static/wheel/css/main.css" type="text/css" />
-<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<!-- <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"> -->
 
 {% endblock stylesheets %}
 
@@ -210,9 +210,10 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-<script src="/static/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
+<!-- <script src="/static/assets/js/jquery-1.10.2.js" type="text/javascript"></script> -->
 
 <script type="text/javascript" src="/static/wheel/js/Winwheel.js"></script>
+<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script> -->
 <script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
 
 <script> 
@@ -232,11 +233,11 @@
 
 
             if (data.ipointer){
-              if (data.spinet){
-                // Light up the spin button by changing it's source image and adding a clickable class to it.
-                document.getElementById('spin_button').src = "/static/wheel/img/spin_img/spin_off.png";
-                document.getElementById('spin_button').className = "clickable";
-              }
+              // if (data.spinet){
+              //   // Light up the spin button by changing it's source image and adding a clickable class to it.
+              //   document.getElementById('spin_button').src = "/static/wheel/img/spin_img/spin_off.png";
+              //   document.getElementById('spin_button').className = "clickable";
+              // }
 
               // document.querySelector('#chat-log').value += (data.ipointer + '\n');
                 
