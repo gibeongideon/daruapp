@@ -26,7 +26,7 @@ SECRET_KEY = '2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['0.0.0.0', '.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -77,8 +77,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'daruapp.wsgi.application'
-ASGI_APPLICATION = 'daruapp.asgi.application'  # AD
+# WSGI_APPLICATION = 'daruapp.wsgi.application'
+ASGI_APPLICATION = "daruapp.routing.application"
+# ASGI_APPLICATION = 'daruapp.asgi.application'  # AD
 
 
 # Database
@@ -155,7 +156,7 @@ LOGOUT_REDIRECT_URL = '/user/login'
 ##### Channels-specific settings
 
 
-redis_host = os.environ.get('REDIS_HOST', 'localhost')
+# redis_host = os.environ.get('REDIS_HOST', 'localhost')
 # Channel layer definitions
 # http://channels.readthedocs.io/en/latest/topics/channel_layers.html
 
@@ -172,26 +173,26 @@ CHANNEL_LAYERS = {
 
 # CELERY
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 # CELERY_ACCEPT_CONTENT = ['application/json']
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 
-CELERY_BEAT_SCHEDULE = {
+# CELERY_BEAT_SCHEDULE = {
 
-    'create_spin_wheel_market': {
-         'task': 'daru_wheel.tasks.create_spinwheel',
-         'schedule': crontab(minute=[
-             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-        },
-    'run_count_down_timer': {
-         'task': 'daru_wheel.tasks.start_count_down',
-         'schedule': crontab(minute=[
-             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-        }
-}
+#     'create_spin_wheel_market': {
+#          'task': 'daru_wheel.tasks.create_spinwheel',
+#          'schedule': crontab(minute=[
+#              0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+#         },
+#     'run_count_down_timer': {
+#          'task': 'daru_wheel.tasks.start_count_down',
+#          'schedule': crontab(minute=[
+#              0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+#         }
+# }
 
 
 # log stuff to console
@@ -215,6 +216,9 @@ LOGGING = {
     },
 }
 
+# db_from_env = dj_database_url.config()
+# DATABASES['default'].update(db_from_env)
+# DATABASES['default']['CONN_MAX_AGE'] = 500
 
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
