@@ -12,3 +12,12 @@ ispin alorit /back bank
 
 ready market/bet trier timer to close//ofor daru weel
 ispin stake /ives spins rounds//ostake sows stake spin or not//
+
+
+Production NOTES
+# release: python manage.py migrate
+# web: daphne daruapp.asgi:application --port $PORT --bind 0.0.0.0 -v2
+# worker: python manage.py runworker channels --settings=daruapp.settings -v2
+# worker: python manage.py qcluster
+
+# daphne -p 8001 daruapp.asgi:application
