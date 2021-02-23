@@ -5,10 +5,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     """Add three fields to existing Django User model.
       : daru_code  and my_code for reference
-      : phone number field
     """
     my_code = models.CharField(max_length=150, blank=True, null=True)
-    daru_code = models.CharField(max_length=150, default='ADMIN')
+    daru_code = models.CharField(max_length=150, blank=True, null=True)
     phone_number = models.CharField(max_length=150, unique=True)
     active = models.BooleanField(default=True)
 
@@ -34,7 +33,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.my_code = 'DA' + str(self.username).upper()
-            self.phone_number = self.format_mobile_no(self.phone_number)
+            self.phone_number = self.format_mobile_no(self.username)
 
         super(User, self).save(*args, **kwargs)
-    

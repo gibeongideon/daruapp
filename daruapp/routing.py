@@ -1,10 +1,4 @@
 
-# release: python manage.py migrate
-# web: daphne daruapp.asgi:application --port $PORT --bind 0.0.0.0 -v2
-# worker: python manage.py runworker channels --settings=daruapp.settings -v2
-
-# daphne -p 8001 daruapp.asgi:application
-
 from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter

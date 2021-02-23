@@ -566,6 +566,7 @@ class Istake (TimeStamp):
     stake_placed = models.BooleanField(blank =True,null=True)#
     has_record = models.BooleanField(blank =True,null=True) #
     bet_on_real_account = models.BooleanField(default=False)
+    outcome_received= models.BooleanField(default=False)
 
     def __str__(self):
         return f'Istake:{self.amount} for:{self.user}'
@@ -606,7 +607,12 @@ class Istake (TimeStamp):
         except  Exception as e:
             print(f'daru_STATUS ERROR:{e}')
             return 'pending'
-                            
+
+    @classmethod        
+    def spins(cls,user_id):
+        return cls.objects.filter(user_id=user_id,outcome_received=false)  
+
+
     def save(self, *args, **kwargs):
         ''' Bet could only be registered if
             user got enoug real or trial balance
@@ -660,16 +666,22 @@ class IoutCome(TimeStamp):
 
     @property
     def real_bet(self):
-        return self.stake.bet_on_real_account
+        try:
+            return self.stake.bet_on_real_account
+        except :
+            pass    
 
     @property
     def determine_result_algo(self):  # fix this
         # if not self.real_bet:
         #     return randint(1,2)        
+        try:
+            if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
+                return 1
+            return 2 
+        except Exception as e:
+            return e          
 
-        if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
-            return 1
-        return 2
 
     @staticmethod
     def result_to_segment(results = None, segment=29):
@@ -719,6 +731,10 @@ class IoutCome(TimeStamp):
             return 'win'
         return 'loss' 
 
+    @classmethod    
+    def open_for_spin(cls,user_id):
+        return cls.objects.filter(user_id=user_id,closed=False)
+
 
     def save(self, *args, **kwargs):
         if not self.closed:
@@ -734,7 +750,7 @@ class IoutCome(TimeStamp):
                     if self.determine_result_algo ==1:
                         self.update_user_trial_account()
                 self.pointer = self.segment
-                self.closed =True
+                # self.closed =True
                 super().save(*args, **kwargs)
                 
             except Exception as e:
@@ -744,3 +760,8 @@ class IoutCome(TimeStamp):
         else:
             return
           
+class Spin(TimeStamp):
+    # outcome  = models.OneToOneField(IoutCome,on_delete=models.CASCADE,related_name='ioutcomes',blank =True,null= True)
+    result = models.IntegerField(blank =True,null= True)
+
+    

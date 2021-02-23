@@ -26,7 +26,7 @@ class SignUpForm2(UserCreationForm):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                "placeholder" : "Username",                
+                "placeholder" : "Phone_number",                
                 "class": "form-control"
             }
         ))
@@ -37,13 +37,13 @@ class SignUpForm2(UserCreationForm):
                 "class": "form-control"
             }
         ))
-    phone_number = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "placeholder" : "Phone_number",                
-                "class": "form-control"
-            }
-        ))
+    # phone_number = forms.CharField(
+    #     widget=forms.TextInput(
+    #         attrs={
+    #             "placeholder" : "Phone_number",                
+    #             "class": "form-control"
+    #         }
+    #     ))
     daru_code = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -76,7 +76,7 @@ class SignUpForm2(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email','last_name', 'password1', 'password2')
+        fields = ('username', 'email', 'last_name', 'password1', 'password2')
         
         
         
