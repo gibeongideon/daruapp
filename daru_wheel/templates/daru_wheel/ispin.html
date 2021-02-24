@@ -31,41 +31,49 @@
 
     </div>
 
+
+    <div class="col-sm-4">
+      <button class="btn big-login" id="search-button" data-toggle="modal" data-target="#betModal"><i class="tim-icons icon-coins" ></i>
+        <span class="d-lg-none d-md-block">Bet 4</span>
+        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Bet 4</span>
+        <div class="text-info"> more spins</div>
+      </button>
+
+      <button class="btn big-login" id="spin_button" ><i class="tim-icons icon-refresh-01" > {{8}}</i>
+        <span class="d-lg-none d-md-block">SPIN NOW</span>
+        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">SPIN NOW</span>
+      </button>     
+     
+    </div>
+
+
     <div class="card-body">
       
-      <form action="{% url 'daru_wheel:spin' %}" method="post">
+      <form action="/create_post/" method="POST" id="post-form">
         {% csrf_token %}
-<!-- 
-        {% if stake_form.errors %}
-        <div class='text-danger'>
-          {{stake_form.errors}}
-        </div>
-        {% endif %} -->
-
 
        <div class="row">
                  
         <div class="col-lg-4">
           <div class="text-info">{{"Select one"}}</div>
           <div class="card card-chart">
-            <!-- <div class="text-info">{{"Select one"}}</div> -->
-
+      
             <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" required="id_marketselection" >
 
-              <label class="btn btn-sm btn-primary btn-simple">
+              <label class="btn btn-sm btn-rede btn-simple">
                 <input type="radio" class="d-none d-sm-none" name="marketselection" value="1" required="id_marketselection">                
                 <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Red</span>
                 <span class="d-block d-sm-none">
-                  <i class="tim-icons icon-gift-2"></i>
+                  <i class="tim-icons icon-gift-2"> Red</i>
                 </span>
               </label>
       
        
-              <label class="btn btn-sm btn-info btn-simple" >
+              <label class="btn btn-sm btn-yell btn-simple" >
                 <input type="radio" class="d-none" name="marketselection" value="2" required="id_marketselection">
                 <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Yellow</span>
                 <span class="d-block d-sm-none">
-                  <i class="tim-icons icon-tap-02"></i>
+                  <i class="tim-icons icon-trophy"> Yellow</i>
                 </span>
               </label>
            
@@ -79,7 +87,6 @@
           
           <div class="card card-chart">
 
-            <!-- <div class="text-info">Amount to bet ( min:5 )</div> -->
             <div class="input-group mb-2 mr-sm-2 mb-sm-0">
               <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
             </div>
@@ -88,24 +95,116 @@
         </div>
 
         <div class="col-lg-4">
-          Bet Real Money: {{ stake_form.bet_on_real_account}}
+
+          <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" >
+            <label class="btn btn-sm btn-info btn-simple" >
+              <input type="checkbox" name="bet_on_real_account" id="id_bet_on_real_account">
+              <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Bet Real</span>
+              <span class="d-block d-sm-none">
+                <i class="tim-icons icon-wallet-43"> Bet Real</i>
+              </span>
+            </label>
+          </div>
+
           <div class="card card-chart">
             <button class="btn btn-fill btn-success" type="submit">Place Bet</button>
-
           </div>
         </div>
 
        </div>
      </form>
 
-     <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" />
+     <!-- <img id="spin_button" src="/static/wheel/img/spin_img/spin_on.png" alt="Spin" /> -->
      <!-- <textarea id="chat-log" cols="5" rows="4"></textarea><br> -->
      <!-- <input id="spin-pointer-input" type="text" size="10"><br> -->
      
     
     </div>
+
+
   
  </div>
+
+ <div class="modal modal-search fade" id="betModal" tabindex="-1" role="dialog" aria-labelledby="betModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="card card-chart">
+        <div class="card-body">          
+ 
+
+          <!-- <form action="{% url 'daru_wheel:spin' %}" method="post">
+            {% csrf_token %}
+    
+           <div class="row">
+                     
+            <div class="col-lg-4">
+              <div class="text-info">{{"Select one"}}</div>
+              <div class="card card-chart">
+          
+                <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" required="id_marketselection" >
+    
+                  <label class="btn btn-sm btn-rede btn-simple">
+                    <input type="radio" class="d-none d-sm-none" name="marketselection" value="1" required="id_marketselection">                
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Red</span>
+                    <span class="d-block d-sm-none">
+                      <i class="tim-icons icon-gift-2"> Red</i>
+                    </span>
+                  </label>
+          
+           
+                  <label class="btn btn-sm btn-yell btn-simple" >
+                    <input type="radio" class="d-none" name="marketselection" value="2" required="id_marketselection">
+                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Yellow</span>
+                    <span class="d-block d-sm-none">
+                      <i class="tim-icons icon-trophy"> Yellow</i>
+                    </span>
+                  </label>
+               
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="col-lg-4">
+              <div class="text-info">Amount to bet ( min:5 )</div>
+              
+              <div class="card card-chart">
+    
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                  <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
+                </div>
+    
+              </div>
+            </div>
+    
+            <div class="col-lg-4">
+    
+              <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" >
+                <label class="btn btn-sm btn-info btn-simple" >
+                  <input type="checkbox" name="bet_on_real_account" id="id_bet_on_real_account">
+                  <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Bet Real</span>
+                  <span class="d-block d-sm-none">
+                    <i class="tim-icons icon-wallet-43"> Bet Real Money</i>
+                  </span>
+                </label>
+              </div>
+    
+              <div class="card card-chart">
+                <button class="btn btn-fill btn-success" type="submit">Place Bet</button>
+              </div>
+            </div>
+    
+           </div>
+         </form> -->        
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
  
 
    <div class="col-lg-6 col-md-12">
@@ -168,43 +267,6 @@
 
 </div>
 
-
-
-
-<!-- <div class="modal modal-search fade" id="betModal" tabindex="-1" role="dialog" aria-labelledby="betModal" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="card card-chart">
-        <div class="card-body">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <i class="tim-icons icon-simple-remove"></i>
-            </button>
-            <h4 class="text-info">Enter Amount and Submit</h4>
-          </div>
-          <div class="modal-body">
-            <div class="box">
-              <div class="content">
-                <form action="{% url 'daru_wheel:spin' %}" method="post">
-                  {% csrf_token %}
-                  <div>
-                    <div class="text-info"> {{"Selection:"}}</div>
-                    <div>{{stake_form.marketselection}}</div>
-                    <div class="text-info">{{"Amount:"}}</div>
-                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                      <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
-                    </div>
-                  </div>
-                  <button type="submit">Place Stake</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
       
 {% endblock content %}
 
@@ -217,6 +279,39 @@
 <script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
 
 <script> 
+
+// AJAX for posting
+function create_bet() {
+    console.log("create post is working!") // sanity check
+    $.ajax({
+        url : "create_post/", // the endpoint
+        type : "POST", // http method
+        data : { the_bet : $('#bet-selection').val(),
+                           $('#bet-amount').val() }, // data sent with the post request
+
+        // handle a successful response
+        success : function(json) {
+            $('#post-text').val(''); // remove the value from the input
+            console.log(json); // log the returned json to the console
+            console.log("success"); // another sanity check
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+};
+
+
+// Submit post on submit
+$('#post-form').on('submit', function(event){
+    event.preventDefault();
+    console.log("form submitted!")  // sanity check
+    create_bet();
+});
 
 
      const spinSocket = new WebSocket(
@@ -269,7 +364,7 @@
             spinSocket.send(JSON.stringify({
                 'ipointer': ipointer
             }));
-            pointerInputDom.value = '';
+            // pointerInputDom.value = '';
         };
 
     // Create new wheel object specifying the parameters at creation time.
