@@ -86,9 +86,9 @@ body {
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #e14eca;
+  color: #525f7f;
   text-align: left;
-  background-color: #e14eca;
+  background-color: #1e1e2f;
 }
 
 [tabindex="-1"]:focus {
@@ -13334,6 +13334,255 @@ fieldset[disabled] .btn-success.active {
   box-shadow: none;
 }
 
+.btn-yell {
+  background: #f8e21d;
+  background-image: -webkit-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d);
+  background-image: -o-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d);
+  background-image: -moz-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d);
+  background-image: linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d);
+  background-size: 210% 210%;
+  background-position: top right;
+  background-color: #f8e21d;
+  transition: all 0.15s ease;
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.btn-yell.animation-on-hover:hover {
+  background-position: bottom left;
+  transition: 0.3s ease-in-out;
+}
+
+.btn-yell:hover,
+.btn-yell:focus,
+.btn-yell:active,
+.btn-yell.active,
+.btn-yell:active:focus,
+.btn-yell:active:hover,
+.btn-yell.active:focus,
+.btn-yell.active:hover {
+  background-color: #f4d733 !important;
+  background-image: linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-image: -webkit-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-image: -o-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-image: -moz-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.btn-yell:active {
+  box-shadow: none !important;
+  transform: translateY(1px) !important;
+  transition: all .15s ease;
+}
+
+.btn-yell:not([data-action]):hover {
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+  -webkit-transform: translateY(-1px);
+}
+
+.btn-yell.disabled,
+.btn-yell.disabled:hover,
+.btn-yell.disabled:focus,
+.btn-yell.disabled.focus,
+.btn-yell.disabled:active,
+.btn-yell.disabled.active,
+.btn-yell:disabled,
+.btn-yell:disabled:hover,
+.btn-yell:disabled:focus,
+.btn-yell:disabled.focus,
+.btn-yell:disabled:active,
+.btn-yell:disabled.active,
+.btn-yell[disabled],
+.btn-yell[disabled]:hover,
+.btn-yell[disabled]:focus,
+.btn-yell[disabled].focus,
+.btn-yell[disabled]:active,
+.btn-yell[disabled].active,
+fieldset[disabled] .btn-yell,
+fieldset[disabled] .btn-yell:hover,
+fieldset[disabled] .btn-yell:focus,
+fieldset[disabled] .btn-yell.focus,
+fieldset[disabled] .btn-yell:active,
+fieldset[disabled] .btn-yell.active {
+  background-color: #f8e21d;
+  border-color: #f8e21d;
+}
+
+.btn-yell.btn-simple {
+  color: #f8e21d;
+  border-color: #f8e21d;
+  background: transparent;
+}
+
+.btn-yell.btn-simple:hover,
+.btn-yell.btn-simple:focus,
+.btn-yell.btn-simple:active,
+.btn-yell.btn-simple:not(:disabled):not(.disabled):active {
+  color: #f8e21d;
+  border-color: #f8e21d;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none;
+}
+
+.btn-yell.btn-simple.active {
+  border-color: #f8e21d !important;
+}
+
+.btn-yell.btn-simple.active:hover,
+.btn-yell.btn-simple.active:focus,
+.btn-yell.btn-simple.active:active,
+.btn-yell.btn-simple.active:not(:disabled):not(.disabled):active {
+  color: #ffffff;
+  border-color: #f8e21d;
+  background-image: linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-image: -webkit-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-image: -o-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-image: -moz-linear-gradient(to bottom left, #f8e21d, #f4d733, #f8e21d) !important;
+  background-color: #f4d733 !important;
+  box-shadow: none;
+}
+
+.btn-yell.btn-link {
+  color: #f8e21d;
+}
+
+.btn-yell.btn-link:hover,
+.btn-yell.btn-link:focus,
+.btn-yell.btn-link:active {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  text-decoration: none;
+  box-shadow: none;
+}
+.btn-redd {
+  background: #f21000;
+  background-image: -webkit-linear-gradient(to bottom left, #f21000, #f00800, #f21000);
+  background-image: -o-linear-gradient(to bottom left, #f21000, #f00800, #f21000);
+  background-image: -moz-linear-gradient(to bottom left, #f21000, #f00800, #f21000);
+  background-image: linear-gradient(to bottom left, #f21000, #f00800, #f21000);
+  background-size: 210% 210%;
+  background-position: top right;
+  background-color: #f21000;
+  transition: all 0.15s ease;
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.btn-rede.animation-on-hover:hover {
+  background-position: bottom left;
+  transition: 0.3s ease-in-out;
+}
+
+.btn-rede:hover,
+.btn-rede:focus,
+.btn-rede:active,
+.btn-rede.active,
+.btn-rede:active:focus,
+.btn-rede:active:hover,
+.btn-rede.active:focus,
+.btn-rede.active:hover {
+  background-color: #f00800 !important;
+  background-image: linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-image: -webkit-linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-image: -o-linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-image: -moz-linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.btn-rede:active {
+  box-shadow: none !important;
+  transform: translateY(1px) !important;
+  transition: all .15s ease;
+}
+
+.btn-rede:not([data-action]):hover {
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+  -webkit-transform: translateY(-1px);
+}
+
+.btn-rede.disabled,
+.btn-rede.disabled:hover,
+.btn-rede.disabled:focus,
+.btn-rede.disabled.focus,
+.btn-rede.disabled:active,
+.btn-rede.disabled.active,
+.btn-rede:disabled,
+.btn-rede:disabled:hover,
+.btn-rede:disabled:focus,
+.btn-rede:disabled.focus,
+.btn-rede:disabled:active,
+.btn-rede:disabled.active,
+.btn-rede[disabled],
+.btn-rede[disabled]:hover,
+.btn-rede[disabled]:focus,
+.btn-rede[disabled].focus,
+.btn-rede[disabled]:active,
+.btn-rede[disabled].active,
+fieldset[disabled] .btn-rede,
+fieldset[disabled] .btn-rede:hover,
+fieldset[disabled] .btn-rede:focus,
+fieldset[disabled] .btn-rede.focus,
+fieldset[disabled] .btn-rede:active,
+fieldset[disabled] .btn-rede.active {
+  background-color: #f21000;
+  border-color: #f21000;
+}
+
+.btn-rede.btn-simple {
+  color: #f21000;
+  border-color: #f21000;
+  background: transparent;
+}
+
+.btn-rede.btn-simple:hover,
+.btn-rede.btn-simple:focus,
+.btn-rede.btn-simple:active,
+.btn-rede.btn-simple:not(:disabled):not(.disabled):active {
+  color: #f21000;
+  border-color: #f21000;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none;
+}
+
+.btn-rede.btn-simple.active {
+  border-color: #f21000 !important;
+}
+
+.btn-rede.btn-simple.active:hover,
+.btn-rede.btn-simple.active:focus,
+.btn-rede.btn-simple.active:active,
+.btn-rede.btn-simple.active:not(:disabled):not(.disabled):active {
+  color: #ffffff;
+  border-color: #f21000;
+  background-image: linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-image: -webkit-linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-image: -o-linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-image: -moz-linear-gradient(to bottom left, #f21000, #f00800, #f21000) !important;
+  background-color: #f00800 !important;
+  box-shadow: none;
+}
+
+.btn-rede.btn-link {
+  color: #f21000;
+}
+
+.btn-rede.btn-link:hover,
+.btn-rede.btn-link:focus,
+.btn-rede.btn-link:active {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  text-decoration: none;
+  box-shadow: none;
+}
+
 .btn-info {
   background: #1d8cf8;
   background-image: -webkit-linear-gradient(to bottom left, #1d8cf8, #3358f4, #1d8cf8);
@@ -15744,7 +15993,7 @@ img {
 
 .modal-search .modal-dialog {
   margin: 20px auto;
-  max-width: 650px;
+  max-width: 50px;
 }
 
 .modal-search .modal-dialog input {
@@ -17064,7 +17313,7 @@ table.tablesorter thead tr .headerSortDown {
 .fixed-plugin .dropdown-menu>.active>a,
 .fixed-plugin .dropdown-menu>.active>a:hover,
 .fixed-plugin .dropdown-menu>.active>a:focus {
-  color: #f5d104;
+  color: #777777;
   text-align: center;
 }
 
@@ -17203,7 +17452,7 @@ table.tablesorter thead tr .headerSortDown {
   position: relative;
   top: -7px;
   font-size: 0.62475rem;
-  color: #f30909;
+  color: #ffffff;
 }
 
 .fixed-plugin .adjustments-line .dropdown-menu>li.adjustments-line>a {

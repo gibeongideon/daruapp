@@ -135,9 +135,6 @@ class IspinConsumer(AsyncWebsocketConsumer):
 
 
 
-
-
-
 from .models import IoutCome
 class QspinConsumer(WebsocketConsumer):
     def connect(self):
@@ -147,17 +144,17 @@ class QspinConsumer(WebsocketConsumer):
     def disconnect(self, close_code):
         pass
 
+
     # Receive pointer from spin group
     def return_pointer(self):#user_id):
-        slist =IoutCome.objects.get(id=71).pointer
+        # slist = IoutCome.objects.get(id=1).pointer
         # act_l=[slval in slist if slval.active=True]
         # if len(act_l)==0:
         #     return ""
         # else:
         #     act_l[0].active = False  # update field/
         #     return act_l[0].ipointer  
-        # 
-        # 
+        #        # 
   
         # return slist
         return randint(1,28) #IoutCome.objects.get(id=5).pointer
