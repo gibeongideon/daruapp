@@ -11,29 +11,7 @@ from django.contrib.auth import views as auth_views
 from .models import User
 from django.forms.utils import ErrorList
 from django.http import HttpResponse
-from .forms import  SignUpForm,SignUpForm2 ,LoginForm2
-
-
-def login_view(request):
-    form = LoginForm2(request.POST or None)
-
-    msg = None
-
-    if request.method == "POST":
-
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("/")
-            else:    
-                msg = 'Invalid credentials'    
-        else:
-            msg = 'Error validating the form'    
-
-    return render(request, "users/accounts/login.html", {"form": form, "msg" : msg})
+from .forms import  SignUpForm
 
 
 @login_required(login_url='/users/login')
@@ -68,7 +46,7 @@ class CustomLoginView(auth_views.LoginView):
         in such case.
         """
         if self.request.POST.get('remember_me', None):
-            self.request.session.set_expiry(0)
+            self.request.session.set_expiry(60)
         return super().form_valid(form)
 
 

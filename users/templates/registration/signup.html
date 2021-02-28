@@ -37,8 +37,13 @@
 
                   {% for field in form %}
                   <p>
+        
 
-
+                    <!-- {% if field.help_text %}
+                    <span class="help-block text-muted">
+                      <small>{{ field.help_text }}</small>
+                    </span>
+                    {% endif %} -->
                   <div class="row">
                     <div class="col-md-3 px-md-1">
                       <div class="form-group">
@@ -51,11 +56,6 @@
                   <span class="text-danger">{{ field.errors|join:'<br />' }}</span>
                   {% endif %}
 
-                  {% if field.help_text %}
-                  <span class="help-block text-muted">
-                    <small>{{ field.help_text }}</small>
-                  </span>
-                  {% endif %}
   
                   </p>
           
