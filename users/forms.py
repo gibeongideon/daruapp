@@ -101,10 +101,10 @@ class SignUpForm(UserCreationForm):
     
     username = forms.CharField(max_length=50, required=True,
         label='',
-        help_text='Required. Inform unique username',
+        help_text='E.g   07200200200 or 01200200200',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Username...'
+            'placeholder': 'Phone Number.  ie 071001000'
         }))
 
     # first_name = forms.CharField(max_length=30, required=False,
@@ -121,13 +121,13 @@ class SignUpForm(UserCreationForm):
     #         'placeholder': 'Last name...'
     #     }))
 
-    phone_number = forms.CharField(max_length=150, required=True,
-        label='',
-        help_text='E.g   07200200200 or 01200200200',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Phone Number...'
-        }))
+    # phone_number = forms.CharField(max_length=150, required=True,
+    #     label='',
+    #     help_text='E.g   07200200200 or 01200200200',
+    #     widget=forms.TextInput(attrs={
+    #         'class': 'form-control',
+    #         'placeholder': 'Phone Number...'
+    #     }))
 
     email = forms.EmailField(max_length=254, required=True,
         label='', help_text='Required. Inform a valid email unique address.',
@@ -141,7 +141,7 @@ class SignUpForm(UserCreationForm):
         help_text='Enter your referer CODE here.Dont have ? Enter ADMIN',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Refer code'
+            'placeholder': 'Refer code Dont have ?Enter ADMIN'
         }))
 
     password1 = forms.CharField(required=True,
@@ -160,14 +160,13 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'phone_number',
-            'email','daru_code', 'password1', 'password2')
+        fields = ('username','email','daru_code', 'password1', 'password2')
 
-    def cleaned_daru_code(self):
-        user =User.objects.get(username=self.username)
-        if self.daru_code not in User.codes():
-            raise ValidationError(
-                self.error_messages['invalid_code'],
-                code='invalid_code',
-            )
+    # def cleaned_daru_code(self):
+    #     user =User.objects.get(username=self.username)
+    #     if self.daru_code not in User.codes():
+    #         raise ValidationError(
+    #             self.error_messages['invalid_code'],
+    #             code='invalid_code',
+    #         )
 

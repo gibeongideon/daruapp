@@ -8,7 +8,7 @@ class User(AbstractUser):
     """
     my_code = models.CharField(max_length=150, blank=True, null=True)
     daru_code = models.CharField(max_length=150, blank=True, null=True)
-    phone_number = models.CharField(max_length=150, unique=True)
+    phone_number = models.CharField(max_length=150, blank=True, null=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):
