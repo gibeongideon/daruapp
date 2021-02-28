@@ -50,6 +50,7 @@ class TimeStamp(models.Model):
     class Meta:
         abstract = True
 
+
 class DaruWheelSetting(TimeStamp):
     return_val = models.FloatField(default=0, blank=True, null=True)
     min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
@@ -74,26 +75,92 @@ try:
     ''' remove no such table on make migrations'''
     set_up, created = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
 except Exception as me:
-    print("MEE",me)
+    print("MEE", me)
     pass
 
+
+class MarketType(TimeStamp):
+    name = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return '{0}:{1}'.format(self.id, self.name)
+
+    def all_selection(self):
+        return Selection.objects.filter(mrtype_id=self.id).all()
+
+    def this_market_selection_id_list(self):
+        return [_mselect.id for _mselect in self.all_selection() ]
+
+    def this_market_selection_verbose_list(self):
+        return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
+
+
 class Market(models.Model):
-    '''Market place '''
-    open_at = models.DateTimeField(default=timezone.now, blank=True, null=True) 
-    closed_at = models.DateTimeField(blank=True, null=True)                
-    results_at = models.DateTimeField(blank=True, null=True)
+    '''Market place wit different market types  '''
+    market_type = models.ForeignKey(
+        MarketType,
+        on_delete=models.CASCADE,
+        related_name='market_types', blank=True, null=True)
 
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     active = models.BooleanField(default=True, blank=True, null=True)
     receive_results = models.BooleanField(default=False, blank=True, null=True)
 
+    # class Meta:
+    #     abstract = True
+
+    def __str__(self):
+        return f'{self.market_type.name}:{self.id} '
+
+
+
+class Selection(TimeStamp):
+    mrtype = models.ForeignKey(
+        MarketType, on_delete=models.CASCADE,
+        related_name='mrtypes', blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    odds = models.FloatField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    def market_id(self):
+        return self.mrtype
+     
+
+class DaruPoker(TimeStamp):
+    ''' Create DaruPoker market Instance '''
+    market = models.OneToOneField(
+        Market, on_delete=models.CASCADE,
+        related_name='poker_markets', blank=True, null=True)
+        
     class Meta:
-        abstract = True
+        db_table = "d_poker_markets"
+
+
+class WheelSpin(TimeStamp):
+    '''Create WheelSpin market instance'''
+    market = models.OneToOneField(
+        Market,
+        on_delete=models.CASCADE,
+        related_name='markets', blank=True, null=True)
+
+    open_at = models.DateTimeField(default=timezone.now, blank=True, null=True) 
+    closed_at = models.DateTimeField(blank=True, null=True)
+    results_at = models.DateTimeField(blank=True, null=True)
+    active = models.BooleanField(default=True, blank=True, null=True)
+    per_retun = models.FloatField(default=0, blank=True, null=True)
+
+    class Meta:
+        db_table = "d_wheel_markets"
+
+    def __str__(self):
+        return f'WheelSpin No:{self.id}'
 
     @property
     def place_stake_is_active(self):
         try:
-            if timezone.now() >  self.open_at and timezone.now() < self.closed_at:
+            if timezone.now() > self.open_at and timezone.now() < self.closed_at:
                 return True
             return False
         except Exception as e:
@@ -109,66 +176,16 @@ class Market(models.Model):
             return e
 
 
-
-class MarketType(TimeStamp):
-    name = models.CharField(max_length=100, default='M', blank=True, null=True)
-
-    def __str__(self):
-        return '{0}:{1}'.format(self.id, self.name)
-
-    def all_selection(self):
-        return Selection.objects.filter(mrtype_id=self.id).all()
-
-    def this_market_selection_id_list(self):
-        return [_mselect.id for _mselect in self.all_selection() ]
-
-    def this_market_selection_verbose_list(self):
-        return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
-
-
-class Selection(TimeStamp):
-    mrtype = models.ForeignKey(
-        MarketType, on_delete=models.CASCADE,
-        related_name='mrtypes', blank=True, null= True)
-    name = models.CharField(max_length=100, blank =True,null=True)
-    odds = models.FloatField(max_length=10 ,blank =True,null=True )
-
-    def __str__(self):
-        return f'{self.name}'
-
-    def market_id(self):
-        return self.mrtype
-        
-
-# selection_created = False        
-# try:    
-#     if not selection_created:
-#         print('CREATIN SELE')
-#         marktype=MarketType.objects.get_or_create(id=1,name="RY")
-#         Selection.objects.get_or_create(id=1, name="Red",odds=2)
-#         Selection.objects.get_or_create(id=2, name="Yellow",odds=2)
-#         selection_created= True
-# except Exception as se:
-#     print(se)
-#     pass    
-
-class WheelSpin(Market): 
-    market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets', blank =True, null= True)   
-    # per_relief = models.FloatField(blank =True,null= True)
-    per_retun = models.FloatField(default = 0,blank =True,null= True)
-    class Meta:
-        db_table = "d_wheel_markets"
-
-    def __str__(self):
-        return f'WheelSpin No:{self.id}'
-
     def market_selection_id_list(self):
-        return self.market.this_market_selection_id_list()
+        try:
+            return self.market.market_type.this_market_selection_id_list()
+        except Exception as e:
+            return e    
 
     def total_bet_amount_per_marktinstance(self):
         try:
             total_amount = Stake.objects.filter(market_id =self.id ).aggregate(bet_amount=Sum('amount'))
-            return  total_amount.get('bet_amount')
+            return total_amount.get('bet_amount')
 
         except Exception as e:
             return e
@@ -179,7 +196,7 @@ class WheelSpin(Market):
             total_amount = Stake.objects.filter(market_id = self.id ).filter(marketselection_id = 1).aggregate(bet_amount =Sum('amount'))
             if total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
-            return  0
+            return 0
             
         except Exception as e:
             return e
@@ -188,7 +205,7 @@ class WheelSpin(Market):
     def white_bet_amount(self):
 
         try:
-            total_amount = Stake.objects.filter(market_id = self.id ).filter(marketselection_id = 2).aggregate(bet_amount =Sum('amount'))
+            total_amount = Stake.objects.filter(market_id =self.id ).filter(marketselection_id =2).aggregate(bet_amount =Sum('amount'))
             if  total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
             return 0
@@ -196,10 +213,10 @@ class WheelSpin(Market):
         except Exception as e:
             return e
 
-    def market_stake_amount(self,select_id):
+    def market_stake_amount(self, select_id):
 
         try:
-            total_amount = Stake.objects.filter(market_id = self.id ).filter(marketselection_id = select_id).aggregate(bet_amount =Sum('amount'))
+            total_amount = Stake.objects.filter(market_id =self.id ).filter(marketselection_id =select_id).aggregate(bet_amount =Sum('amount'))
             if  total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
             return 0
@@ -209,11 +226,14 @@ class WheelSpin(Market):
 
     @property
     def selection_bet_amount(self):
-        mrkt_bet_amount= []
-        for selecn in self.market_selection_id_list():
-            mrkt_bet_amount.append(self.market_stake_amount(selecn))
+        try:
+            mrkt_bet_amount = []
+            for selecn in self.market.market_type.this_market_selection_id_list():
+                mrkt_bet_amount.append(self.market_stake_amount(selecn))
+            return mrkt_bet_amount
+        except Exception as e:
+            return e
 
-        return mrkt_bet_amount
 
     @property
     def offset(self):
@@ -231,18 +251,19 @@ class WheelSpin(Market):
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on staking  '''
         
-        self.closed_at = self.open_at + timedelta(minutes = set_up.closed_at)
-        self.results_at = self.open_at + timedelta(minutes =set_up.results_at)
+        self.closed_at = self.open_at + timedelta(minutes=set_up.closed_at)
+        self.results_at = self.open_at + timedelta(minutes=set_up.results_at)
 
         if self.active and not self.place_stake_is_active:
             self.active = False
-        try:
-            self.market,_ = MarketType.objects.get_or_create( id= int(set_up.wheelspin_id ) )#get_or_create return a tuple/
-        except:
-            self.market,_ = MarketType.objects.get_or_create( id= 1)
+        # try:
+        #     self.market,_ = MarketType.objects.get_or_create( id= int(set_up.wheelspin_id ) )#get_or_create return a tuple/
+        # except:
+        #     self.market,_ = MarketType.objects.get_or_create( id= 1)
             
-        super().save(*args, **kwargs) 
+        super().save(*args, **kwargs)
 
+  
 class Stake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
     market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='wheelspins',blank =True,null=True)
@@ -298,12 +319,6 @@ class Stake (TimeStamp):
                 this_wheelspin,_ = WheelSpin.objects.get_or_create(id =1)
                 pass
                   
-            # create your market if worker is asleep!aja alale!
-            # if not this_wheelspin.place_stake_is_active:
-            #     WheelSpin.objects.create(id = market_id+1)
-            #     this_wheelspin = WheelSpin.objects.get(id =market_id+1 )
-                
-            # end create market on demand
 
             if this_wheelspin.place_stake_is_active:# 
 
@@ -617,14 +632,16 @@ class Istake (TimeStamp):
         ''' Bet could only be registered if
             user got enoug real or trial balance
         '''
-        print("CB",self.this_user_has_cash_to_bet) #Debug
+        if not self.pk:
+            print("CB",self.this_user_has_cash_to_bet) #Debug
+            if self.this_user_has_cash_to_bet: #then
+                self.deduct_amount_from_this_user_account()
+      
+                super().save(*args, **kwargs) # create a db record
+            else:
+                return # no db table record to create!   
 
-        if self.this_user_has_cash_to_bet: #then
-            self.deduct_amount_from_this_user_account()
- 
-            super().save(*args, **kwargs) # create a db record
-        else:
-            return # no db table record to create!            
+         
 
 
 class CashStore(models.Model):
@@ -737,7 +754,7 @@ class IoutCome(TimeStamp):
 
 
     def save(self, *args, **kwargs):
-        if not self.closed:
+        if not self.pk:
             try:
                 mstore,_ = CashStore.objects.get_or_create(id =1)
                 self.cashstore = mstore
@@ -750,18 +767,19 @@ class IoutCome(TimeStamp):
                     if self.determine_result_algo ==1:
                         self.update_user_trial_account()
                 self.pointer = self.segment
-                # self.closed =True
+   
                 super().save(*args, **kwargs)
                 
             except Exception as e:
                 print(f'IoutCome {e}' )                            
 
 
-        else:
-            return
-          
+           
 class Spin(TimeStamp):
     # outcome  = models.OneToOneField(IoutCome,on_delete=models.CASCADE,related_name='ioutcomes',blank =True,null= True)
     result = models.IntegerField(blank =True,null= True)
 
-    
+
+
+def process_spins(user_id):
+    unclosed_outcomes=IoutCome.objects.filter(user_id=user_id,closed=False)    

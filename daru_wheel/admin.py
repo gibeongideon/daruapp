@@ -1,9 +1,16 @@
 from django.contrib import admin
 from .models import (
     Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType,
-    OutCome, MarketType, Selection, DaruWheelSetting, Istake, IoutCome ,CashStore)
+    OutCome, Selection, DaruWheelSetting, Istake, IoutCome,
+    CashStore, DaruPoker, Market)
+
+class MarketAdmin(admin.ModelAdmin):
+    list_display = ('id','market_type',)
+    list_display_links = ('id',)
+    # list_editable = ('',)
 
 
+admin.site.register(Market, MarketAdmin) 
 class DaruWheelSettingAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'return_val', 'min_redeem_refer_credit',
@@ -40,23 +47,27 @@ class SelectionAdmin(admin.ModelAdmin):
 admin.site.register(Selection, SelectionAdmin)
 
 
+class DaruPokerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'market', 'created_at', 'updated_at')
+    list_display_links = ('id',)
+    # list_editable = ('',)
+
+
+admin.site.register(DaruPoker, DaruPokerAdmin) 
+
+
 class WheelSpinAdmin(admin.ModelAdmin):
 
     list_display = (
-        'id', 'market', 'active', 'receive_results',
-        'place_stake_is_active', 'open_at', 'closed_at',
-        'results_at', 'updated_at','total_bet_amount_per_marktinstance',
+        'id', 'market', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
         'selection_bet_amount', 'black_bet_amount', 'white_bet_amount',
-        'offset', 'gain_after_relief', 'get_result_active',)
+        'offset', 'gain_after_relief',)
 
     list_display_links = ('id',)
     readonly_fields = (
-        'id', 'market', 'receive_results', 'active',
-        'place_stake_is_active', 'open_at', 'closed_at', 'results_at',
-        'updated_at', 'total_bet_amount_per_marktinstance',
+        'id', 'updated_at', 'total_bet_amount_per_marktinstance',
         'selection_bet_amount', 'black_bet_amount', 'white_bet_amount',
-        'offset', 'gain_after_relief', 'place_stake_is_active',
-        'get_result_active',)
+        'offset', 'gain_after_relief',)
 
 
 admin.site.register(WheelSpin, WheelSpinAdmin)
@@ -146,4 +157,3 @@ class CashStoreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CashStore, CashStoreAdmin)
-
