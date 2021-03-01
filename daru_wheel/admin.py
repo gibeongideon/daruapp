@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType,
-    OutCome, Selection, DaruWheelSetting, Istake, IoutCome,
+    OutCome, Selection, DaruWheelSetting,
     CashStore, DaruPoker, Market)
 
 class MarketAdmin(admin.ModelAdmin):
@@ -59,7 +59,7 @@ admin.site.register(DaruPoker, DaruPokerAdmin)
 class WheelSpinAdmin(admin.ModelAdmin):
 
     list_display = (
-        'id', 'market', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
+        'id', 'market','place_stake_is_active', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
         'selection_bet_amount', 'black_bet_amount', 'white_bet_amount',
         'offset', 'gain_after_relief',)
 
@@ -73,20 +73,20 @@ class WheelSpinAdmin(admin.ModelAdmin):
 admin.site.register(WheelSpin, WheelSpinAdmin)
 
 
-class StakeAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'user', 'market', 'marketselection', 'current_bal',
-        'amount', 'stake_placed', 'has_record',
-        'update_account_on_win_lose', 'created_at', 'updated_at')
+# class StakeAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'id', 'user', 'market', 'marketselection', 'current_bal',
+#         'amount', 'stake_placed', 'has_record',
+#         'update_account_on_win_lose', 'created_at', 'updated_at')
 
-    list_display_links = ('user',)
-    search_fields = ('user',)
-    # list_editable = ('outcome',)
-    list_filter =('user', 'market', 'marketselection')
-    readonly_fields = ('current_bal', 'market')
+#     list_display_links = ('user',)
+#     search_fields = ('user',)
+#     # list_editable = ('outcome',)
+#     list_filter =('user', 'market', 'marketselection')
+#     readonly_fields = ('current_bal', 'market')
 
 
-admin.site.register(Stake, StakeAdmin)
+# admin.site.register(Stake, StakeAdmin)
 
 
 class CumulativeGainAdmin(admin.ModelAdmin):
@@ -96,18 +96,6 @@ class CumulativeGainAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CumulativeGain, CumulativeGainAdmin) 
-
-
-class OutComeAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'market', 'closed', 'result', 'pointer',
-        'determine_result_algo', 'segment', 'created_at', 'updated_at')
-
-    list_display_links = ('id',)
-    readonly_fields = ('closed', 'result', 'pointer')
-
-
-admin.site.register(OutCome, OutComeAdmin) 
 
 
 class ResultAdmin(admin.ModelAdmin):
@@ -122,7 +110,7 @@ admin.site.register(Result, ResultAdmin)
 
 
 
-class IstakeAdmin(admin.ModelAdmin):
+class StakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user', 'marketselection',
         'amount', 'bet_on_real_account','this_user_has_cash_to_bet',
@@ -135,19 +123,19 @@ class IstakeAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(Istake, IstakeAdmin)
+admin.site.register(Stake, StakeAdmin)
 
 
-class IoutComeAdmin(admin.ModelAdmin):
+class OutComeAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'stake', 'closed','give_away', 'result', 'pointer',
+        'id','market', 'stake', 'closed','give_away', 'result', 'pointer',
         'determine_result_algo', 'segment','real_bet', 'created_at', 'updated_at')
 
     list_display_links = ('id',)
     readonly_fields = ('closed', 'result', 'pointer')
 
 
-admin.site.register(IoutCome, IoutComeAdmin)
+admin.site.register(OutCome, OutComeAdmin)
 
 class CashStoreAdmin(admin.ModelAdmin):
     list_display = ('id', 'give_away', 'to_keep',)

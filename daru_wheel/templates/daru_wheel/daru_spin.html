@@ -46,27 +46,24 @@
     <div class="card-body">    </div>
 </div>  <!-- raw -->        
 
+
 <div class="modal modal-search fade" id="betModal" tabindex="-1" role="dialog" aria-labelledby="betModal" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="card card-chart">
-        <div class="card-body">
-          <form action="{% url 'daru_wheel:daru_spin' %}" method="post">
+        <div class="card-body">          
+ 
+
+          <form action="{% url 'daru_wheel:spin' %}" method="post">
             {% csrf_token %}
     
-    
            <div class="row">
-            
+                     
             <div class="col-lg-4">
+              <div class="text-info">{{"Select one"}}</div>
               <div class="card card-chart">
-                <div class="text-info">{{"Select one"}}</div>
-    
+          
                 <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" required="id_marketselection" >
-                  {% if stake_form.errors %}
-                  <div class='text-danger'>
-                    {{stake_form.errors}}
-                  </div>
-                  {% endif %}
     
                   <label class="btn btn-sm btn-rede btn-simple">
                     <input type="radio" class="d-none d-sm-none" name="marketselection" value="1" required="id_marketselection">                
@@ -84,35 +81,43 @@
                       <i class="tim-icons icon-trophy"> Yellow</i>
                     </span>
                   </label>
-                  
                
                 </div>
     
               </div>
-              
-
             </div>
     
             <div class="col-lg-4">
+              <div class="text-info">Amount to bet ( min:5 )</div>
+              
               <div class="card card-chart">
     
-                <div class="text-info">Amount to bet ( min:5 )</div>
                 <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                  <input id="amount_id" class="form-control" type="form" placeholder="amount" name="amount" required="id_amount" >
+                  <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
                 </div>
     
               </div>
             </div>
     
             <div class="col-lg-4">
+    
+              <div class="btn-group btn-group-toggle float-left" data-toggle="buttons" >
+                <label class="btn btn-sm btn-info btn-simple" >
+                  <input type="checkbox" name="bet_on_real_account" id="id_bet_on_real_account">
+                  <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Bet Real</span>
+                  <span class="d-block d-sm-none">
+                    <i class="tim-icons icon-wallet-43"> Bet Real Money</i>
+                  </span>
+                </label>
+              </div>
+    
               <div class="card card-chart">
                 <button class="btn btn-fill btn-success" type="submit">Place Bet</button>
-    
               </div>
             </div>
     
            </div>
-         </form>
+         </form>        
 
 
         </div>

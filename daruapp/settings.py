@@ -35,6 +35,10 @@ ALLOWED_HOSTS = ['0.0.0.0', '.herokuapp.com', '127.0.0.1']
 INSTALLED_APPS = [
     'channels',
     'functional_tests',
+    #...
+    'admin_interface',
+    'colorfield',
+    #...
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

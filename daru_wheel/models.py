@@ -78,7 +78,6 @@ except Exception as me:
     print("MEE", me)
     pass
 
-
 class MarketType(TimeStamp):
     name = models.CharField(max_length=100, blank=True, null=True)
 
@@ -110,11 +109,11 @@ class Market(models.Model):
     #     abstract = True
 
     def __str__(self):
-        return f'{self.market_type.name}:{self.id} '
-
+        return f'{self.market_type.name} market of id {self.id} '.lower()
 
 
 class Selection(TimeStamp):
+
     mrtype = models.ForeignKey(
         MarketType, on_delete=models.CASCADE,
         related_name='mrtypes', blank=True, null=True)
@@ -126,7 +125,7 @@ class Selection(TimeStamp):
 
     def market_id(self):
         return self.mrtype
-     
+  
 
 class DaruPoker(TimeStamp):
     ''' Create DaruPoker market Instance '''
@@ -137,6 +136,19 @@ class DaruPoker(TimeStamp):
     class Meta:
         db_table = "d_poker_markets"
 
+    def save(self, *args, **kwargs):
+        try:
+
+            market_type, _ = MarketType.objects.get_or_create(
+                name='poker')
+            self.market = Market.objects.create(market_type=market_type)
+            
+            super().save(*args, **kwargs)
+        except Exception as e:
+            print(f'Daru:DaruPoker:Market craete Error:{e} ')
+            pass
+
+
 
 class WheelSpin(TimeStamp):
     '''Create WheelSpin market instance'''
@@ -145,7 +157,7 @@ class WheelSpin(TimeStamp):
         on_delete=models.CASCADE,
         related_name='markets', blank=True, null=True)
 
-    open_at = models.DateTimeField(default=timezone.now, blank=True, null=True) 
+    open_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     closed_at = models.DateTimeField(blank=True, null=True)
     results_at = models.DateTimeField(blank=True, null=True)
     active = models.BooleanField(default=True, blank=True, null=True)
@@ -160,7 +172,8 @@ class WheelSpin(TimeStamp):
     @property
     def place_stake_is_active(self):
         try:
-            if timezone.now() > self.open_at and timezone.now() < self.closed_at:
+            if timezone.now() > self.open_at and \
+                 timezone.now() < self.closed_at:
                 return True
             return False
         except Exception as e:
@@ -184,7 +197,8 @@ class WheelSpin(TimeStamp):
 
     def total_bet_amount_per_marktinstance(self):
         try:
-            total_amount = Stake.objects.filter(market_id =self.id ).aggregate(bet_amount=Sum('amount'))
+            total_amount = Stake.objects.filter(
+                market_id =self.id ).aggregate(bet_amount=Sum('amount'))
             return total_amount.get('bet_amount')
 
         except Exception as e:
@@ -193,7 +207,8 @@ class WheelSpin(TimeStamp):
     @property
     def black_bet_amount(self):
         try:
-            total_amount = Stake.objects.filter(market_id = self.id ).filter(marketselection_id = 1).aggregate(bet_amount =Sum('amount'))
+            total_amount = Stake.objects.filter(
+                market_id = self.id ).filter(marketselection_id = 1).aggregate(bet_amount =Sum('amount'))
             if total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
             return 0
@@ -249,109 +264,28 @@ class WheelSpin(TimeStamp):
         return ((100 - per_to_return)/100)*float(self.offset)
 
     def save(self, *args, **kwargs):
-        ''' Overrride internal model save method to update balance on staking  '''
-        
         self.closed_at = self.open_at + timedelta(minutes=set_up.closed_at)
         self.results_at = self.open_at + timedelta(minutes=set_up.results_at)
 
         if self.active and not self.place_stake_is_active:
             self.active = False
-        # try:
-        #     self.market,_ = MarketType.objects.get_or_create( id= int(set_up.wheelspin_id ) )#get_or_create return a tuple/
-        # except:
-        #     self.market,_ = MarketType.objects.get_or_create( id= 1)
+
+        try:
+
+            market_type, _ = MarketType.objects.get_or_create(
+                name='spinner')
+            self.market = Market.objects.create(market_type=market_type)
             
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
+
+        except Exception as e:
+            print(f'Daru:DaruPoker:Market craete Error:{e} ')
+            return 
+
+
+
 
   
-class Stake (TimeStamp):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
-    market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='wheelspins',blank =True,null=True)
-    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections',blank =True,null=True)
-    current_bal = models.FloatField(max_length=10,default=0 )#R
-    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
-    stake_placed = models.BooleanField(blank =True,null=True)
-    has_record = models.BooleanField(blank =True,null=True)
-
-    def __str__(self):
-        return 'Stake:{0} for:{1}'.format(self.amount,self.user)  
-
-
-    @classmethod
-    def per_market_bets(cls,market_id):
-        return cls.objects.filter(market_id = market_id)
-
-    @property
-    def place_bet_is_active(self):
-        return self.market.place_stake_is_active
-        
-    @property
-    def status(self):
-        return self.update_account_on_win_lose()
-
-    def update_account_on_win_lose(self):
-        selection = self.marketselection_id
-        try:
-            results = Result.objects.get(market_id = self.market_id).resu  #self.marketinstant.determine_result_algo
-        except:
-            results = ''
-        resu = ''
-        try:
-            if not results:
-                resu = 'PENDING'               
-            elif selection == results:
-                resu= 'YOU WIN'
-            else:
-                resu = 'YOU LOSE'
-            return resu
-            
-        except Exception as e:
-            print('GERR',e)
-
-
-    def save(self, *args, **kwargs):
-        ''' Overrride internal model save method to update balance on staking  '''
-        if not self.stake_placed:
-            try:
-                market_id = max((obj.id for obj in WheelSpin.objects.all()))
-                this_wheelspin = WheelSpin.objects.get(id =market_id )
-            except Exception as mae:
-                this_wheelspin,_ = WheelSpin.objects.get_or_create(id =1)
-                pass
-                  
-
-            if this_wheelspin.place_stake_is_active:# 
-
-                self.market = this_wheelspin
-                try:
-                    current_user_account_bal = current_account_bal_of(self.user.id) # F2
-                    if self.amount <= current_user_account_bal: # no staking more than account balance
-                        if not self.stake_placed:
-                            new_bal = current_user_account_bal - float(self.amount)
-                            self.current_bal = new_bal
-                            update_account_bal_of(self.user_id,new_bal)# F3
-                            self.stake_placed = True
-                    
-                    else: 
-                        raise Exception ('insufficient funds')
-                        # return 'Not enough balance to stake'
-
-                except Exception as e:
-                    print('STAKE:',e)
-                    return e
-            else:
-                print('INACTIVE MARKET!')
-                return # no saving record if market is inactive
-
-            try:
-                if not self.has_record:
-                    log_record(self.user_id,self.amount,'Stake')
-                    
-                    self.has_record = True
-            except:
-                pass
-
-            super().save(*args, **kwargs)
 
 class CumulativeGain(TimeStamp):
 
@@ -368,53 +302,6 @@ class CumulativeGain(TimeStamp):
             
         except Exception as e:
             return e
-
-class OutCome(TimeStamp):
-    market  = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='marketoutcomes',blank =True,null= True)
-    result = models.IntegerField(blank =True,null= True)
-    pointer = models.IntegerField(blank =True,null= True)
-    closed = models.BooleanField(default = False,blank =True,null= True)
-
-    @property
-    def determine_result_algo(self):  # fix this
-        try:
-            B = self.market.black_bet_amount
-            W = self.market.white_bet_amount
-            
-            if self.market.place_stake_is_active == False:
-                if B == W:
-                    return randint(1,2) # fix me to get random 1 or 2
-                if B > W :
-                    return 2
-                return 1
-
-        except Exception as e:
-            return  e
-
-    @staticmethod
-    def result_to_segment(results = None, segment=29):
-        from random import randint, randrange
-        if results is None:
-            results = randint(1,2)
-        if results ==1:
-            return randrange(1,segment,2) # odd no b/w 1 to segment(29)
-        else:
-            return randrange(2,segment,2) # even no b/w 2 to segment(29)
-            
-    @property
-    def segment(self):
-        return self.result_to_segment(results = self.result)# ,segment = 29) from settings
-
-    def save(self, *args, **kwargs):
-        if not self.closed:
-            if self.market.place_stake_is_active == False:
-                self.result = self.determine_result_algo
-                self.pointer = self.segment
-                self.closed =True
-
-                super().save(*args, **kwargs)
-        else:
-            return
 
 class Result(TimeStamp):
     market = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='rmarkets',blank =True,null= True)
@@ -574,17 +461,42 @@ class Result(TimeStamp):
             return
 
 
-class Istake (TimeStamp):
+class Stake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_istakes',blank =True,null=True)
+    market = models.ForeignKey(Market, on_delete=models.CASCADE,related_name='market_instnces',blank =True,null=True)
     marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections',blank =True,null=True)#
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    current_bal = models.FloatField(max_length=10,default=0 )#R
     stake_placed = models.BooleanField(blank =True,null=True)#
     has_record = models.BooleanField(blank =True,null=True) #
     bet_on_real_account = models.BooleanField(default=False)
     outcome_received= models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Istake:{self.amount} for:{self.user}'
+        return f'stake:{self.amount} by:{self.user}'
+ 
+    # @property
+    # def status(self):
+    #     return self.update_account_on_win_lose()
+
+    # def update_account_on_win_lose(self):
+    #     selection = self.marketselection_id
+    #     try:
+    #         results = Result.objects.get(market_id = self.market_id).resu  #self.marketinstant.determine_result_algo
+    #     except:
+    #         results = ''
+    #     resu = ''
+    #     try:
+    #         if not results:
+    #             resu = 'PENDING'               
+    #         elif selection == results:
+    #             resu= 'YOU WIN'
+    #         else:
+    #             resu = 'YOU LOSE'
+    #         return resu
+            
+    #     except Exception as e:
+    #         print('GERR',e)
 
     @property
     def this_user_has_cash_to_bet(self):
@@ -614,11 +526,12 @@ class Istake (TimeStamp):
             update_account_trialbal_of(self.user_id,new_bal)# F3
         else:
             new_bal = current_account_bal_of(self.user_id) - float(self.amount)
+            self.current_bal=new_bal
             update_account_bal_of(self.user_id,new_bal)# F3
             
     def bet_status(self):
         try:
-            return IoutCome.objects.get(stake_id=self.id).win_status
+            return OutCome.objects.get(stake_id=self.id).win_status
         except  Exception as e:
             print(f'daru_STATUS ERROR:{e}')
             return 'pending'
@@ -629,42 +542,34 @@ class Istake (TimeStamp):
 
 
     def save(self, *args, **kwargs):
-        ''' Bet could only be registered if
-            user got enoug real or trial balance
-        '''
+        ''' Bet could only be registered if user got enoug real or trial balance '''
         if not self.pk:
-            print("CB",self.this_user_has_cash_to_bet) #Debug
             if self.this_user_has_cash_to_bet: #then
-                self.deduct_amount_from_this_user_account()
-      
-                super().save(*args, **kwargs) # create a db record
+                self.deduct_amount_from_this_user_account() 
+                self.stake_placed= True     
+                
             else:
-                return # no db table record to create!   
+                return # no db table record to create!
 
-         
-
-
+            try:
+                if not self.has_record:
+                    log_record(self.user_id,self.amount,'Stake')                    
+                    self.has_record = True
+            except:
+                pass
+            super().save(*args, **kwargs) # create a db record
 class CashStore(models.Model):
     give_away =  models.DecimalField(('give_away'), max_digits=12, decimal_places=2, default=0)
     to_keep =  models.DecimalField(('to_keep'), max_digits=12, decimal_places=2, default=0)
 
 
-class IoutCome(TimeStamp):
-    stake  = models.OneToOneField(Istake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
+class OutCome(TimeStamp):
+    market  = models.OneToOneField(Market,on_delete=models.CASCADE,related_name='marketoutcomess',blank =True,null= True)
+    stake  = models.OneToOneField(Stake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
     cashstore =models.ForeignKey(CashStore,on_delete=models.CASCADE,related_name='cashstores',blank =True,null= True)
-    inbank = models.DecimalField(('inbank'), max_digits=12, decimal_places=2, default=0)
-    outbank = models.DecimalField(('outbank'), max_digits=12, decimal_places=2, default=0)
     result = models.IntegerField(blank =True,null= True)
     pointer = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(default = False,blank =True,null= True)
-
-    # @classmethod
-    # def set_store(cls):
-    #     try:
-    #        cashstore_,_=CashStore.objects.get_or_create(id =1)
-    #        cls.objects.update(cashstore=cashstore_)
-    #     except Exception as e:
-    #         pass
 
     @property
     def current_update_give_away(self):
@@ -687,17 +592,33 @@ class IoutCome(TimeStamp):
             return self.stake.bet_on_real_account
         except :
             pass    
-
+       
     @property
     def determine_result_algo(self):  # fix this
-        # if not self.real_bet:
-        #     return randint(1,2)        
-        try:
-            if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
-                return 1
-            return 2 
-        except Exception as e:
-            return e          
+        if self.market is None:
+
+            # if not self.real_bet:
+            #     return randint(1,2)        
+            try:
+                if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
+                    return 1
+                return 2 
+            except Exception as e:
+                return e          
+        else:
+            try:
+                B = self.market.black_bet_amount
+                W = self.market.white_bet_amount
+            
+                if self.market.place_stake_is_active == False:
+                    if B == W:
+                        return randint(1,2) # fix me to get random 1 or 2
+                    if B > W :
+                        return 2
+                    return 1
+
+            except Exception as e:
+                return  e
 
 
     @staticmethod
@@ -754,7 +675,7 @@ class IoutCome(TimeStamp):
 
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if not self.pk and self.market is None :
             try:
                 mstore,_ = CashStore.objects.get_or_create(id =1)
                 self.cashstore = mstore
@@ -771,15 +692,15 @@ class IoutCome(TimeStamp):
                 super().save(*args, **kwargs)
                 
             except Exception as e:
-                print(f'IoutCome {e}' )                            
+                print(f'IoutCome {e}' )
+                return  
+        else:
+            if not self.closed:
+                if self.market.place_stake_is_active == False:
+                    self.result = self.determine_result_algo
+                    self.pointer = self.segment
+                    self.closed =True
 
-
-           
-class Spin(TimeStamp):
-    # outcome  = models.OneToOneField(IoutCome,on_delete=models.CASCADE,related_name='ioutcomes',blank =True,null= True)
-    result = models.IntegerField(blank =True,null= True)
-
-
-
-def process_spins(user_id):
-    unclosed_outcomes=IoutCome.objects.filter(user_id=user_id,closed=False)    
+                    super().save(*args, **kwargs)
+            else:
+                return

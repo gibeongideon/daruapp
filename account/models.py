@@ -287,7 +287,7 @@ class CashDeposit(TimeStamp):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='user_deposits',blank =True,null=True)
+        related_name='user_deposits')
 
     currency_id = models.ForeignKey(
         Currency,
@@ -310,27 +310,39 @@ class CashDeposit(TimeStamp):
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
-        try:
-
-            if not self.deposited:
-                ctotal_balanc = current_account_bal_of(self.user_id) #F
-                new_bal = ctotal_balanc + int(self.amount)
-                update_account_bal_of(self.user_id,new_bal) #F
-                self.deposited = True
+        if self.amount > 0:
 
             try:
-                if not self.has_record:
-                    log_record(self.user_id,self.amount,'Shop Deposit')
-                    self.has_record = True
-            except  Exception as e:
-                pass
+                try:
+                    if not self.deposited :
+                        ctotal_balanc = current_account_bal_of(self.user_id) #F
+                        new_bal = ctotal_balanc + int(self.amount)
+                        update_account_bal_of(self.user_id,new_bal) #F
+                        self.deposited = True
+                except Exception as e:
+                    print(f'Daru:CashDeposit-Deposited Error:{e}') # Debug
+                    pass        
+
+
+
+
+                try:
+                    if not self.has_record:
+                        log_record(self.user_id,self.amount,'Shop Deposit')
+                        self.has_record = True
+                except  Exception as e:
+                    print(f'Daru:CashDeposit-Log Error:{e}') # Debug
+                    pass
+
+                super().save(*args, **kwargs) # disllow amount edit/nice feature
             
-        except Exception as e:
-            print('DEPOSIT ERROR',e)#  issue to fix on mpesa deposit error
+            except Exception as e:
+                print('DEPOSIT ERROR',e)#  issue to fix on mpesa deposit error
+                return
+
+            # super().save(*args, **kwargs) # allow mount edit
+        else:
             return
-
-        super().save(*args, **kwargs)
-
 
 class CashWithrawal(TimeStamp): # sensitive transaction
     """Represent user's money withdrawal instance.
@@ -350,7 +362,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='user_withrawals',blank =True,null=True
+        related_name='user_withrawals'
         )    
     currency_id = models.ForeignKey(
         Currency,

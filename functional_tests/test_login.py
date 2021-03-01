@@ -19,9 +19,9 @@ class LoginTestCase(FunctionalTestCase):
     def test_can_login(self):
 
         # [fixture] sample user is registered
-        TEST_USERNAME = 'ibeon'
-        TEST_EMAIL = 'ibeon@casino.test'
-        TEST_PASSWORD = 'QWErtyUI123!#!#'
+        TEST_USERNAME = 'admin'
+        TEST_EMAIL = 'gibeon@casino.test'
+        TEST_PASSWORD = 'qqqqq11111'
         User.objects.create_user(username=TEST_USERNAME,
                                  email=TEST_EMAIL,
                                  password=TEST_PASSWORD)
@@ -35,10 +35,12 @@ class LoginTestCase(FunctionalTestCase):
 
         # Then he enter account credentials
         self.browser.find_element_by_name('username').send_keys(TEST_USERNAME)
-        sleep(1)
         self.browser.find_element_by_name('password').send_keys(TEST_PASSWORD)
-        sleep(1)
+        sleep(5)
         self.browser.find_element_by_name('password').send_keys(Keys.ENTER)
+        sleep(2)
+        self.browser.find_element_by_id('spin_button').click()
+        sleep(15)
 
         # John is logged in
         # self.wait_to_be_logged_in()

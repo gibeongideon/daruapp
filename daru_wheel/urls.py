@@ -8,6 +8,5 @@ urlpatterns = [
 
     path('', views.spin, name="spin"),
     path('spin', views.daru_spin, name="daru_spin"),
-    
-    
+        
 ]

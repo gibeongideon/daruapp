@@ -66,13 +66,8 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            # phone_number = form.cleaned_data.get('phone_number')
-            # daru_code = form.cleaned_data.get('daru_code')
-    
-            user = authenticate(username=username, password=raw_password)
-            # user.phone_number = phone_number
-            # user.daru_code = daru_code
 
+            user = authenticate(username=username, password=raw_password)
             user.save()
             
             login(request, user)
