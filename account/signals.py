@@ -42,7 +42,7 @@ def update_account_balance_on_mpesa_deposit(sender,instance,created, **kwargs):
 def update_user_withrawable_balance_onstake(sender, instance, created, **kwargs):
     try:
         
-        if created:
+        if created and instance.bet_on_real_account is True:
             now_withrawable = float(Account.objects.get(user_id =instance.user_id).withrawable_balance)
             print(f'now_withrawableS:{now_withrawable}')
             added_amount = float(instance.amount)
@@ -56,20 +56,20 @@ def update_user_withrawable_balance_onstake(sender, instance, created, **kwargs)
         print('Withrable cal err_onstake',e)
 
 
-@receiver(post_save, sender=CashWithrawal)
-def update_user_withrawable_balance_onwithraw(sender, instance, created, **kwargs):
-    try:
-        if created and instance.withrawned:  # and instance.active=False:
+# @receiver(post_save, sender=CashWithrawal)
+# def update_user_withrawable_balance_onwithraw(sender, instance, created, **kwargs):
+#     try:
+#         if created and instance.withrawned is True:  # and instance.active=False:
       
-            now_withrawable = float(Account.objects.get(user_id=instance.user_id).withrawable_balance)
-            print(f'now_withrawableW:{now_withrawable}')
-            deduct_amount = float(instance.amount)
-            print(f'added_amountW:{deduct_amount}')
-            total_withwawable = now_withrawable - deduct_amount
+#             now_withrawable = float(Account.objects.get(user_id=instance.user_id).withrawable_balance)
+#             print(f'now_withrawableW:{now_withrawable}')
+#             deduct_amount = float(instance.amount)
+#             print(f'added_amountW:{deduct_amount}')
+#             total_withwawable = now_withrawable - deduct_amount
 
-            if total_withwawable > 0:
-                Account.objects.filter(user_id =instance.user_id).update(withrawable_balance= total_withwawable)
+#             if total_withwawable > 0:
+#                 Account.objects.filter(user_id =instance.user_id).update(withrawable_balance= total_withwawable)
 
-    except Exception as e:
-        print('Withrable cal err_onwithraw',e)
+#     except Exception as e:
+#         print('Withrable cal err_onwithraw',e)
 

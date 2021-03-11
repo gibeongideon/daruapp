@@ -1,11 +1,12 @@
 from django.contrib import admin
 from .models import (
-    Stake, WheelSpin, CumulativeGain, Result, Selection, MarketType,
+    Stake, WheelSpin, CumulativeGain, Selection,
     OutCome, Selection, DaruWheelSetting,
-    CashStore, DaruPoker, Market)
+    CashStore, Market)
 
 class MarketAdmin(admin.ModelAdmin):
-    list_display = ('id','market_type',)
+    list_display = ('id','name', 'this_market_selection_id_list',
+        'this_market_selection_verbose_list',)
     list_display_links = ('id',)
     # list_editable = ('',)
 
@@ -24,17 +25,6 @@ class DaruWheelSettingAdmin(admin.ModelAdmin):
 
 admin.site.register(DaruWheelSetting, DaruWheelSettingAdmin) 
 
-class MarketTypeAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'name', 'this_market_selection_id_list',
-        'this_market_selection_verbose_list', 'created_at', 'updated_at',)
-
-    list_display_links = ('id',)
-    # list_editable = ('closed',)
-
-
-admin.site.register(MarketType, MarketTypeAdmin)
-
 
 class SelectionAdmin(admin.ModelAdmin):
     list_display = (
@@ -47,26 +37,17 @@ class SelectionAdmin(admin.ModelAdmin):
 admin.site.register(Selection, SelectionAdmin)
 
 
-class DaruPokerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'market', 'created_at', 'updated_at')
-    list_display_links = ('id',)
-    # list_editable = ('',)
-
-
-admin.site.register(DaruPoker, DaruPokerAdmin) 
-
-
 class WheelSpinAdmin(admin.ModelAdmin):
 
     list_display = (
-        'id', 'market','place_stake_is_active', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
-        'selection_bet_amount', 'black_bet_amount', 'white_bet_amount',
+        'id', 'market','receive_results','place_stake_is_active', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
+        'selection_bet_amount',
         'offset', 'gain_after_relief',)
 
     list_display_links = ('id',)
     readonly_fields = (
         'id', 'updated_at', 'total_bet_amount_per_marktinstance',
-        'selection_bet_amount', 'black_bet_amount', 'white_bet_amount',
+        'selection_bet_amount', 
         'offset', 'gain_after_relief',)
 
 
@@ -98,28 +79,28 @@ class CumulativeGainAdmin(admin.ModelAdmin):
 admin.site.register(CumulativeGain, CumulativeGainAdmin) 
 
 
-class ResultAdmin(admin.ModelAdmin):
-    list_display = (
-        'id', 'closed', 'market', 'resu', 'gain',
-        'return_per', 'created_at', 'updated_at',)
-    list_display_links = ('id',)
+# class ResultAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'id', 'closed', 'market', 'resu', 'gain',
+#         'return_per', 'created_at', 'updated_at',)
+#     list_display_links = ('id',)
 
 
-admin.site.register(Result, ResultAdmin)
+# admin.site.register(Result, ResultAdmin)
 
 
 
 
 class StakeAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'user', 'marketselection',
+        'id', 'user','market', 'marketselection',
         'amount', 'bet_on_real_account','this_user_has_cash_to_bet',
         'stake_placed', 'has_record','bet_status',
         'created_at', 'updated_at')
 
     list_display_links = ('user',)
     search_fields = ('user',)
-    list_filter =('user', 'marketselection')
+    list_filter =('user', 'marketselection','market','created_at')
 
 
 

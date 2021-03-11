@@ -1,8 +1,8 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from .models import (
-    Result, OutCome, CumulativeGain, WheelSpin,
-    Stake, Market, DaruPoker)
+    OutCome, CumulativeGain, WheelSpin,
+    Stake, Market)
 from channels.layers import get_channel_layer
 # from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
@@ -14,6 +14,7 @@ def on_results_save(sender, instance, **kwargs):
     if instance.market is not None:
         
         pointer_val = instance.pointer  # fix id
+        print(f'SIF mR ID:{instance.market_id} ')
         market_id = instance.market_id
     
         try:
@@ -49,12 +50,12 @@ def on_results_save(sender, instance, **kwargs):
                 print(ce)
                 pass
 
-            Result.objects.update_or_create(
-                market_id=instance.market_id, cumgain_id=1)
 
         except Exception as re:
             print(f'REESignal error:{re}')  # debug
             pass  # results later/manual by admin incase 
+    else:
+        pass
     #
 
 # @receiver(post_save, sender=WheelSpin)

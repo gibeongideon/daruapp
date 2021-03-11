@@ -48,7 +48,7 @@ def spin_manager():
             OutCome.objects.create(market_id=id)  #  process result of last ma
         except Exception as e:
             pass
-        sleep(2)
+  
         this_wheelspin = WheelSpin.objects.get(id=id)
             #  create on demand
         if not this_wheelspin.place_stake_is_active:

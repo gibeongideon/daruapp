@@ -1,20 +1,43 @@
 from django.test import TestCase
 from users.models import User
-from daru_wheel.models import Stake, CashStore, OutCome ,current_account_trialbal_of,Market ,WheelSpin,DaruPoker,MarketType
+import random
+from django.utils import timezone
+from time import sleep
+from daru_wheel.models import (
+    Stake, CashStore, OutCome, Market, WheelSpin, Selection,
+    current_account_trialbal_of,)
+
 from account.models import Account, CashDeposit ,current_account_bal_of
 # MODEL TESTS
 
 def create_user():
     return User.objects.create(username="0725100876",email='user12@mail.com',daru_code="ADMIN")
 
+
+def create_test_user(username):
+    '''simplify create_test_user'''  
+    ran_value = random.randint(1, 99)
+    email = f'user{ran_value}@darucasino.com' 
+
+    return User.objects.create(
+        username=str(username),
+        email=email,
+        daru_code="ADMIN") 
+
+
+def deposit_to_test_user(user_id, amount=10000):
+    CashDeposit.objects.create(
+        user_id=user_id,
+        amount=amount) 
+
 class MarketTestCase(TestCase):
     def test_create_rit_market(self):
 
         WheelSpin.objects.create()
         WheelSpin.objects.create()
-        DaruPoker.objects.create()
 
-        self.assertEqual(Market.objects.count(), 3)
+
+        self.assertEqual(Market.objects.count(), 1)
         
 
 class StakeTestCase(TestCase):
@@ -118,8 +141,9 @@ class StakeTestCase(TestCase):
         self.assertEqual(CashStore.objects.get(id=1).give_away, 2500)  
 
     def test_create_stake_for_rit_market(self):
-        market_type = MarketType.objects.create(name='SPIN')
-        market = Market.objects.create(market_type=market_type)
+
+        market = WheelSpin.objects.create()
+
 
         Stake.objects.create(
             user=self.user,
@@ -139,18 +163,6 @@ class StakeTestCase(TestCase):
 
 
 
-# TEST VIEW
-
-
-# class BetViewTest(TestCase):
-#     def test_can_bet_istake_request(self):
-#         self.user = create_user()
-#         self.client.post(
-#             "spin",
-#             data={'user': self.user,'marketselection':1,'amount':333}
-#             )
-#         self.assertEqual(Stake.objects.count(), 1)
-
 class LoginPageTest(TestCase):
 
     TEST_USERNAME = '0721399876'
@@ -167,11 +179,214 @@ class LoginPageTest(TestCase):
         })
         self.assertRedirects(response, '/')
 
-class SpinPageTest(TestCase):
-    def test_spin_home_template(self):
-        response = self.client.get('/daru_wheel/spin')
-        self.assertRedirects(response, '/user/login?next=/daru_wheel/spin')
+# class SpinPageTest(TestCase):
+#     def test_spin_home_template(self):
+#         response = self.client.get('/daru_wheel/spin')
+#         self.assertRedirects(response, '/user/login?next=/daru_wheel/spin')
         
-        # self.assertTemplateUsed(response, 'home.html')
+#         # self.assertTemplateUsed(response, 'home.html')
 
 
+class BetLogicTest(TestCase):
+
+    def setUp(self):
+        self.spin = WheelSpin.objects.create()        
+        self.market = Market.objects.get(id=1)
+        
+
+        self.marketselection1, _ = Selection.objects.get_or_create(
+            id=1,
+            mrtype=self.market,
+            name='RED',
+            odds=2)
+
+        self.marketselection2, _ = Selection.objects.get_or_create(
+            id=2,
+            mrtype=self.market,
+            name='YELLOW',
+            odds=2)
+
+        self.user1 = create_test_user('07000000001')
+        self.user2 = create_test_user('07000000002')
+        self.user3 = create_test_user('07000000003')
+
+        deposit_to_test_user(self.user1.id, 5000)
+        deposit_to_test_user(self.user2.id, 6000)
+        deposit_to_test_user(self.user3.id, 1000)
+  
+
+    def test_setup(self):        
+        self.assertEqual(
+            current_account_bal_of(self.user1.id),
+            5000)
+
+        self.assertEqual(
+            current_account_bal_of(self.user2.id),
+            6000)
+
+        self.assertEqual(
+            current_account_bal_of(self.user3.id),
+            1000)
+
+        self.assertEqual(Market.objects.count(),1)    
+  
+        # BET
+    def test_test_deduct_bet_amount(self):  
+        #BEFORE  
+        self.assertEqual(
+            current_account_bal_of(self.user1.id),
+            5000)
+
+        self.assertEqual(
+            current_account_bal_of(self.user2.id),
+            6000)
+            
+        self.assertEqual(
+            current_account_bal_of(self.user3.id),
+            1000)        
+        #BET
+        Stake.objects.create(
+            user=self.user1,
+            market=self.spin,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True,
+            amount=100)
+
+        Stake.objects.create(
+            user=self.user2,
+            market=self.spin,
+            marketselection=self.marketselection2,
+            bet_on_real_account=True,
+            amount=200)
+
+        Stake.objects.create(
+            user=self.user3,
+            market=self.spin,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True,
+            amount=300)
+
+        #AFTER
+        self.assertEqual(
+            current_account_bal_of(self.user1.id),
+            4900)
+
+        self.assertEqual(
+            current_account_bal_of(self.user2.id),
+            5800)
+
+    def test_test_add_winner_account_amount(self):  #1
+        '''#1 test/let it not failed: It determine precise stake culculations'''
+        #BEFORE  
+        self.assertEqual(
+            current_account_bal_of(self.user1.id),
+            5000)
+
+        self.assertEqual(
+            current_account_bal_of(self.user2.id),
+            6000)
+            
+        self.assertEqual(
+            current_account_bal_of(self.user3.id),
+            1000)        
+        #BET
+        Stake.objects.create(
+            user=self.user1,
+            market=self.spin,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True,
+            amount=1000)
+
+        Stake.objects.create(
+            user=self.user2,
+            market=self.spin,
+            marketselection=self.marketselection2,
+            bet_on_real_account=True,
+            amount=200)
+
+        Stake.objects.create(
+            user=self.user3,
+            market=self.spin,
+            marketselection=self.marketselection2,
+            bet_on_real_account=False,
+            amount=300)
+
+        #AFTER
+        self.assertEqual(
+            current_account_bal_of(self.user1.id),
+            4000)
+
+        self.assertEqual(
+            current_account_bal_of(self.user2.id),
+            5800)
+        self.assertEqual(
+            current_account_bal_of(self.user3.id),
+            1000)
+        self.assertEqual(
+            current_account_trialbal_of(self.user3.id),
+            49700)       
+  
+        #OUTCOME
+
+        outcome = OutCome.objects.create(market=self.spin)
+
+        self.assertEqual(OutCome.objects.count(),1 )
+        self.assertEqual(outcome.result,2 )
+
+
+
+        #AFTER OUTCOME
+        self.assertEqual(
+            current_account_bal_of(self.user1.id),
+            4000)
+
+        self.assertEqual(
+            current_account_bal_of(self.user2.id),
+            6200)
+
+        self.assertEqual(
+            current_account_bal_of(self.user3.id),
+            1000)
+
+        self.assertEqual(
+            current_account_trialbal_of(self.user3.id),
+            50300)
+
+    def test_total_bet_amount_per_market(self):
+             #BET
+        Stake.objects.create(
+            user=self.user1,
+            market=self.spin,
+            marketselection=self.marketselection1,
+            bet_on_real_account=False,
+            amount=100)
+
+        Stake.objects.create(
+            user=self.user2,
+            market=self.spin,
+            marketselection=self.marketselection2,
+            bet_on_real_account=True,
+            amount=200)
+
+        Stake.objects.create(
+            user=self.user3,
+            market=self.spin,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True,
+            amount=300)
+
+        Stake.objects.create(
+            user=self.user1,
+            market=self.spin,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True,
+            amount=150)
+
+        Stake.objects.create(
+            user=self.user2,
+            market=self.spin,
+            marketselection=self.marketselection2,
+            bet_on_real_account=False,
+            amount=600)
+        #MARKET STATE
+        self.assertEqual(self.spin.selection_bet_amount,[450,200]) 

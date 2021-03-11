@@ -34,6 +34,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.my_code = str(uuid.uuid4()).upper()[:3]+'D'+str(self.username[-3:]).upper()
-        self.phone_number = self.format_mobile_no(self.username)
+            self.phone_number = self.format_mobile_no(self.username)
 
         super(User, self).save(*args, **kwargs)

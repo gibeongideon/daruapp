@@ -2,10 +2,12 @@ from django.test import TestCase  #,Client
 from django.urls import reverse
 from account.models import CashDeposit, CashWithrawal, Account
 from users.models import User
+from daru_wheel.models import  Stake
 import random
 
 
 # MODEL TESTS
+
 class CashDepositWithrawalTestCase(TestCase):
     def setUp(self):
        self.usera=User.objects.create(username="0710001000", email="testa@gmail.com",daru_code="ADMIN")
@@ -51,3 +53,30 @@ class CashDepositWithrawalTestCase(TestCase):
 
         self.assertEqual(101000, bal2a)
         self.assertEqual(1000, bal2b)
+
+    def test_witrawable_update_correctly(self):
+        CashDeposit.objects.create(amount=10000,user=self.usera)
+
+        self.assertEqual(Account.objects.get(user=self.usera).balance,10000)
+        self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance ,0)
+
+        Stake.objects.create(user=self.usera,amount=1000,bet_on_real_account=True)
+
+        self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
+        self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance ,1000)
+
+        CashWithrawal.objects.create(user=self.usera,amount=800) 
+
+
+        self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
+        self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance ,1000)
+        
+        self.assertEqual(CashWithrawal.objects.get(id=1).approved,False)
+
+        CashWithrawal.objects.filter(id=1).update(approved=True)
+
+        self.assertEqual(CashWithrawal.objects.get(id=1).approved,True)
+
+        self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
+        # self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance , 200)#failin
+

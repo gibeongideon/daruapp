@@ -12,6 +12,8 @@ class DuserAdmin(UserAdmin):
     list_display_links = ('id',)
     search_fields = ('id',)
     ordering = ('id',)
+    
+    list_editable = ('phone_number', 'my_code', 'daru_code',)
     readonly_fields = ('password',)
 
 

@@ -168,37 +168,38 @@ LOGOUT_REDIRECT_URL = '/user/login'
 # http://channels.readthedocs.io/en/latest/topics/channel_layers.html
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('localhost', 6379)],
+    "default": {
+        # This example app uses the Redis channel layer implementation channels_redis
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "CONFIG": {
+         
         },
-    }
+    },
 }
 
 
 # CELERY
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
 
-CELERY_BEAT_SCHEDULE = {
+# CELERY_BEAT_SCHEDULE = {
 
-    'create_spin_wheel_market': {
-         'task': 'daru_wheel.tasks.create_spinwheel',
-         'schedule': crontab(minute=[
-             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-        },
-    'run_count_down_timer': {
-         'task': 'daru_wheel.tasks.start_count_down',
-         'schedule': crontab(minute=[
-             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-        }
-}
+#     'create_spin_wheel_market': {
+#          'task': 'daru_wheel.tasks.create_spinwheel',
+#          'schedule': crontab(minute=[
+#              0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+#         },
+#     'run_count_down_timer': {
+#          'task': 'daru_wheel.tasks.start_count_down',
+#          'schedule': crontab(minute=[
+#              0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+#         }
+# }
 
 
 # log stuff to console

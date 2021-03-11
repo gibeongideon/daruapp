@@ -34,15 +34,15 @@ from .models import Stake, WheelSpin
 
 #     return render(request, 'daru_wheel/daru_spin.html', context)
 
-
 @login_required(login_url='/user/login')
 def spin(request):
 
     stake_form = IstakeForm()
     trans_logz = Stake.objects.filter(
-        user=request.user).order_by('-created_at')[:12]
+        user=request.user,market=None,has_market=False).order_by('-created_at')[:12]
 
-    if request.method == 'POST':   
+    if request.method == 'POST':  
+        print('YOYOYO') 
         data = {}
         data['user'] = request.user
         data['marketselection'] = request.POST.get('marketselection')
@@ -66,6 +66,7 @@ def spin(request):
 
 
 
+
 @login_required(login_url='/user/login')
 def daru_spin(request):
     try:
@@ -73,30 +74,32 @@ def daru_spin(request):
         this_wheelspin = WheelSpin.objects.get(id =market_id )
     except Exception as mae:
         this_wheelspin,_ = WheelSpin.objects.get_or_create(id =1)
-        pass
-            
+        pass       
    
     stake_form = StakeForm()
     trans_logz = Stake.objects.filter(
-        user=request.user).order_by('-created_at')[:12]
+        user=request.user,has_market=True).order_by('-created_at')[:12]
 
     if request.method == 'POST':
-        if this_wheelspin.place_stake_is_active:# 
-            market = this_wheelspin
-     
-            data = {}
-            data['user'] = request.user
-            data['market'] = market
-            data['marketselection'] = request.POST.get('marketselection')
-            data['amount'] = request.POST.get('amount')
-        
-            stake_form = StakeForm(data=data)
-  
-            if stake_form.is_valid():
+        # if this_wheelspin.place_stake_is_active:# 
+        market = this_wheelspin
+        print('ID31')
+        print(market.id)
+        print('ID31')
+    
+        data = {}
+        data['user'] = request.user
+        data['market'] = market
+        data['marketselection'] = request.POST.get('marketselection')
+        data['amount'] = request.POST.get('amount')
+    
+        stake_form = StakeForm(data=data)
 
-                stake_form.save()
-            else:
-                print(stake_form.errors)
+        if stake_form.is_valid():
+
+            stake_form.save()
+        else:
+            print(stake_form.errors)
 
     context = {
         'user': request.user, 'stake_form': stake_form,

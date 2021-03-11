@@ -50,20 +50,13 @@ class TimeStamp(models.Model):
     class Meta:
         abstract = True
 
-
 class DaruWheelSetting(TimeStamp):
     return_val = models.FloatField(default=0, blank=True, null=True)
     min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
     refer_per = models.FloatField(default=0, blank=True, null=True)
-    closed_at = models.FloatField(
-        help_text='sensitive settings value.Dont edit',
-        default=4.7, blank=True, null=True)
-    results_at = models.FloatField(
-        help_text='sensitive settings value.Dont edit',
-        default=4.8, blank=True, null=True)
-    wheelspin_id = models.IntegerField(
-        help_text='super critical setting value.DONT EDIT!',
-        default=1, blank=True, null=True)
+    closed_at = models.FloatField(help_text='sensitive settings value.Dont edit',default=4.7, blank=True, null=True)
+    results_at = models.FloatField(help_text='sensitive settings value.Dont edit',default=4.8, blank=True, null=True)
+    wheelspin_id = models.IntegerField(help_text='super critical setting value.DONT EDIT!',default=1, blank=True, null=True)
     curr_unit = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     min_bet = models.DecimalField(max_digits=5,default=45.9, decimal_places=2, blank=True, null=True)
     
@@ -78,11 +71,14 @@ except Exception as me:
     print("MEE", me)
     pass
 
-class MarketType(TimeStamp):
+class Market(models.Model):
+    '''Market place wit different market types  '''
     name = models.CharField(max_length=100, blank=True, null=True)
+    # class Meta:
+    #     abstract = True
 
     def __str__(self):
-        return '{0}:{1}'.format(self.id, self.name)
+        return f'{self.name} market of id {self.id} '.lower()
 
     def all_selection(self):
         return Selection.objects.filter(mrtype_id=self.id).all()
@@ -93,29 +89,10 @@ class MarketType(TimeStamp):
     def this_market_selection_verbose_list(self):
         return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
 
-
-class Market(models.Model):
-    '''Market place wit different market types  '''
-    market_type = models.ForeignKey(
-        MarketType,
-        on_delete=models.CASCADE,
-        related_name='market_types', blank=True, null=True)
-
-    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    active = models.BooleanField(default=True, blank=True, null=True)
-    receive_results = models.BooleanField(default=False, blank=True, null=True)
-
-    # class Meta:
-    #     abstract = True
-
-    def __str__(self):
-        return f'{self.market_type.name} market of id {self.id} '.lower()
-
-
 class Selection(TimeStamp):
 
     mrtype = models.ForeignKey(
-        MarketType, on_delete=models.CASCADE,
+        Market, on_delete=models.CASCADE,
         related_name='mrtypes', blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     odds = models.FloatField(max_length=10, blank=True, null=True)
@@ -126,33 +103,9 @@ class Selection(TimeStamp):
     def market_id(self):
         return self.mrtype
   
-
-class DaruPoker(TimeStamp):
-    ''' Create DaruPoker market Instance '''
-    market = models.OneToOneField(
-        Market, on_delete=models.CASCADE,
-        related_name='poker_markets', blank=True, null=True)
-        
-    class Meta:
-        db_table = "d_poker_markets"
-
-    def save(self, *args, **kwargs):
-        try:
-
-            market_type, _ = MarketType.objects.get_or_create(
-                name='poker')
-            self.market = Market.objects.create(market_type=market_type)
-            
-            super().save(*args, **kwargs)
-        except Exception as e:
-            print(f'Daru:DaruPoker:Market craete Error:{e} ')
-            pass
-
-
-
 class WheelSpin(TimeStamp):
     '''Create WheelSpin market instance'''
-    market = models.OneToOneField(
+    market = models.ForeignKey(
         Market,
         on_delete=models.CASCADE,
         related_name='markets', blank=True, null=True)
@@ -160,8 +113,10 @@ class WheelSpin(TimeStamp):
     open_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     closed_at = models.DateTimeField(blank=True, null=True)
     results_at = models.DateTimeField(blank=True, null=True)
+    
     active = models.BooleanField(default=True, blank=True, null=True)
     per_retun = models.FloatField(default=0, blank=True, null=True)
+    receive_results = models.BooleanField(default=False, blank=True, null=True)
 
     class Meta:
         db_table = "d_wheel_markets"
@@ -169,6 +124,7 @@ class WheelSpin(TimeStamp):
     def __str__(self):
         return f'WheelSpin No:{self.id}'
 
+        
     @property
     def place_stake_is_active(self):
         try:
@@ -191,48 +147,30 @@ class WheelSpin(TimeStamp):
 
     def market_selection_id_list(self):
         try:
-            return self.market.market_type.this_market_selection_id_list()
+            return self.market.this_market_selection_id_list()
         except Exception as e:
             return e    
 
     def total_bet_amount_per_marktinstance(self):
         try:
             total_amount = Stake.objects.filter(
-                market_id =self.id ).aggregate(bet_amount=Sum('amount'))
+                market_id =self.id,
+                bet_on_real_account=True ).aggregate(bet_amount=Sum('amount'))
             return total_amount.get('bet_amount')
 
-        except Exception as e:
-            return e
-
-    @property
-    def black_bet_amount(self):
-        try:
-            total_amount = Stake.objects.filter(
-                market_id = self.id ).filter(marketselection_id = 1).aggregate(bet_amount =Sum('amount'))
-            if total_amount.get('bet_amount'):
-                return total_amount.get('bet_amount')
-            return 0
-            
-        except Exception as e:
-            return e
-
-    @property
-    def white_bet_amount(self):
-
-        try:
-            total_amount = Stake.objects.filter(market_id =self.id ).filter(marketselection_id =2).aggregate(bet_amount =Sum('amount'))
-            if  total_amount.get('bet_amount'):
-                return total_amount.get('bet_amount')
-            return 0
-            
         except Exception as e:
             return e
 
     def market_stake_amount(self, select_id):
 
         try:
-            total_amount = Stake.objects.filter(market_id =self.id ).filter(marketselection_id =select_id).aggregate(bet_amount =Sum('amount'))
-            if  total_amount.get('bet_amount'):
+            total_amount = Stake.objects.filter(
+                market_id=self.id,
+                bet_on_real_account=True).filter(
+                    marketselection_id=select_id).aggregate(
+                        bet_amount=Sum('amount'))
+
+            if total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
             return 0
         
@@ -243,7 +181,7 @@ class WheelSpin(TimeStamp):
     def selection_bet_amount(self):
         try:
             mrkt_bet_amount = []
-            for selecn in self.market.market_type.this_market_selection_id_list():
+            for selecn in self.market.this_market_selection_id_list():
                 mrkt_bet_amount.append(self.market_stake_amount(selecn))
             return mrkt_bet_amount
         except Exception as e:
@@ -253,15 +191,18 @@ class WheelSpin(TimeStamp):
     @property
     def offset(self):
         try:
-            return abs(self.white_bet_amount - self.black_bet_amount)
+            return abs(self.selection_bet_amount[1] - self.selection_bet_amount[0])
 
         except Exception as e:
             return e
 
     @property
     def gain_after_relief(self):
-        per_to_return = self.per_retun
-        return ((100 - per_to_return)/100)*float(self.offset)
+        try:
+            per_to_return = self.per_retun
+            return ((100 - per_to_return)/100)*float(self.offset)
+        except Exception as e:
+            return e   
 
     def save(self, *args, **kwargs):
         self.closed_at = self.open_at + timedelta(minutes=set_up.closed_at)
@@ -271,21 +212,15 @@ class WheelSpin(TimeStamp):
             self.active = False
 
         try:
-
-            market_type, _ = MarketType.objects.get_or_create(
+            market, _ = Market.objects.get_or_create(
                 name='spinner')
-            self.market = Market.objects.create(market_type=market_type)
+            self.market = market
             
             super().save(*args, **kwargs)
 
         except Exception as e:
-            print(f'Daru:DaruPoker:Market craete Error:{e} ')
+            print(f'Daru:Market craete Error:{e} ')
             return 
-
-
-
-
-  
 
 class CumulativeGain(TimeStamp):
 
@@ -303,200 +238,21 @@ class CumulativeGain(TimeStamp):
         except Exception as e:
             return e
 
-class Result(TimeStamp):
-    market = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='rmarkets',blank =True,null= True)
-    cumgain = models.ForeignKey(CumulativeGain,on_delete=models.CASCADE,related_name='gains',blank =True,null= True)
-
-    resu = models.IntegerField(blank =True,null= True)
-
-    return_per =models.FloatField(blank =True,null= True)
-    gain = models.DecimalField(('gain'), max_digits=100, decimal_places=5,blank =True,null= True)
-
-    closed = models.BooleanField(blank =True,null= True)
-    active = models.BooleanField(blank =True,null= True)
-
-    @property
-    def determine_result_algo(self):  # fix this
-        try:
-            B = self.market.black_bet_amount
-            W = self.market.white_bet_amount
-            
-            if self.market.place_stake_is_active == False:
-                if B == W:
-                    return randint(1,2) # fix me to get random 1 or 2
-                if B > W :
-                    return 2
-                return 1
-
-        except Exception as e:
-            return  e
-
-    @staticmethod
-    def per_return_relief(all_gain,userstake,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
-        try:
-            return_amount = (per_to_return/100)*all_gain
-            per_user_return = (userstake/all_lose_stake)*return_amount
-            return per_user_return
-
-        except Exception as e:
-            return 0
-
-    @staticmethod
-    def update_reference_account(user_id,ref_credit,trans_type):
-        print(user_id,ref_credit,trans_type)
-
-        try:
-            this_user = User.objects.get(id = user_id)
-         
-            this_user_ReferCode = this_user.daru_code # first name is used as referer code
-            if not this_user_ReferCode:
-                this_user_ReferCode = 'ADMIN'  # settings
-            
-            referer_users = User.objects.filter(my_code = this_user_ReferCode)
-            for referer in referer_users:
-                print(referer,'RefererUser')
-
-                refer_credit_create(referer,this_user.username,ref_credit) #F4
-                # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
-
-        except Exception as e:
-            print('update_reference_account ERROR',e)
-
-    @staticmethod
-    def update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type):
-        try: 
-            update_account_bal_of(user_id,new_bal) #F3       
-            log_record(user_id,rem_credit,trans_type) #F1
-        except Exception as e:
-
-            print('update_acc_n_bal_record ERROR',e)
-
-    def update_winner_losser(self,this_user_stak_obj):
-        user_id = this_user_stak_obj.user_id
-        user_current_account_bal =current_account_bal_of(user_id)
-
-        #WINNER 
-        if this_user_stak_obj.marketselection_id == self.resu:
-            amount = float(this_user_stak_obj.amount)
-            odds = float(this_user_stak_obj.marketselection.odds)
-            per_for_referer = set_up.refer_per  # Settings
-            print(f'REFFC:{per_for_referer}')
-            win_amount = amount *odds
-
-            if per_for_referer > 100: # Enforce 0<=p<=100 TODO
-                per_for_referer = 0
-
-            ref_credit = (per_for_referer/100)*win_amount
-            rem_credit = win_amount -ref_credit
-
-            new_bal = user_current_account_bal + rem_credit
-
-            trans_type = 'WIN' 
-            self.update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type)
-
-            if ref_credit > 0:
-                trans_type = 'R-WIN'
-                self.update_reference_account(user_id,ref_credit,trans_type)
-
-        #LOSER
-        elif this_user_stak_obj.marketselection_id != self.resu:
-            all_gain = float(self.market.offset) # FIX
-            userstake =  float(this_user_stak_obj.amount)
- 
-            if self.resu == 2:
-                all_lose_stake = float(self.market.black_bet_amount)
-            elif self.resu ==1:
-                all_lose_stake = float(self.market.white_bet_amount)
-
-            per_to_return = float(self.market.per_retun) # 
-            relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
-
-            new_bal = user_current_account_bal + relief_amount
-            amount= round(relief_amount,1)
-            if amount > 0:
-                trans_type = 'ROL'
-                self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)
-        
-    def account_update(self):
-            try:
-                all_stakes_in_this_market = Stake.objects.filter(market = self.market).all()#R
-
-                for user_stak in all_stakes_in_this_market: 
-                    # user_stake is object to access below
-                    # :user_stak.amount                # BET AMOUNT
-                    # :user_stak..marketselection.odds # ODDS
-
-                    self.update_winner_losser(user_stak) ###M
-    
-            # [self.update_winner_losser(user_stak,user_current_account_bal) for _stake in all_stakes_in_this_market for user_stak in all_stakes_of_this_user ]                                                         
-                self.closed= True
-
-            except Exception as e:
-                print('RESULTACCOUNT:',e)
-                return
-       
-    def update_db_records(self):
-        try:
-            set_per_return = self.market.per_retun
-            self.return_per =set_per_return
-            self.gain = self.market.gain_after_relief
-            WheelSpin.objects.filter(id = self.market_id).update(receive_results =True) # self.market.update(closed=True) or self.market.closed=True DOESN'T WORK
-            
-        except Exception as e:
-            print('update_db_records ERROR:',e)
-            pass
-
-    def save(self, *args, **kwargs):  
-        ''' Overrride internal model save method to update balance on staking  '''
-        if not self.resu:
-            self.resu = self.determine_result_algo
-
-        if  self.resu and not self.closed:
-            self.update_db_records()
-            self.account_update()
-
-            super().save(*args, **kwargs) #save only if 
-
-        else:
-            return
-
-
 class Stake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_istakes',blank =True,null=True)
-    market = models.ForeignKey(Market, on_delete=models.CASCADE,related_name='market_instnces',blank =True,null=True)
+    market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='market_instnces',blank =True,null=True)
     marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='imarketselections',blank =True,null=True)#
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     current_bal = models.FloatField(max_length=10,default=0 )#R
     stake_placed = models.BooleanField(blank =True,null=True)#
-    has_record = models.BooleanField(blank =True,null=True) #
+    has_record = models.BooleanField(blank=True,null=True) #
+    has_market = models.BooleanField(default=False, blank=True,null=True)
     bet_on_real_account = models.BooleanField(default=False)
-    outcome_received= models.BooleanField(default=False)
+    outcome_received = models.BooleanField(default=False)
 
     def __str__(self):
         return f'stake:{self.amount} by:{self.user}'
  
-    # @property
-    # def status(self):
-    #     return self.update_account_on_win_lose()
-
-    # def update_account_on_win_lose(self):
-    #     selection = self.marketselection_id
-    #     try:
-    #         results = Result.objects.get(market_id = self.market_id).resu  #self.marketinstant.determine_result_algo
-    #     except:
-    #         results = ''
-    #     resu = ''
-    #     try:
-    #         if not results:
-    #             resu = 'PENDING'               
-    #         elif selection == results:
-    #             resu= 'YOU WIN'
-    #         else:
-    #             resu = 'YOU LOSE'
-    #         return resu
-            
-    #     except Exception as e:
-    #         print('GERR',e)
 
     @property
     def this_user_has_cash_to_bet(self):
@@ -517,8 +273,7 @@ class Stake (TimeStamp):
                 except Exception as e:
                     return e
         else:
-            return False
-        
+            return False        
 
     def deduct_amount_from_this_user_account(self):
         if not self.bet_on_real_account:
@@ -528,10 +283,26 @@ class Stake (TimeStamp):
             new_bal = current_account_bal_of(self.user_id) - float(self.amount)
             self.current_bal=new_bal
             update_account_bal_of(self.user_id,new_bal)# F3
-            
+
+    def bet_status_on_market(self):
+        if self.market is not None:
+            try:
+                if self.marketselection == OutCome.objects.get(market=self.market).determine_result_algo():
+                    return 'WIN'
+                else:
+                    return "Lose"
+            except:
+                return 0        
+        else:
+            return'ISSUE'
+
     def bet_status(self):
         try:
-            return OutCome.objects.get(stake_id=self.id).win_status
+            try:
+                return OutCome.objects.get(stake_id=self.id).win_status
+            except:
+                return self.bet_status_on_market() 
+                   
         except  Exception as e:
             print(f'daru_STATUS ERROR:{e}')
             return 'pending'
@@ -543,6 +314,7 @@ class Stake (TimeStamp):
 
     def save(self, *args, **kwargs):
         ''' Bet could only be registered if user got enoug real or trial balance '''
+
         if not self.pk:
             if self.this_user_has_cash_to_bet: #then
                 self.deduct_amount_from_this_user_account() 
@@ -557,19 +329,27 @@ class Stake (TimeStamp):
                     self.has_record = True
             except:
                 pass
+            if self.market is not None:
+                self.has_market =True
             super().save(*args, **kwargs) # create a db record
+            
 class CashStore(models.Model):
     give_away =  models.DecimalField(('give_away'), max_digits=12, decimal_places=2, default=0)
     to_keep =  models.DecimalField(('to_keep'), max_digits=12, decimal_places=2, default=0)
 
 
 class OutCome(TimeStamp):
-    market  = models.OneToOneField(Market,on_delete=models.CASCADE,related_name='marketoutcomess',blank =True,null= True)
+    market  = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='marketoutcomess',blank =True,null= True)
     stake  = models.OneToOneField(Stake,on_delete=models.CASCADE,related_name='istakes',blank =True,null= True)
     cashstore =models.ForeignKey(CashStore,on_delete=models.CASCADE,related_name='cashstores',blank =True,null= True)
     result = models.IntegerField(blank =True,null= True)
     pointer = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(default = False,blank =True,null= True)
+
+    cumgain = models.ForeignKey(CumulativeGain,on_delete=models.CASCADE,related_name='gains',blank =True,null= True)
+    return_per =models.FloatField(blank =True,null= True)
+    gain = models.DecimalField(('gain'), max_digits=100, decimal_places=5,blank =True,null= True)
+    active = models.BooleanField(blank =True,null= True)
 
     @property
     def current_update_give_away(self):
@@ -607,19 +387,18 @@ class OutCome(TimeStamp):
                 return e          
         else:
             try:
-                B = self.market.black_bet_amount
-                W = self.market.white_bet_amount
+                B = self.market.selection_bet_amount[0]
+                W = self.market.selection_bet_amount[1]
             
-                if self.market.place_stake_is_active == False:
-                    if B == W:
-                        return randint(1,2) # fix me to get random 1 or 2
-                    if B > W :
-                        return 2
-                    return 1
+                # if self.market.place_stake_is_active == False:
+                if B == W:
+                    return randint(1,2) # fix me to get random 1 or 2
+                if B > W :
+                    return 2
+                return 1
 
             except Exception as e:
                 return  e
-
 
     @staticmethod
     def result_to_segment(results = None, segment=29):
@@ -672,7 +451,132 @@ class OutCome(TimeStamp):
     @classmethod    
     def open_for_spin(cls,user_id):
         return cls.objects.filter(user_id=user_id,closed=False)
+#DARU
 
+    @staticmethod
+    def per_return_relief(all_gain,userstake,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
+        try:
+            return_amount = (per_to_return/100)*all_gain
+            per_user_return = (userstake/all_lose_stake)*return_amount
+            return per_user_return
+
+        except Exception as e:
+            return 0
+
+    @staticmethod
+    def update_reference_account(user_id,ref_credit,trans_type):
+        print(user_id,ref_credit,trans_type)
+        try:
+            this_user = User.objects.get(id = user_id)
+         
+            this_user_ReferCode = this_user.daru_code # first name is used as referer code
+            if not this_user_ReferCode:              
+                this_user_ReferCode =User.objects.get(id=1).my_code  # settings
+            
+            referer_users = User.objects.filter(my_code = this_user_ReferCode)
+            for referer in referer_users:
+                print(referer,'RefererUser')
+                refer_credit_create(referer,this_user.username,ref_credit) #F4
+                # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
+
+        except Exception as e:
+            print('update_reference_account ERROR',e)
+
+    @staticmethod
+    def update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type):
+        try: 
+            update_account_bal_of(user_id,new_bal) #F3       
+            log_record(user_id,rem_credit,trans_type) #F1
+        except Exception as e:
+
+            print('update_acc_n_bal_record ERROR',e)
+
+    @staticmethod
+    def update_acc_n_trialbal_record(user_id,new_bal,rem_credit,trans_type):
+        try: 
+            update_account_trialbal_of(user_id,new_bal) #F3       
+            log_record(user_id,rem_credit,trans_type) #F1
+        except Exception as e:
+
+            print('update_acc_n_trialbal_record ERROR',e)
+
+    def update_winner_losser(self,this_user_stak_obj):
+        user_id = this_user_stak_obj.user_id
+        user_current_account_bal =current_account_bal_of(user_id)
+        user_current_account_trialbal =current_account_trialbal_of(user_id)
+
+        #WINNER 
+        if this_user_stak_obj.marketselection_id == self.result:
+            amount = float(this_user_stak_obj.amount)
+            odds = float(this_user_stak_obj.marketselection.odds)
+            per_for_referer = set_up.refer_per  # Settings
+            print(f'REFFC:{per_for_referer}')
+            win_amount = amount *odds
+
+            if per_for_referer > 100: # Enforce 0<=p<=100 TODO
+                per_for_referer = 0
+
+            ref_credit = (per_for_referer/100)*win_amount
+            rem_credit = win_amount -ref_credit           
+
+            trans_type = 'WIN' 
+            if this_user_stak_obj.bet_on_real_account==False:
+                new_bal = user_current_account_trialbal + win_amount
+                self.update_acc_n_trialbal_record(user_id,new_bal,win_amount,trans_type)
+
+            elif this_user_stak_obj.bet_on_real_account==True:
+                new_bal = user_current_account_bal + rem_credit
+                self.update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type)   
+
+            if ref_credit > 0:
+                trans_type = 'R-WIN'
+                self.update_reference_account(user_id,ref_credit,trans_type)
+
+        #LOSER
+        elif this_user_stak_obj.marketselection_id != self.result:
+            all_gain = float(self.market.offset) # FIX
+            userstake =  float(this_user_stak_obj.amount)
+ 
+            if self.result == 2:
+                all_lose_stake = float(self.market.selection_bet_amount[0])
+            elif self.result ==1:
+                all_lose_stake = float(self.market.selection_bet_amount[1])
+
+            per_to_return = float(self.market.per_retun) # 
+            relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
+
+            new_bal = user_current_account_bal + relief_amount
+            amount= round(relief_amount,1)
+            if amount > 0:
+                trans_type = 'ROL'
+                self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)
+        
+    def account_update(self):
+            try:
+                all_stakes_in_this_market = Stake.objects.filter(market = self.market).all()#R
+
+                for user_stak in all_stakes_in_this_market: 
+                    # user_stake is object to access below
+                    # :user_stak.amount                # BET AMOUNT
+                    # :user_stak..marketselection.odds # ODDS
+                    self.update_winner_losser(user_stak) ###M    
+            # [self.update_winner_losser(user_stak,user_current_account_bal) for _stake in all_stakes_in_this_market for user_stak in all_stakes_of_this_user ]                                                         
+                self.closed= True
+
+            except Exception as e:
+                print('RESULTACCOUNT:',e)
+                return
+       
+    def update_db_records(self):
+        try:
+            set_per_return = self.market.per_retun
+            self.return_per =set_per_return
+            self.gain = self.market.gain_after_relief
+            WheelSpin.objects.filter(id = self.market_id).update(receive_results =True) # self.market.update(closed=True) or self.market.closed=True DOESN'T WORK
+            
+        except Exception as e:
+            print('update_db_records ERROR:',e)
+            pass
 
     def save(self, *args, **kwargs):
         if not self.pk and self.market is None :
@@ -687,8 +591,7 @@ class OutCome(TimeStamp):
                 else:
                     if self.determine_result_algo ==1:
                         self.update_user_trial_account()
-                self.pointer = self.segment
-   
+                self.pointer = self.segment                   
                 super().save(*args, **kwargs)
                 
             except Exception as e:
@@ -696,11 +599,12 @@ class OutCome(TimeStamp):
                 return  
         else:
             if not self.closed:
-                if self.market.place_stake_is_active == False:
-                    self.result = self.determine_result_algo
-                    self.pointer = self.segment
-                    self.closed =True
-
-                    super().save(*args, **kwargs)
+                # if self.market.place_stake_is_active == False:
+                self.result = self.determine_result_algo#A
+                self.pointer = self.segment 
+                self.update_db_records()#
+                self.account_update()#
+                self.closed =True
+                super().save(*args, **kwargs)
             else:
                 return
