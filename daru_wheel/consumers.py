@@ -3,6 +3,7 @@ from channels.generic.websocket import (
     AsyncWebsocketConsumer, WebsocketConsumer)
 from asgiref.sync import async_to_sync
 from random import randint
+from .models import OutCome
 
 
 class SpinConsumer(AsyncWebsocketConsumer):
@@ -134,8 +135,6 @@ class IspinConsumer(AsyncWebsocketConsumer):
 
 
 
-
-from .models import IoutCome
 class QspinConsumer(WebsocketConsumer):
     def connect(self):
         self.user =self.scope["user"]

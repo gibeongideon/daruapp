@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 
 class User(AbstractUser):
     """Add three fields to existing Django User model.
       : daru_code  and my_code for reference
     """
-    my_code = models.CharField(max_length=150, blank=True, null=True)
+    my_code = models.CharField(max_length=150,unique=True,null=True)
     daru_code = models.CharField(max_length=150, blank=True, null=True)
     phone_number = models.CharField(max_length=150, blank=True, null=True)
     active = models.BooleanField(default=True)
@@ -32,7 +33,7 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.my_code = 'DA' + str(self.username).upper()
+            self.my_code = str(uuid.uuid4()).upper()[:3]+'D'+str(self.username[-3:]).upper()
             self.phone_number = self.format_mobile_no(self.username)
 
         super(User, self).save(*args, **kwargs)

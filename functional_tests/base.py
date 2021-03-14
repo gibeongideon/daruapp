@@ -50,7 +50,7 @@ class FunctionalTestCase(StaticLiveServerTestCase):
 
     def setUp(self):
 
-        self.live_server_url = self.live_server_url  #get_staging_server()
+        self.live_server_url = get_staging_server()
         # if not self.live_server_url:
         #     pytest.exit('Now running functional tests in only possible '
         #                 'with staging server')
