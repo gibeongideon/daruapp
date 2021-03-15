@@ -83,18 +83,24 @@ class StakeTestCase(TestCase):
 
     def test_store_bank_mat(self):
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000) #REAL
-        Stake.objects.create(user=self.user, amount=1000) #TRIAL
+        stake1=Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000) #REAL
+        OutCome.objects.create(stake_id=stake1.id)
+        stake2 = Stake.objects.create(user=self.user, amount=1000) #TRIAL
+        OutCome.objects.create(stake_id=stake2.id)
      
         self.assertEqual(current_account_bal_of(self.user), 9000)
         self.assertEqual(current_account_trialbal_of(self.user), 49000)
+        
         
         self.assertEqual(CashStore.objects.get(id=1).give_away, 1000)
 
         #______________________________________________
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)  #REAL
-        Stake.objects.create(user=self.user,bet_on_real_account=False, amount=2000) # TRIAL
+        stake=Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)  #REAL
+        OutCome.objects.create(stake_id=stake.id)
+        stake =Stake.objects.create(user=self.user,bet_on_real_account=False, amount=2000) # TRIAL
+        OutCome.objects.create(stake_id=stake.id)
+
 
         self.assertEqual(current_account_bal_of(self.user), 8000)
         self.assertEqual(current_account_trialbal_of(self.user), 47000)
@@ -103,8 +109,10 @@ class StakeTestCase(TestCase):
 
         #_____________________________________________________
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)
-        Stake.objects.create(user=self.user,bet_on_real_account=False, amount=5000)
+        stake =Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)
+        OutCome.objects.create(stake_id=stake.id)
+        stake=Stake.objects.create(user=self.user,bet_on_real_account=False, amount=5000)
+        OutCome.objects.create(stake_id=stake.id)
 
         self.assertEqual(current_account_bal_of(self.user), 7000)
         self.assertEqual(current_account_trialbal_of(self.user), 42000)
@@ -113,7 +121,8 @@ class StakeTestCase(TestCase):
 
         #_____________________________________________
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)
+        stake =Stake.objects.create(user=self.user, bet_on_real_account=True, amount=1000)
+        OutCome.objects.create(stake_id=stake.id)
         Stake.objects.create(user=self.user, amount=1000)
    
 
@@ -123,17 +132,20 @@ class StakeTestCase(TestCase):
         self.assertEqual(CashStore.objects.get(id=1).give_away, 2000)   
         #_______________________________________________________________  
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=100)
+        stake =Stake.objects.create(user=self.user,bet_on_real_account=True, amount=100)
+        OutCome.objects.create(stake_id=stake.id)
 
         self.assertEqual(CashStore.objects.get(id=1).give_away, 1900)
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=500)
+        stake =Stake.objects.create(user=self.user,bet_on_real_account=True, amount=500)
+        OutCome.objects.create(stake_id=stake.id)
 
         self.assertEqual(CashStore.objects.get(id=1).give_away, 1400)
 
         #________________________________________________
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1100)
+        stake =Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1100)
+        OutCome.objects.create(stake_id=stake.id)
 
         self.assertEqual(current_account_bal_of(self.user), 7500)
         self.assertEqual(current_account_trialbal_of(self.user), 41000)
@@ -153,10 +165,13 @@ class StakeTestCase(TestCase):
 
         self.assertEqual(OutCome.objects.count(), 0)
 
-        Stake.objects.create(
+
+        stake=Stake.objects.create(
             user=self.user,
             bet_on_real_account=False,
             amount=100)
+
+        OutCome.objects.create(stake_id=stake.id)    
             
         self.assertEqual(OutCome.objects.count(), 1)
 

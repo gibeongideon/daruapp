@@ -27,7 +27,7 @@ SECRET_KEY = '2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost','0.0.0.0', '.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'mpesa_api.util',
     'rest_framework',
     # 'rest_framework.authtoken',
+    'cash_trans'
 ]
 
 MIDDLEWARE = [

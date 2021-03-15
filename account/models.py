@@ -324,8 +324,6 @@ class CashDeposit(TimeStamp):
                     pass        
 
 
-
-
                 try:
                     if not self.has_record:
                         log_record(self.user_id,self.amount,'Shop Deposit')

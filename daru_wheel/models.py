@@ -9,7 +9,7 @@ try:
     from account.models import (
         update_account_bal_of,
         log_record, refer_credit_create)
-except ImportError as e:
+except ImportError:
     pass
 
 from django.contrib.auth import get_user_model
@@ -31,11 +31,11 @@ def current_account_trialbal_of(user_id): #F2
     except Exception as e:
         return e
 
-def update_account_trialbal_of(user_id,new_bal): #F3
+def update_account_trialbal_of(user_id, new_bal): #F3
     from account.models import Account
     try:
         if new_bal >= 0:
-            Account.objects.filter(user_id =user_id).update(trial_balance= new_bal)
+            Account.objects.filter(user_id =user_id).update(trial_balance=new_bal)
         else:
             log_record(user_id,0,'Account Error') # REMOVE
     except Exception as e:
@@ -248,7 +248,9 @@ class Stake (TimeStamp):
     has_record = models.BooleanField(blank=True,null=True) #
     has_market = models.BooleanField(default=False, blank=True,null=True)
     bet_on_real_account = models.BooleanField(default=False)
-    outcome_received = models.BooleanField(default=False)
+    outcome_received = models.BooleanField(default=False, blank=True,null=True)
+    spinned = models.BooleanField(default=False, blank=True,null=True)
+    # show_user =  models.BooleanField(default=False, blank=True,null=True)
 
     def __str__(self):
         return f'stake:{self.amount} by:{self.user}'
@@ -288,11 +290,11 @@ class Stake (TimeStamp):
         if self.market is not None:
             try:
                 if self.marketselection == OutCome.objects.get(market=self.market).determine_result_algo():
-                    return 'WIN'
+                    return 'Win'
                 else:
                     return "Lose"
             except:
-                return 0        
+                return 'Pending'        
         else:
             return'ISSUE'
 
@@ -301,15 +303,21 @@ class Stake (TimeStamp):
             try:
                 return OutCome.objects.get(stake_id=self.id).win_status
             except:
-                return self.bet_status_on_market() 
+                return 'Pending' 
                    
         except  Exception as e:
             print(f'daru_STATUS ERROR:{e}')
             return 'pending'
 
     @classmethod        
-    def spins(cls,user_id):
-        return cls.objects.filter(user_id=user_id,outcome_received=false)  
+    def unspinned(cls,user_id):
+        return len(cls.objects.filter(user_id=user_id,spinned=False))  
+
+    @property
+    def active_spins(self):
+        return self.unspinned(self.user.id)
+        # pass
+
 
 
     def save(self, *args, **kwargs):
@@ -392,7 +400,7 @@ class OutCome(TimeStamp):
             
                 # if self.market.place_stake_is_active == False:
                 if B == W:
-                    return randint(1,2) # fix me to get random 1 or 2
+                    return 2#randint(1,2) # fix me to get random 1 or 2
                 if B > W :
                     return 2
                 return 1
@@ -404,15 +412,33 @@ class OutCome(TimeStamp):
     def result_to_segment(results = None, segment=29):
         from random import randint, randrange
         if results is None:
+            # print('Results is NONE')
             results = randint(1,2)
         if results ==1:
             return randrange(1,segment,2) # odd no b/w 1 to segment(29)
         else:
             return randrange(2,segment,2) # even no b/w 2 to segment(29)
-            
+
+    def selection(self):
+        if self.stake is not None:
+            return self.stake.marketselection.id
+        else:
+            return None    
+
+    @property
+    def isegment(self):
+        # if self.stake is not None:
+        #     print('SE1')
+        return self.result_to_segment(results = self.winner_losser)# ,segment = 29) from settings
+
+
     @property
     def segment(self):
-        return self.result_to_segment(results = self.result)# ,segment = 29) from settings
+        # if self.stake is not None:
+        #     print('SE1')
+        #     return self.result_to_segment(results = self.winner_losser)# ,segment = 29) from settings
+
+        return self.result_to_segment(results = self.result)    
 
     def update_user_trial_account(self):
         this_user= self.stake.user_id
@@ -441,7 +467,29 @@ class OutCome(TimeStamp):
             new_bal = current_bal + float(self.stake.amount)
             print(new_bal)
             self.update_give_away(new_bal)
-       
+
+
+    @property
+    def winner_losser(self):
+        # if self. is  not None:
+        if self.stake.marketselection.id ==1:
+            # return self.result
+            print('a')
+            if self.determine_result_algo==1 :
+                print('a1')
+                return 2
+            print('a2')    
+            return 1
+
+        if self.stake.marketselection.id ==2:
+            # return self.result
+            print('b')
+            if self.determine_result_algo==1 :
+                print('b1')
+                return 1
+            print('b2')    
+            return 2
+ 
     @property
     def win_status(self):
         if self.result==1:
@@ -583,14 +631,20 @@ class OutCome(TimeStamp):
             try:
                 mstore,_ = CashStore.objects.get_or_create(id =1)
                 self.cashstore = mstore
+                
+                # if self.stake is not None:
+                #     self.result = self.winner_losser
+                # else:
                 self.result = self.determine_result_algo
+
                 if self.real_bet:
                     if self.result ==1:
                         self.update_user_real_account()
                     self.update_give_away_bank()
                 else:
-                    if self.determine_result_algo ==1:
+                    if self.result ==1:
                         self.update_user_trial_account()
+                        
                 self.pointer = self.segment                   
                 super().save(*args, **kwargs)
                 
@@ -607,4 +661,4 @@ class OutCome(TimeStamp):
                 self.closed =True
                 super().save(*args, **kwargs)
             else:
-                return
+                return    2

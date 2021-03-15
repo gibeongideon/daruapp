@@ -54,21 +54,6 @@ class WheelSpinAdmin(admin.ModelAdmin):
 admin.site.register(WheelSpin, WheelSpinAdmin)
 
 
-# class StakeAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'id', 'user', 'market', 'marketselection', 'current_bal',
-#         'amount', 'stake_placed', 'has_record',
-#         'update_account_on_win_lose', 'created_at', 'updated_at')
-
-#     list_display_links = ('user',)
-#     search_fields = ('user',)
-#     # list_editable = ('outcome',)
-#     list_filter =('user', 'market', 'marketselection')
-#     readonly_fields = ('current_bal', 'market')
-
-
-# admin.site.register(Stake, StakeAdmin)
-
 
 class CumulativeGainAdmin(admin.ModelAdmin):
     list_display = ('id', 'gain', 'gainovertime', 'created_at', 'updated_at')
@@ -79,23 +64,11 @@ class CumulativeGainAdmin(admin.ModelAdmin):
 admin.site.register(CumulativeGain, CumulativeGainAdmin) 
 
 
-# class ResultAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'id', 'closed', 'market', 'resu', 'gain',
-#         'return_per', 'created_at', 'updated_at',)
-#     list_display_links = ('id',)
-
-
-# admin.site.register(Result, ResultAdmin)
-
-
-
-
 class StakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user','market', 'marketselection',
         'amount', 'bet_on_real_account','this_user_has_cash_to_bet',
-        'stake_placed', 'has_record','bet_status',
+        'stake_placed', 'has_record','bet_status','active_spins',
         'created_at', 'updated_at')
 
     list_display_links = ('user',)
@@ -110,7 +83,7 @@ admin.site.register(Stake, StakeAdmin)
 class OutComeAdmin(admin.ModelAdmin):
     list_display = (
         'id','market', 'stake', 'closed','give_away', 'result', 'pointer',
-        'determine_result_algo', 'segment','real_bet', 'created_at', 'updated_at')
+        'determine_result_algo', 'segment','selection','real_bet', 'created_at', 'updated_at')
 
     list_display_links = ('id',)
     readonly_fields = ('closed', 'result', 'pointer')
