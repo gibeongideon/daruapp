@@ -34,9 +34,9 @@ def pages(request):
 
 
 @login_required(login_url="/user/login")
-def icons(request):
+def deposit_withraw(request):
 
-    return render(request, "dashboard/ui-icons.html")
+    return render(request, "dashboard/deposit_withraw.html")
 
 
 @login_required(login_url="/user/login")

@@ -69,17 +69,20 @@ def on_results_save(sender, instance, **kwargs):
 #         pass
 
 
-@receiver(post_save, sender=Stake)
-def create_ioutcome_on_istake_save(sender, instance, **kwargs):
+# @receiver(post_save, sender=Stake)
+# def create_ioutcome_on_istake_save(sender, instance, **kwargs):
     
-    print(f'Creatin Outcome for Outcome id {instance.id}')
-    try:
-        print(f'instance.market:{instance.market} ')
-        if instance.market is None:
-            OutCome.objects.create(stake_id=instance.id)
-    except Exception as e:
-        print('NEWWWWSinal', e)
-        pass    
+    
+#     try:
+#         if instance.market is None:
+#             print(f'Creatin Outcome for Outcome id {instance.id} of market{instance.market} ')
+#             OutCome.objects.create(stake_id=instance.id)
+#         else:
+#             print('No Out come created.ISPIN')
+#             pass    
+#     except Exception as e:
+#         print('NEWWWWSinal', e)
+#         pass    
 
 # @receiver(post_save, sender=IoutCome)
 # def on_oucome_save(sender, instance, **kwargs):

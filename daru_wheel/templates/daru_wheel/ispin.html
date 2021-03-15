@@ -39,15 +39,32 @@
         <div class="text-info"> more spins</div>
       </button>
 
-      <button class="btn big-login" id="spin_button" ><i class="tim-icons icon-refresh-01" > {{8}}</i>
+      <button class="btn big-login" id="spin_button" ><i class="tim-icons icon-refresh-01" > {{spins}}</i>
         <span class="d-lg-none d-md-block">SPIN NOW</span>
         <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">SPIN NOW</span>
       </button>     
      
     </div>
 
+    <button class="btn btn-link" id="search-button" data-toggle="modal" data-target="#searchModal"><i class="tim-icons icon-zoom-split" ></i>
+      <span class="d-lg-none d-md-block">Stake</span>
+    </button>
+
 
     <div class="card-body">
+
+      <div class="modal modal-search fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- <form action="/create_post/" method="POST" id="post-form">
         {% csrf_token %}
@@ -161,18 +178,18 @@
                 </div>    
               </div>
             </div>
-    
             <div class="col-lg-4">
               <div class="text-info">Amount to bet ( min:5 )</div>
               
               <div class="card card-chart">
     
-                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="search-bar input-group">
                   <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
                 </div>
     
               </div>
             </div>
+
     
             <div class="col-lg-4">
     
@@ -482,16 +499,6 @@
         }
         }
 
-        function startSpinX(){
-        theWheel.stopAnimation(false);
-        theWheel.rotationAngle = 0;
-        segmentNumber = 13;
-        let stopAt = theWheel.getRandomForSegment(segmentNumber);
-        theWheel.animation.stopAngle = stopAt;
-
-        theWheel.startAnimation();
-        
-        }
 </script>
 
 

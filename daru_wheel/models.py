@@ -9,7 +9,7 @@ try:
     from account.models import (
         update_account_bal_of,
         log_record, refer_credit_create)
-except ImportError as e:
+except ImportError:
     pass
 
 from django.contrib.auth import get_user_model
@@ -248,7 +248,9 @@ class Stake (TimeStamp):
     has_record = models.BooleanField(blank=True,null=True) #
     has_market = models.BooleanField(default=False, blank=True,null=True)
     bet_on_real_account = models.BooleanField(default=False)
-    outcome_received = models.BooleanField(default=False)
+    outcome_received = models.BooleanField(default=False, blank=True,null=True)
+    spinned = models.BooleanField(default=False, blank=True,null=True)
+    # show_user =  models.BooleanField(default=False, blank=True,null=True)
 
     def __str__(self):
         return f'stake:{self.amount} by:{self.user}'
@@ -288,11 +290,11 @@ class Stake (TimeStamp):
         if self.market is not None:
             try:
                 if self.marketselection == OutCome.objects.get(market=self.market).determine_result_algo():
-                    return 'WIN'
+                    return 'Win'
                 else:
                     return "Lose"
             except:
-                return 0        
+                return 'Pending'        
         else:
             return'ISSUE'
 
@@ -301,15 +303,21 @@ class Stake (TimeStamp):
             try:
                 return OutCome.objects.get(stake_id=self.id).win_status
             except:
-                return self.bet_status_on_market() 
+                return 'Pending' 
                    
         except  Exception as e:
             print(f'daru_STATUS ERROR:{e}')
             return 'pending'
 
     @classmethod        
-    def spins(cls,user_id):
-        return cls.objects.filter(user_id=user_id,outcome_received=false)  
+    def unspinned(cls,user_id):
+        return len(cls.objects.filter(user_id=user_id,spinned=False))  
+
+    @property
+    def active_spins(self):
+        return self.unspinned(self.user.id)
+        # pass
+
 
 
     def save(self, *args, **kwargs):
@@ -392,7 +400,7 @@ class OutCome(TimeStamp):
             
                 # if self.market.place_stake_is_active == False:
                 if B == W:
-                    return randint(1,2) # fix me to get random 1 or 2
+                    return 2#randint(1,2) # fix me to get random 1 or 2
                 if B > W :
                     return 2
                 return 1
@@ -589,7 +597,7 @@ class OutCome(TimeStamp):
                         self.update_user_real_account()
                     self.update_give_away_bank()
                 else:
-                    if self.determine_result_algo ==1:
+                    if self.result ==1:
                         self.update_user_trial_account()
                 self.pointer = self.segment                   
                 super().save(*args, **kwargs)
@@ -608,3 +616,10 @@ class OutCome(TimeStamp):
                 super().save(*args, **kwargs)
             else:
                 return
+
+
+class Ispin(models.Model):
+    stake  = models.OneToOneField(Stake,on_delete=models.CASCADE,related_name='stake_spins',blank =True,null= True)
+    pointer = models.IntegerField(blank =True,null= True)
+
+    

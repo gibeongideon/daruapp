@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Stake, WheelSpin, CumulativeGain, Selection,
     OutCome, Selection, DaruWheelSetting,
-    CashStore, Market)
+    CashStore, Market, Ispin)
 
 class MarketAdmin(admin.ModelAdmin):
     list_display = ('id','name', 'this_market_selection_id_list',
@@ -95,7 +95,7 @@ class StakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user','market', 'marketselection',
         'amount', 'bet_on_real_account','this_user_has_cash_to_bet',
-        'stake_placed', 'has_record','bet_status',
+        'stake_placed', 'has_record','bet_status','active_spins',
         'created_at', 'updated_at')
 
     list_display_links = ('user',)
@@ -126,3 +126,10 @@ class CashStoreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CashStore, CashStoreAdmin)
+
+class IspinAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pointer',)
+
+    list_display_links = ('id',)
+
+admin.site.register(Ispin, IspinAdmin)
