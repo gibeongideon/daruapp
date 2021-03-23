@@ -45,7 +45,7 @@ def on_results_save(sender, instance, **kwargs):
                 if created:
                     pass
             except Exception as ce:
-                print(ce)
+                print('CUMsinal',ce)
                 pass
 
 

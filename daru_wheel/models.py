@@ -459,13 +459,13 @@ class OutCome(TimeStamp):
         if self.determine_result_algo == 1:
             current_bal = self.current_update_give_away
             new_bal = current_bal - float(self.stake.amount) 
-            print(new_bal)
+            # print(new_bal)
             self.update_give_away(new_bal)
 
         else:
             current_bal = self.current_update_give_away
             new_bal = current_bal + float(self.stake.amount)
-            print(new_bal)
+            # print(new_bal)
             self.update_give_away(new_bal)
 
  
@@ -492,7 +492,7 @@ class OutCome(TimeStamp):
 
     @staticmethod
     def update_reference_account(user_id,ref_credit,trans_type):
-        print(user_id,ref_credit,trans_type)
+        # print(user_id,ref_credit,trans_type)
         try:
             this_user = User.objects.get(id = user_id)
          
@@ -502,12 +502,13 @@ class OutCome(TimeStamp):
             
             referer_users = User.objects.filter(my_code = this_user_ReferCode)
             for referer in referer_users:
-                print(referer,'RefererUser')
+                # print(referer,'RefererUser')
                 refer_credit_create(referer,this_user.username,ref_credit) #F4
                 # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
 
         except Exception as e:
-            print('update_reference_account ERROR',e)
+            pass
+            # print('update_reference_account ERROR',e)
 
     @staticmethod
     def update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type):
@@ -537,7 +538,7 @@ class OutCome(TimeStamp):
             amount = float(this_user_stak_obj.amount)
             odds = float(this_user_stak_obj.marketselection.odds)
             per_for_referer = set_up.refer_per  # Settings
-            print(f'REFFC:{per_for_referer}')
+            # print(f'REFFC:{per_for_referer}')
             win_amount = amount *odds
 
             if per_for_referer > 100: # Enforce 0<=p<=100 TODO
