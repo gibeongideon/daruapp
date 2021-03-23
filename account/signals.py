@@ -10,15 +10,15 @@ from daru_wheel.models import Stake # DD
 User = get_user_model()
 
 
-@receiver(post_save, sender= User) 
-def create_user_account(sender,instance,created, **kwargs):
+@receiver(post_save, sender=User) 
+def create_user_account(sender, instance, created, **kwargs):
     if created:
         Account.objects.update_or_create(user=instance)
-        print(f'User{instance.username} Account Created ')
+        # print(f'User{instance.username} Account Created ')#Debug
 
 
 @receiver(post_save, sender= OnlineCheckoutResponse) #TODO
-def update_account_balance_on_mpesa_deposit(sender,instance,created, **kwargs):
+def update_account_balance_on_mpesa_deposit(sender, instance, created, **kwargs):
     # if created:
     try:
         if int(instance.result_code) ==200:  ##TODO phone NO detection should be flexible enough
@@ -30,9 +30,9 @@ def update_account_balance_on_mpesa_deposit(sender,instance,created, **kwargs):
             
             this_user = User.objects.get(phone_number = phone_no) 
 
-            new_bal = current_account_bal_of(this_user) + float(deposited_amount) # F2 # fix unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
-            update_account_bal_of(this_user,new_bal) #F3
-            log_record(this_user.id,deposited_amount,"mpesa online deposit")
+            new_bal = current_account_bal_of(this_user) + float(deposited_amount)  # F2 # fix unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
+            update_account_bal_of(this_user, new_bal)  #F3
+            log_record(this_user.id, deposited_amount, "mpesa online deposit")
             
     except Exception as e:
         print('MPESA DEPO',e)
@@ -44,9 +44,9 @@ def update_user_withrawable_balance_onstake(sender, instance, created, **kwargs)
         
         if created and instance.bet_on_real_account is True:
             now_withrawable = float(Account.objects.get(user_id =instance.user_id).withrawable_balance)
-            print(f'now_withrawableS:{now_withrawable}')
+            # print(f'now_withrawableS:{now_withrawable}')
             added_amount = float(instance.amount)
-            print(f'added_amountS:{added_amount}')
+            # print(f'added_amountS:{added_amount}')
             total_withwawable = now_withrawable + added_amount
 
             if total_withwawable > 0:

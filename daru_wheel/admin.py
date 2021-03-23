@@ -16,11 +16,12 @@ class DaruWheelSettingAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'return_val', 'min_redeem_refer_credit',
         'refer_per', 'closed_at', 'results_at','min_bet', 'wheelspin_id',
-        'created_at', 'updated_at',)
+        'win_algo','trial_algo','created_at', 'updated_at',)
     list_display_links = ('id',)
     list_editable = (
         'return_val', 'min_redeem_refer_credit', 'refer_per',
-        'closed_at', 'results_at','min_bet', 'wheelspin_id',)
+        'win_algo','trial_algo','closed_at', 'results_at',
+        'min_bet', 'wheelspin_id',)
 
 
 admin.site.register(DaruWheelSetting, DaruWheelSettingAdmin) 

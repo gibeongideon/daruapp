@@ -18,8 +18,8 @@ admin.site.register(AccountSetting, AccountSettingAdmin)
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user_id', 'user', 'balance', 'actual_balance',
-        'withrawable_balance', 'refer_balance', 'trial_balance', 'active',
-        'created_at', 'updated_at')
+        'withrawable_balance', 'refer_balance', 'trial_balance',
+        'cum_depo', 'active','created_at', 'updated_at')
     list_display_links = ('user_id',)
     search_fields = ('user_id',)
     list_editable = ('active',)
