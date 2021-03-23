@@ -405,3 +405,17 @@ class BetLogicTest(TestCase):
             amount=600)
         #MARKET STATE
         self.assertEqual(self.spin.selection_bet_amount,[450,200]) 
+
+
+# TEST VIEWS
+
+
+
+
+
+# class DaruWeelTest(TestCase):
+
+#     def test_uses_seed_template(self):
+#         response = self.client.get('/daru_wheel/spin')
+#         print('RESSS',response)
+#         self.assertTemplateUsed(response, 'daru_wheel/ispin.html')

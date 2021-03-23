@@ -426,19 +426,19 @@ class OutCome(TimeStamp):
             return None    
 
     @property
-    def isegment(self):
-        # if self.stake is not None:
-        #     print('SE1')
-        return self.result_to_segment(results = self.winner_losser)# ,segment = 29) from settings
-
-
-    @property
     def segment(self):
-        # if self.stake is not None:
-        #     print('SE1')
-        #     return self.result_to_segment(results = self.winner_losser)# ,segment = 29) from settings
+        if self.stake is not None:
+            stak =self.stake.marketselection.id
+            if self.stake.marketselection.id ==2:
+                return self.result_to_segment(results = self.result)
+            else:
+                if self.result==1:
+                    return self.result_to_segment(results = 2)
+                else:
+                    return self.result_to_segment(results = 1)
 
-        return self.result_to_segment(results = self.result)    
+        else:
+            return self.result_to_segment(results = self.result)    
 
     def update_user_trial_account(self):
         this_user= self.stake.user_id
@@ -468,27 +468,6 @@ class OutCome(TimeStamp):
             print(new_bal)
             self.update_give_away(new_bal)
 
-
-    @property
-    def winner_losser(self):
-        # if self. is  not None:
-        if self.stake.marketselection.id ==1:
-            # return self.result
-            print('a')
-            if self.determine_result_algo==1 :
-                print('a1')
-                return 2
-            print('a2')    
-            return 1
-
-        if self.stake.marketselection.id ==2:
-            # return self.result
-            print('b')
-            if self.determine_result_algo==1 :
-                print('b1')
-                return 1
-            print('b2')    
-            return 2
  
     @property
     def win_status(self):
@@ -661,4 +640,4 @@ class OutCome(TimeStamp):
                 self.closed =True
                 super().save(*args, **kwargs)
             else:
-                return    2
+                return 
