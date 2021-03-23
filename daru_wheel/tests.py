@@ -153,13 +153,28 @@ class StakeTestCase(TestCase):
         self.assertEqual(CashStore.objects.get(id=1).give_away, 2500)  
 
     def test_create_stake_for_rit_market(self):
+        self.spin = WheelSpin.objects.create()        
+        self.market = Market.objects.get(id=1)
 
         market = WheelSpin.objects.create()
+
+        self.marketselection1, _ = Selection.objects.get_or_create(
+            id=1,
+            mrtype=self.market,
+            name='RED',
+            odds=2)
+
+        self.marketselection2, _ = Selection.objects.get_or_create(
+            id=2,
+            mrtype=self.market,
+            name='YELLOW',
+            odds=2)
+
 
 
         Stake.objects.create(
             user=self.user,
-            market=market,
+            market=self.spin,
             bet_on_real_account=False,
             amount=100)
 
@@ -168,6 +183,7 @@ class StakeTestCase(TestCase):
 
         stake=Stake.objects.create(
             user=self.user,
+            marketselection=self.marketselection1,
             bet_on_real_account=False,
             amount=100)
 
@@ -405,3 +421,17 @@ class BetLogicTest(TestCase):
             amount=600)
         #MARKET STATE
         self.assertEqual(self.spin.selection_bet_amount,[450,200]) 
+
+
+# TEST VIEWS
+
+
+
+
+
+# class DaruWeelTest(TestCase):
+
+#     def test_uses_seed_template(self):
+#         response = self.client.get('/daru_wheel/spin')
+#         print('RESSS',response)
+#         self.assertTemplateUsed(response, 'daru_wheel/ispin.html')

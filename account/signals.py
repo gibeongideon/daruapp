@@ -53,7 +53,7 @@ def update_user_withrawable_balance_onstake(sender, instance, created, **kwargs)
                 Account.objects.filter(user_id=instance.user_id).update(withrawable_balance=total_withwawable)
 
     except Exception as e:
-        print('Withrable cal err_onstake',e)
+        print('Withrable cal err_onstake', e)
 
 
 # @receiver(post_save, sender=CashWithrawal)
