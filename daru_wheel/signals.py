@@ -11,10 +11,8 @@ from time import sleep
 
 @receiver(post_save, sender=OutCome)
 def on_results_save(sender, instance, **kwargs):
-    if instance.market is not None:
-        
+    if instance.market is not None:      
         pointer_val = instance.pointer  # fix id
-        print(f'SIF mR ID:{instance.market_id} ')
         market_id = instance.market_id
     
         try:
