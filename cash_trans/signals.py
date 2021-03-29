@@ -20,11 +20,10 @@ def create_user_account(sender, instance, created, **kwargs):
             
             this_user = User.objects.get(
                 phone_number=str(instance.phone_number)) 
-
-            new_bal = current_account_bal_of(this_user.id) + float(deposited_amount)  # F2 # fix unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
-            update_account_bal_of(this_user.id, new_bal)  #F3
-
-            log_record(this_user.id, deposited_amount, "mpesa online deposit")
+            if this_user.is_staff:
+                new_bal = current_account_bal_of(this_user.id) + float(deposited_amount)  # F2 # fix unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
+                update_account_bal_of(this_user.id, new_bal)  #F3
+                log_record(this_user.id, deposited_amount, "mpesa online deposit")
             
     except Exception as e:# implement user wit tat pone does not exist error
         print('MPESA DEPO', e)

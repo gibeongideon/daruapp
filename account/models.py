@@ -39,10 +39,12 @@ class Account(TimeStamp):
 
     refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     trial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=50000)
-    active = models.BooleanField(default= True)
+
+    cum_depo = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    active = models.BooleanField(default=True)
 
     def __str__(self): 
-        return 'Account No: {0} Balance: {1}'.format(self.user,self.balance)
+        return 'Account No: {0} Balance: {1}'.format(self.user, self.balance)
     class Meta:
         db_table = "d_accounts"
         ordering = ('-user_id',)
@@ -305,6 +307,17 @@ class CashDeposit(TimeStamp):
     @property
     def current_bal(self): 
         return current_account_bal_of(self.user_id)
+
+    def update_cum_depo(self):
+        try:
+            if not self.deposited :
+                ctotal_balanc = current_account_cum_depo_of(self.user_id) #F
+                new_bal = ctotal_balanc + int(self.amount)
+                update_account_cum_depo_of(self.user_id,new_bal) #F
+                self.deposited = True
+        except Exception as e:
+            print(f'Daru:CashDeposit-update_cum_depo Error:{e}') # Debug
+            pass  
             
 
     def save(self, *args, **kwargs):
@@ -318,10 +331,11 @@ class CashDeposit(TimeStamp):
                         ctotal_balanc = current_account_bal_of(self.user_id) #F
                         new_bal = ctotal_balanc + int(self.amount)
                         update_account_bal_of(self.user_id,new_bal) #F
+                        self.update_cum_depo() #####
                         self.deposited = True
                 except Exception as e:
                     print(f'Daru:CashDeposit-Deposited Error:{e}') # Debug
-                    pass        
+                    pass      
 
 
                 try:
@@ -477,3 +491,19 @@ def refer_credit_create(credit_to_user,credit_from_username,amount):
     except Exception as e:
         print(f'RRR{e}')
 
+
+def current_account_cum_depo_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).cum_depo)
+    except Exception as e:
+        return e
+
+def update_account_cum_depo_of(user_id,new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(cum_depo= new_bal)
+        else:
+            pass
+            # log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
