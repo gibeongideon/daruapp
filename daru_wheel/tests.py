@@ -142,12 +142,6 @@ class StakeTestCase(TestCase):
             bet_on_real_account=True, amount=1000)
 
         OutCome.objects.create(stake_id=stake.id)
-        stake=Stake.objects.create(
-            user=self.user,
-            marketselection=self.marketselection2,
-            bet_on_real_account=False, amount=5000)
-        OutCome.objects.create(stake_id=stake.id)
-        
         self.assertEqual(OutCome.objects.count(), 6)
         self.assertEqual(current_account_bal_of(self.user), 7000)
         self.assertEqual(current_account_trialbal_of(self.user), 42000)
@@ -183,11 +177,7 @@ class StakeTestCase(TestCase):
         stake =Stake.objects.create(
             user=self.user,
             marketselection=self.marketselection1,
-            bet_on_real_account=True, amount=500)
         OutCome.objects.create(stake_id=stake.id)
-
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 1400)
-
     #     #________________________________________________
 
         stake =Stake.objects.create(
@@ -232,12 +222,9 @@ class StakeTestCase(TestCase):
 
         stake=Stake.objects.create(
             user=self.user,
-            marketselection=self.marketselection1,
             bet_on_real_account=False,
-            amount=100)
-
         OutCome.objects.create(stake_id=stake.id)    
-            
+  
         self.assertEqual(OutCome.objects.count(), 1)
 
 

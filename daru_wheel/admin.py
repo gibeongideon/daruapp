@@ -100,3 +100,4 @@ class CashStoreAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CashStore, CashStoreAdmin)
+
