@@ -59,8 +59,11 @@ class DaruWheelSetting(TimeStamp):
     wheelspin_id = models.IntegerField(help_text='super critical setting value.DONT EDIT!',default=1, blank=True, null=True)
     curr_unit = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     min_bet = models.DecimalField(max_digits=5,default=45.9, decimal_places=2, blank=True, null=True)
-    win_algo = models.IntegerField(default=1, blank=True, null=True)
-    trial_algo = models.IntegerField(default=1, blank=True, null=True)
+    win_algo = models.IntegerField(default=2,help_text='1=Random win_RECO,2=Sure win_to_impress_', blank=True, null=True)
+    trial_algo = models.IntegerField(
+        default=1,
+        help_text='1=Normal win_RECO,2=Super win_to_impress,others=Use_win_algo_above',
+        blank=True, null=True)
     
     class Meta:
         db_table = "d_daruwheel_setup"
@@ -397,27 +400,32 @@ class OutCome(TimeStamp):
             # cum_depo = self.user_cum_depo            
 
             if not self.real_bet:
+
                 if set_up.trial_algo ==1: # normal win trial
-                    print('Trial Al 1')
+                    print('Using Normal_Trial Al 1')
                     return randint(1,2)
 
-                if set_up.trial_algo ==2:# super win trial
-                    print('Trial Al 2')
+                elif set_up.trial_algo ==2:# super win trial
+                    print('Using super_WinTrial Al 2')
                     random_val = randint(1,3)
                     if random_val == 3:
                         return 2
                     return 1
+                else:
+                    print('Using REALNormal4Trial Win Algo')
+                    pass #toREALNormal Win Algo
+                    # return randint(1,2)                     
 
-            try:
-                
+            try:                
                 if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
                     # return 1
                     if set_up.win_algo ==1:
-                        print('1 ONE Algo')
-                        return 1
-                    elif set_up.win_algo ==2:
-                        print('2 TWO Algo')
+                        print('Using REALrandom Algo')
                         return randint(1,2)
+
+                    elif set_up.win_algo ==2:
+                        print('Using REALsure win Algo')
+                        return 1
                     else:
                         return 2    
                 return 2 
@@ -672,3 +680,4 @@ class OutCome(TimeStamp):
                 super().save(*args, **kwargs)
             else:
                 return 
+0

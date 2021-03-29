@@ -21,3 +21,8 @@ Production NOTES
 # worker: python manage.py qcluster
 
 # daphne -p 8001 daruapp.asgi:application
+
+
+
+#Refer_for_ispin_also_
+#
