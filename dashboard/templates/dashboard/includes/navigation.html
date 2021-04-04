@@ -58,7 +58,8 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right dropdown-navbar">
                   <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info">Actual Balance: {{user.user_accounts.balance}}</h5></a></li>
-                  <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info"> Withraw Power: {{user.user_accounts.withrawable_balance}}</h5></a></li>
+                  <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info"> Withrawable Balannce: {{user.user_accounts.withrawable_balance}}</h5></a></li>
+                  <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info"> Withraw Power: {{user.user_accounts.withraw_power}}</h5></a></li>
                   <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item"><h5 class="text-info">Refer Balance: {{user.user_accounts.refer_balance}}</h5></a></li>
                   <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item"><h5 class="text-info">Trial Balance: {{user.user_accounts.trial_balance}}</h5></a></li>
             

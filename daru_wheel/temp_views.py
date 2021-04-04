@@ -57,12 +57,13 @@ def daru_spin(request):
 
     if request.method == 'POST':
         # if this_wheelspin.place_stake_is_active:# 
-        market = this_wheelspin    
+        market = this_wheelspin
         data = {}
         data['user'] = request.user
         data['market'] = market
         data['marketselection'] = request.POST.get('marketselection')
         data['amount'] = request.POST.get('amount')
+        data['bet_on_real_account'] = request.POST.get("bet_on_real_account")
     
         stake_form = StakeForm(data=data)
 

@@ -17,16 +17,15 @@ admin.site.register(AccountSetting, AccountSettingAdmin)
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'user_id', 'user', 'balance', 'actual_balance',
+        'id', 'user_id', 'user', 'balance', 'actual_balance','withraw_power',
         'withrawable_balance', 'refer_balance', 'trial_balance',
-        'cum_depo', 'active','created_at', 'updated_at')
+        'cum_deposit','cum_withraw','active','created_at', 'updated_at')
     list_display_links = ('user_id',)
     search_fields = ('user_id',)
     list_editable = ('active',)
 
 
 admin.site.register(Account, AccountAdmin)
-
 
 class Curr_VariableAdmin(admin.ModelAdmin):
     list_display = ('id','name','curr_unit',)

@@ -58,18 +58,18 @@ class CashDepositWithrawalTestCase(TestCase):
         CashDeposit.objects.create(amount=10000,user=self.usera)
 
         self.assertEqual(Account.objects.get(user=self.usera).balance,10000)
-        self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance ,0)
+        self.assertEqual(Account.objects.get(user=self.usera).withraw_power ,0)
 
         Stake.objects.create(user=self.usera,amount=1000,bet_on_real_account=True)
 
         self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
-        self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance ,1000)
+        self.assertEqual(Account.objects.get(user=self.usera).withraw_power ,1000)
 
         CashWithrawal.objects.create(user=self.usera,amount=800) 
 
 
         self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
-        self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance ,1000)
+        self.assertEqual(Account.objects.get(user=self.usera).withraw_power ,1000)
         
         self.assertEqual(CashWithrawal.objects.get(id=1).approved,False)
 
@@ -78,5 +78,16 @@ class CashDepositWithrawalTestCase(TestCase):
         self.assertEqual(CashWithrawal.objects.get(id=1).approved,True)
 
         self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
-        # self.assertEqual(Account.objects.get(user=self.usera).withrawable_balance , 200)#failin
+        # self.assertEqual(Account.objects.get(user=self.usera).withraw_power , 200)#failin
 
+
+    def test_cu_deposit_update_correctly(self):
+        CashDeposit.objects.create(amount=10000,user=self.usera)
+
+        self.assertEqual(Account.objects.get(user=self.usera).cum_deposit,10000)
+
+        CashDeposit.objects.create(amount=1000,user=self.usera)
+
+        self.assertEqual(Account.objects.get(user=self.usera).cum_deposit,11000)
+
+ 

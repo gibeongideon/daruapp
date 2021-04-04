@@ -14,7 +14,6 @@ except ImportError:
 
 from django.contrib.auth import get_user_model
 User = get_user_model() # make apps independent
-# from .tasks import create_market
 
 
 def current_account_bal_of(user_id): #F2
@@ -74,7 +73,6 @@ class DaruWheelSetting(TimeStamp):
         return set_up
 
 
-
 try:
     ''' remove no such table on make migrations'''
     set_up, created = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
@@ -99,9 +97,8 @@ class Market(models.Model):
 
     def this_market_selection_verbose_list(self):
         return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
-
+        
 class Selection(TimeStamp):
-
     mrtype = models.ForeignKey(
         Market, on_delete=models.CASCADE,
         related_name='mrtypes', blank=True, null=True)
@@ -113,6 +110,7 @@ class Selection(TimeStamp):
 
     def market_id(self):
         return self.mrtype
+  
   
 class WheelSpin(TimeStamp):
     '''Create WheelSpin market instance'''
@@ -134,7 +132,6 @@ class WheelSpin(TimeStamp):
 
     def __str__(self):
         return f'WheelSpin No:{self.id}'
-
         
     @property
     def place_stake_is_active(self):
@@ -154,7 +151,6 @@ class WheelSpin(TimeStamp):
             return False
         except Exception as e:
             return e
-
 
     def market_selection_id_list(self):
         try:
@@ -184,7 +180,7 @@ class WheelSpin(TimeStamp):
             if total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
             return 0
-        
+
         except Exception as e:
             return e
 
@@ -265,7 +261,6 @@ class Stake (TimeStamp):
 
     def __str__(self):
         return f'stake:{self.amount} by:{self.user}'
- 
 
     @property
     def this_user_has_cash_to_bet(self):
@@ -277,7 +272,6 @@ class Stake (TimeStamp):
                     return False
                 except Exception as e:
                     return e    
-
             else:
                 try:
                     if current_account_bal_of(self.user_id) >=self.amount:
@@ -297,25 +291,17 @@ class Stake (TimeStamp):
             self.current_bal=new_bal
             update_account_bal_of(self.user_id,new_bal)# F3
 
-    def bet_status_on_market(self):
-        if self.market is not None:
-            try:
-                if self.marketselection == OutCome.objects.get(market=self.market).determine_result_algo():
-                    return 'Win'
-                else:
-                    return "Lose"
-            except:
-                return 'Pending'        
-        else:
-            return'ISSUE'
-
     def bet_status(self):
         try:
             try:
-                return OutCome.objects.get(stake_id=self.id).win_status
-            except:
-                return 'Pending' 
-                   
+                if not self.market:
+                    return OutCome.objects.get(stake_id=self.id).win_status
+                if  self.marketselection_id== OutCome.objects.get(market_id=self.market.id).result:
+                    return 'win'                    
+                return   'lose'
+            except  Exception as e:
+                print(f'daru_STATUS1 ERROR:{e}')
+                return 'pending'                    
         except  Exception as e:
             print(f'daru_STATUS ERROR:{e}')
             return 'pending'
@@ -329,11 +315,8 @@ class Stake (TimeStamp):
         return self.unspinned(self.user.id)
         # pass
 
-
-
     def save(self, *args, **kwargs):
         ''' Bet could only be registered if user got enoug real or trial balance '''
-
         if not self.pk:
             if self.this_user_has_cash_to_bet: #then
                 self.deduct_amount_from_this_user_account() 
@@ -341,7 +324,6 @@ class Stake (TimeStamp):
                 
             else:
                 return # no db table record to create!
-
             try:
                 if not self.has_record:
                     log_record(self.user_id,self.amount,'Stake')                    
@@ -371,6 +353,13 @@ class OutCome(TimeStamp):
     active = models.BooleanField(blank =True,null= True)
 
     @property
+    def real_bet(self):
+        try:        
+            return self.stake.bet_on_real_account
+        except :
+            return None    
+       
+    @property
     def current_update_give_away(self):
         return float(CashStore.objects.get(id =1).give_away)
 
@@ -387,63 +376,60 @@ class OutCome(TimeStamp):
         except Exception as e:
             return e 
 
-    @property
-    def real_bet(self):
-        try:
-            return self.stake.bet_on_real_account
-        except :
-            pass    
-       
+    def real_account_result_algo(self):        
+        try:                
+            if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
+                # return 1
+                if set_up.win_algo ==1:
+                    print('Using REALrandom Algo')
+                    return randint(1,2)
+
+                elif set_up.win_algo ==2:
+                    print('Using REALsure win Algo')
+                    return 1
+                else:
+                    return 2    
+            return 2 
+        except Exception as e:
+            return e 
+
+    def trial_account_result_algo(self):
+        if set_up.trial_algo ==1: # normal win trial
+            print('Using Normal_Trial Al 1')
+            return randint(1,2)
+
+        elif set_up.trial_algo ==2:# super win trial
+            print('Using super_WinTrial Al 2')
+            random_val = randint(1,3)
+            if random_val == 3:
+                return 2
+            return 1
+        else:
+            print('Using REALNormal4Trial Win Algo')
+            pass #toREALNormal Win Algo
+
     @property
     def determine_result_algo(self):  # fix this
         if self.market is None:
-            # cum_depo = self.user_cum_depo            
-
             if not self.real_bet:
+                self.trial_account_result_algo()
+            else:
+                self.real_account_result_algo() 
 
-                if set_up.trial_algo ==1: # normal win trial
-                    print('Using Normal_Trial Al 1')
-                    return randint(1,2)
-
-                elif set_up.trial_algo ==2:# super win trial
-                    print('Using super_WinTrial Al 2')
-                    random_val = randint(1,3)
-                    if random_val == 3:
-                        return 2
-                    return 1
-                else:
-                    print('Using REALNormal4Trial Win Algo')
-                    pass #toREALNormal Win Algo
-                    # return randint(1,2)                     
-
-            try:                
-                if self.current_update_give_away >= (3*self.stake.amount):  ##TO IMPLEMENT
-                    # return 1
-                    if set_up.win_algo ==1:
-                        print('Using REALrandom Algo')
-                        return randint(1,2)
-
-                    elif set_up.win_algo ==2:
-                        print('Using REALsure win Algo')
-                        return 1
-                    else:
-                        return 2    
-                return 2 
-            except Exception as e:
-                return e          
-        else:
+        elif self.market:
+            # self.auto_spin_result_algo()
             try:
                 B = self.market.selection_bet_amount[0]
-                W = self.market.selection_bet_amount[1]
-            
+                W = self.market.selection_bet_amount[1]            
                 # if self.market.place_stake_is_active == False:
                 if B == W:
-                    return 2#randint(1,2) # fix me to get random 1 or 2
+                    print('UsinRandoAl')
+                    return randint(1,2) # fix me to get random 1 or 2
                 if B > W :
                     return 2
                 return 1
-
             except Exception as e:
+                print(e)
                 return  e
 
     @staticmethod
@@ -474,50 +460,63 @@ class OutCome(TimeStamp):
                     return self.result_to_segment(results = 2)
                 else:
                     return self.result_to_segment(results = 1)
-
         else:
             return self.result_to_segment(results = self.result)    
 
-    def update_user_trial_account(self):
-        this_user= self.stake.user_id
+    def update_user_trial_account(self,this_user,add_amount):
         current_bal=current_account_trialbal_of(this_user)  #F1
-        new_bal = current_bal +float(self.stake.amount*2)
+        new_bal = current_bal +add_amount
         update_account_trialbal_of(this_user,new_bal) #with new_bal
 
-
-    def update_user_real_account(self):
-        this_user= self.stake.user_id
+    def update_user_real_account(self,this_user,add_amount):      
         current_bal=current_account_bal_of(this_user)  #F1
-        new_bal = current_bal +float(self.stake.amount*2) # ard Code odds
+        new_bal = current_bal + add_amount# ard Code odds
         update_account_bal_of(this_user,new_bal) #with new_bal
 
+    @staticmethod
+    def update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type):
+        try: 
+            update_account_bal_of(user_id,new_bal) #F3       
+            log_record(user_id,rem_credit,trans_type) #F1
+        except Exception as e:
+            print('update_acc_n_bal_record ERROR',e)
+
+    @staticmethod        
+    def update_values(stake_obj):
+        amount = float(stake_obj.amount)
+        odds = float(stake_obj.marketselection.odds)
+        per_for_referer = set_up.refer_per  # Settings
+        win_amount = amount *odds
+        if per_for_referer > 100: # Enforce 0<=p<=100 TODO
+            per_for_referer = 0
+
+        ref_credit = (per_for_referer/100)*win_amount
+        rem_credit = win_amount -ref_credit        
+        return win_amount,ref_credit,rem_credit
 
     def update_give_away_bank(self):
-
         if self.result== 1:
             current_bal = self.current_update_give_away
             new_bal = current_bal - float(self.stake.amount) 
-            # print(new_bal)
             self.update_give_away(new_bal)
-
         else:
             current_bal = self.current_update_give_away
             new_bal = current_bal + float(self.stake.amount)
-            # print(new_bal)
             self.update_give_away(new_bal)
-
  
     @property
     def win_status(self):
-        if self.result==1:
-            return 'win'
-        return 'loss' 
+        if self.market is None:#ispin
+            if self.result==1:
+                return 'win'
+            return 'loss' 
+        else:#daru
+            pass      
 
     @classmethod    
     def open_for_spin(cls,user_id):
         return cls.objects.filter(user_id=user_id,closed=False)
 #DARU
-
     @staticmethod
     def per_return_relief(all_gain,userstake,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
         try:
@@ -528,12 +527,12 @@ class OutCome(TimeStamp):
         except Exception as e:
             return 0
 
+
     @staticmethod
     def update_reference_account(user_id,ref_credit,trans_type):
         # print(user_id,ref_credit,trans_type)
         try:
-            this_user = User.objects.get(id = user_id)
-         
+            this_user = User.objects.get(id = user_id)         
             this_user_ReferCode = this_user.daru_code # first name is used as referer code
             if not this_user_ReferCode:              
                 this_user_ReferCode =User.objects.get(id=1).my_code  # settings
@@ -543,95 +542,72 @@ class OutCome(TimeStamp):
                 # print(referer,'RefererUser')
                 refer_credit_create(referer,this_user.username,ref_credit) #F4
                 # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
-
         except Exception as e:
-            pass
-            # print('update_reference_account ERROR',e)
+            return e#TODO
 
-    @staticmethod
-    def update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type):
-        try: 
-            update_account_bal_of(user_id,new_bal) #F3       
-            log_record(user_id,rem_credit,trans_type) #F1
-        except Exception as e:
-
-            print('update_acc_n_bal_record ERROR',e)
-
-    @staticmethod
-    def update_acc_n_trialbal_record(user_id,new_bal,rem_credit,trans_type):
-        try: 
-            update_account_trialbal_of(user_id,new_bal) #F3       
-            log_record(user_id,rem_credit,trans_type) #F1
-        except Exception as e:
-
-            print('update_acc_n_trialbal_record ERROR',e)
-
-    def update_winner_losser(self,this_user_stak_obj):
-        user_id = this_user_stak_obj.user_id
+    def run_update_winner_losser(self,this_user_stak_obj):
+        user_id = this_user_stak_obj.user.id
         user_current_account_bal =current_account_bal_of(user_id)
         user_current_account_trialbal =current_account_trialbal_of(user_id)
 
-        #WINNER 
-        if this_user_stak_obj.marketselection_id == self.result:
-            amount = float(this_user_stak_obj.amount)
-            odds = float(this_user_stak_obj.marketselection.odds)
-            per_for_referer = set_up.refer_per  # Settings
-            # print(f'REFFC:{per_for_referer}')
-            win_amount = amount *odds
+        if this_user_stak_obj.bet_on_real_account==True:#REAL
+            if this_user_stak_obj.market is not None:#daru
+                if this_user_stak_obj.marketselection_id == self.result:
+                    win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
+                    trans_type = 'win'
+                    ###
+                    self.update_user_real_account(user_id,rem_credit)
+                    log_record(user_id,rem_credit,trans_type) #F1
+                    if ref_credit > 0:
+                        trans_type = 'refer-win'
+                        self.update_reference_account(user_id,ref_credit,trans_type)
 
-            if per_for_referer > 100: # Enforce 0<=p<=100 TODO
-                per_for_referer = 0
+                elif this_user_stak_obj.marketselection_id != self.result:
+                    pass#TODO
 
-            ref_credit = (per_for_referer/100)*win_amount
-            rem_credit = win_amount -ref_credit           
+            else:#ispin
+                win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
+                if self.result ==1:###
+                    # add_amount=float(self.stake.amount*2)
+                    self.update_user_real_account(user_id,rem_credit)
+                self.update_give_away_bank()           
 
-            trans_type = 'WIN' 
-            if this_user_stak_obj.bet_on_real_account==False:
-                new_bal = user_current_account_trialbal + win_amount
-                self.update_acc_n_trialbal_record(user_id,new_bal,win_amount,trans_type)
+        else:#TRIAL
+            if this_user_stak_obj.market is not None:#daru
+                #WINNER
+                if this_user_stak_obj.marketselection_id == self.result:
+                    win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
+                    trans_type = 'trial-win'
+                    #######
+                    self.update_user_trial_account(user_id,rem_credit)
+                    log_record(user_id,rem_credit,trans_type) #F1
+                    # if ref_credit > 0:
+                    #     trans_type = 'trial-refer-win'
+                    #     self.update_reference_account(user_id,ref_credit,trans_type)
+                   
+                elif this_user_stak_obj.marketselection_id != self.result:
+                    pass
+            else:#ispin
+                win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
+                if self.result ==1:
+                    # add_amount=float(self.stake.amount*2) 
+                    self.update_user_trial_account(user_id,rem_credit)
 
-            elif this_user_stak_obj.bet_on_real_account==True:
-                new_bal = user_current_account_bal + rem_credit
-                self.update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type)   
-
-            if ref_credit > 0:
-                trans_type = 'R-WIN'
-                self.update_reference_account(user_id,ref_credit,trans_type)
-
-        #LOSER
-        elif this_user_stak_obj.marketselection_id != self.result:
-            all_gain = float(self.market.offset) # FIX
-            userstake =  float(this_user_stak_obj.amount)
- 
-            if self.result == 2:
-                all_lose_stake = float(self.market.selection_bet_amount[0])
-            elif self.result ==1:
-                all_lose_stake = float(self.market.selection_bet_amount[1])
-
-            per_to_return = float(self.market.per_retun) # 
-            relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
-
-            new_bal = user_current_account_bal + relief_amount
-            amount= round(relief_amount,1)
-            if amount > 0:
-                trans_type = 'ROL'
-                self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)
-        
-    def account_update(self):
+               
+    def run_account_update(self):
+        if self.market is not None:            
             try:
                 all_stakes_in_this_market = Stake.objects.filter(market = self.market).all()#R
-
-                for user_stak in all_stakes_in_this_market: 
-                    # user_stake is object to access below
-                    # :user_stak.amount                # BET AMOUNT
-                    # :user_stak..marketselection.odds # ODDS
-                    self.update_winner_losser(user_stak) ###M    
-            # [self.update_winner_losser(user_stak,user_current_account_bal) for _stake in all_stakes_in_this_market for user_stak in all_stakes_of_this_user ]                                                         
-                self.closed= True
-
+                for user_stak in all_stakes_in_this_market:
+                    self.run_update_winner_losser(user_stak) ###M                                                    
+                # self.closed= True
             except Exception as e:
                 print('RESULTACCOUNT:',e)
-                return
+                return 
+        else:
+            # self.update_winner_losser(self.stake)
+            stake_obj=self.stake
+            self.run_update_winner_losser(stake_obj)
        
     def update_db_records(self):
         try:
@@ -645,39 +621,130 @@ class OutCome(TimeStamp):
             pass
 
     def save(self, *args, **kwargs):
-        if not self.pk and self.market is None :
-            try:
+        if not self.pk and not self.closed:
+            if self.market is None :
                 mstore,_ = CashStore.objects.get_or_create(id =1)
                 self.cashstore = mstore
-                
-                # if self.stake is not None:
-                #     self.result = self.winner_losser
-                # else:
-                self.result = self.determine_result_algo
-
-                if self.real_bet:
-                    if self.result ==1:
-                        self.update_user_real_account()
-                    self.update_give_away_bank()
-                else:
-                    if self.result ==1:
-                        self.update_user_trial_account()
-                        
-                self.pointer = self.segment                   
-                super().save(*args, **kwargs)
-                
-            except Exception as e:
-                print(f'IoutCome {e}' )
-                return  
-        else:
-            if not self.closed:
-                # if self.market.place_stake_is_active == False:
-                self.result = self.determine_result_algo#A
-                self.pointer = self.segment 
-                self.update_db_records()#
-                self.account_update()#
-                self.closed =True
-                super().save(*args, **kwargs)
             else:
-                return 
-0
+                self.update_db_records()#
+            try:                
+                self.result = self.determine_result_algo
+                self.pointer = self.segment
+                self.run_account_update()
+                self.closed= True
+                                   
+                super().save(*args, **kwargs)                
+            except Exception as e:
+                return  
+
+
+
+
+
+
+
+
+                
+                    # iplupdate_reference_account
+                    # print('akoisNone')                    
+                    # all_gain = float(self.market.offset) # FIX
+                    # userstake =  float(this_user_stak_obj.amount) 
+                    # if self.result == 2:
+                    #     all_lose_stake = float(self.market.selection_bet_amount[0])
+                    # elif self.result ==1:                                                                                 
+                    #    all_lose_stake = float(self.market.selection_bet_amount[1])
+                    # per_to_return = float(self.market.per_retun) # 
+                    # relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
+                    # new_bal = user_current_account_bal + relief_amount
+                    # amount= round(relief_amount,1)
+                    # if amount > 0:
+                    #     trans_type = 'ROL'
+
+                    # self.update_user_real_account(user_id,new_bal)
+                    # log_record(user_id,rem_credit,trans_type) #F1
+
+    # @property
+    # def real_bet(self):
+    #     try:
+    #         return self.stake.bet_on_real_account
+    #     except :
+    #         return None    
+       
+                
+    # def account_update(self):
+    #         try:
+    #             all_stakes_in_this_market = Stake.objects.filter(market = self.market).all()#R
+    #             for user_stak in all_stakes_in_this_market:
+    #                 self.update_winner_losser(user_stak) ###M                                                    
+    #             self.closed= True
+    #         except Exception as e:
+    #             print('RESULTACCOUNT:',e)
+    #             return
+
+    # @staticmethod
+    # def update_acc_n_trialbal_record(user_id,new_bal,rem_credit,trans_type):
+    #     try: 
+    #         update_account_trialbal_of(user_id,new_bal) #F3       
+    #         log_record(user_id,rem_credit,trans_type) #F1
+    #     except Exception as e:
+    #         print('update_acc_n_trialbal_record ERROR',e)
+
+
+
+    # def update_user_account(self):
+    #     this_user=self.stake.user
+    #     if self.real_bet:
+    #         if self.result ==1:
+    #             add_amount=float(self.stake.amount*2)
+    #             self.update_user_real_account(this_user,add_amount)
+    #         self.update_give_away_bank()
+    #     else:
+    #         if self.result ==1:
+    #             add_amount=float(self.stake.amount*2)                
+    #             self.update_user_trial_account(this_user,add_amount)
+
+
+    # def update_winner_losser(self,this_user_stak_obj):
+    #     user_id = this_user_stak_obj.user_id
+    #     user_current_account_bal =current_account_bal_of(user_id)
+    #     user_current_account_trialbal =current_account_trialbal_of(user_id)
+
+    #     #WINNER 
+    #     if this_user_stak_obj.marketselection_id == self.result:
+    #         win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)            
+
+    #         trans_type = 'WIN' 
+    #         if this_user_stak_obj.bet_on_real_account==False:
+    #             self.update_user_trial_account(user_id,win_amount)
+    #             log_record(user_id,win_amount,trans_type) #F1
+
+    #         elif this_user_stak_obj.bet_on_real_account==True:
+    #             self.update_user_real_account(user_id,rem_credit)
+    #             log_record(user_id,rem_credit,trans_type) #F1
+
+    #         if ref_credit > 0:
+    #             trans_type = 'R-WIN'
+    #             self.update_reference_account(user_id,ref_credit,trans_type)
+
+    #     #LOSER4realaccountonly_relief
+    #     elif this_user_stak_obj.marketselection_id != self.result:
+    #         if self.market is not None:  
+    #             print('akoisNone')
+    #             all_gain = float(self.market.offset) # FIX
+    #             userstake =  float(this_user_stak_obj.amount)
+    #             if self.result == 2:
+    #                 all_lose_stake = float(self.market.selection_bet_amount[0])
+    #             elif self.result ==1:
+    #                 all_lose_stake = float(self.market.selection_bet_amount[1])
+    #             per_to_return = float(self.market.per_retun) # 
+    #             relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
+    #             new_bal = user_current_account_bal + relief_amount
+    #             amount= round(relief_amount,1)
+    #             if amount > 0:
+    #                 trans_type = 'ROL'
+    #                 # if this_user_stak_obj.bet_on_real_account==False:
+    #                 #     self.update_user_trial_account(user_id,rem_credit)
+    #                 #     log_record(user_id,win_amount,trans_type) #F1
+    #                 if this_user_stak_obj.bet_on_real_account==True:
+    #                     self.update_user_real_account(user_id,new_bal)
+    #                     log_record(user_id,rem_credit,trans_type) #F1
