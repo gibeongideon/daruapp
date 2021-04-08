@@ -128,7 +128,7 @@ class StakeTestCase(TestCase):
         OutCome.objects.create(stake_id=stake.id)
 
         print(f'1out_come1.result:{out_come1.result}')
-
+        self.assertNotEqual(out_come1.result,None)
         if  out_come1.result==1: 
             self.assertEqual(current_account_bal_of(self.user), 10000)
             self.assertEqual(CashStore.objects.get(id=1).give_away, 0)
@@ -159,9 +159,11 @@ class StakeTestCase(TestCase):
             amount=5000)
 
         out_come2=OutCome.objects.create(stake_id=stake.id)
+        self.assertNotEqual(out_come1.result,None)
 
         self.assertEqual(OutCome.objects.count(), 6)
         print(f'2out_come1.result:{out_come1.result}')
+        self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1: 
             # self.assertEqual(OutCome.objects.count(), 7)
@@ -190,6 +192,7 @@ class StakeTestCase(TestCase):
             marketselection=self.marketselection1, amount=1000)
         out_come2=OutCome.objects.create(stake_id=stake.id) 
         print(f'3out_come1.result:{out_come1.result}')
+        self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1:  
             # self.assertEqual(OutCome.objects.count(), 7)
@@ -217,6 +220,7 @@ class StakeTestCase(TestCase):
             user=self.user,
             marketselection=self.marketselection1, amount=1100)
         OutCome.objects.create(stake_id=stake.id)
+        self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1:  
             # self.assertEqual(OutCome.objects.count(), 7)
@@ -236,6 +240,7 @@ class StakeTestCase(TestCase):
             marketselection=self.marketselection1,
             bet_on_real_account=True, amount=1100)
         out_come1=OutCome.objects.create(stake_id=stake.id)
+        self.assertNotEqual(out_come1.result,None)
 
         print(f'4out_come1.result:{out_come1.result}')
         if  out_come1.result==1:  
