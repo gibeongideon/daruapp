@@ -5,15 +5,8 @@ from decimal import Decimal
 import math
 from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
+from dashboard.models import TimeStamp
 
-
-class TimeStamp(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,blank =True,null=True)
-    updated_at = models.DateTimeField(auto_now=True,blank =True,null=True)
-    # is_active = models.BooleanField(default=True)
-
-    class Meta:
-        abstract = True
 
 class AccountSetting(TimeStamp):
     curr_unit = models.FloatField(default=0, blank=True, null=True)
@@ -289,6 +282,7 @@ class CashDeposit(TimeStamp):
     # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     deposited = models.BooleanField(blank =True ,null= True)
+    deposit_type=models.CharField(max_length=100 ,default='Shop Deposit',blank =True,null=True)
     has_record = models.BooleanField(blank =True ,null= True)
 
     user = models.ForeignKey(
@@ -344,7 +338,7 @@ class CashDeposit(TimeStamp):
 
                 try:
                     if not self.has_record:
-                        log_record(self.user_id,self.amount,'Shop Deposit')
+                        log_record(self.user_id,self.amount,str(self.deposit_type))
                         self.has_record = True
                 except  Exception as e:
                     print(f'Daru:CashDeposit-Log Error:{e}') # Debug
@@ -397,6 +391,19 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     def user_account(self):
         return current_account_bal_of(self.user)# Account.objects.get(user_id =self.user_id)
 
+    @classmethod
+    def withraw_amount(cls):
+        return cls.objects.all()
+
+    # @property
+    # def similar_trans(self):
+    #     all_trans=self.withraw_amount()
+    #     le=len(all_trans.filter(user_id=self.user_id))
+    #     pre=all_trans.filter(user_id=self.user_id)[le-2]
+    #     if  self.amount==pre.amount:
+    #         return    True
+    #     return    False
+
     def update_user_withrawable_balance(self):
         try:
             now_withrawable = float(Account.objects.get(user_id=self.user_id).withraw_power)
@@ -440,6 +447,8 @@ class CashWithrawal(TimeStamp): # sensitive transaction
             return 'failed'
 
     def save(self, *args, **kwargs):
+        # if self.similar_trans:
+        #     return
         ''' Overrride internal model save method to update balance on deposit  '''
         account_is_active = self.user.active
         ctotal_balanc = current_account_bal_of(self.user_id)
@@ -501,6 +510,22 @@ def update_account_bal_of(user_id,new_bal): #F3
     except Exception as e:
         return e
 
+
+def current_account_trialbal_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).trial_balance)
+    except Exception as e:
+        return e
+
+def update_account_trialbal_of(user_id, new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(trial_balance=new_bal)
+        else:
+            log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
 def refer_credit_create(credit_to_user,credit_from_username,amount):
     try:
         RefCredit.objects.update_or_create(user = credit_to_user,credit_from = credit_from_username, amount= amount)
@@ -538,4 +563,5 @@ def update_account_cum_withraw_of(user_id,new_bal): #F3
             pass
             # log_record(user_id,0,'Account Error') # REMOVE
     except Exception as e:
-        return e        
+        return e
+        

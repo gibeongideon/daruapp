@@ -5,49 +5,16 @@ from datetime import timedelta, datetime
 from random import randint
 from django.utils import timezone
 try:
-    from account.models import RefCredit
-    from account.models import (
-        update_account_bal_of,
-        log_record, refer_credit_create)
+    from account.models import *
 except ImportError:
     pass
 
 from django.contrib.auth import get_user_model
-User = get_user_model() # make apps independent
+from dashboard.models import TimeStamp
 
 
-def current_account_bal_of(user_id): #F2
-    from account.models import Account
-    try:
-        return float(Account.objects.get(user_id =user_id).balance)
-    except Exception as e:
-        return e
+User = get_user_model()
 
-def current_account_trialbal_of(user_id): #F2
-    from account.models import Account
-    try:
-        return float(Account.objects.get(user_id =user_id).trial_balance)
-    except Exception as e:
-        return e
-
-def update_account_trialbal_of(user_id, new_bal): #F3
-    from account.models import Account
-    try:
-        if new_bal >= 0:
-            Account.objects.filter(user_id =user_id).update(trial_balance=new_bal)
-        else:
-            log_record(user_id,0,'Account Error') # REMOVE
-    except Exception as e:
-        return e
-
-
-class TimeStamp(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    # is_active = models.BooleanField(default=True)
-
-    class Meta:
-        abstract = True
 
 class DaruWheelSetting(TimeStamp):
     return_val = models.FloatField(default=0, blank=True, null=True)

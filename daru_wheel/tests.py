@@ -4,10 +4,11 @@ import random
 from django.utils import timezone
 from time import sleep
 from daru_wheel.models import (
-    Stake, CashStore, OutCome, WheelSpin, Selection,
-    current_account_trialbal_of,)
-
-from account.models import Account, CashDeposit ,current_account_bal_of
+    Stake, CashStore, OutCome, WheelSpin, Selection
+    )
+from account.models import (
+    Account, CashDeposit, current_account_bal_of,current_account_trialbal_of
+    )
 # MODEL TESTS
 
 def create_user():
@@ -32,7 +33,6 @@ def deposit_to_test_user(user_id, amount=10000):
 
 class MarketTestCase(TestCase):
     def test_create_rit_market(self):
-
         WheelSpin.objects.create()
         # WheelSpin.objects.create()
         self.assertEqual(WheelSpin.objects.count(), 1)        
@@ -43,7 +43,6 @@ class StakeTestCase(TestCase):
         CashDeposit.objects.create(user=self.user, amount=10000)  
         self.spin = WheelSpin.objects.create()        
         # self.market = Market.objects.get(id=1)
-
         # market = WheelSpin.objects.create()
 
         self.marketselection1, _ = Selection.objects.get_or_create(

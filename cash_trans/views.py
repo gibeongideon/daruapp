@@ -16,7 +16,7 @@ def mpesa_deposit(request):
         if form.is_valid():
             form.save()
             print('YES DONE')
-            # return redirect(reverse('cash_trans:trans_log'))
         else:
             print('ERRRRR', form.errors)
+    # trans_logz = CashDeposit.objects.filter(user =request.user).order_by('-id')[:10]        
     return render(request, 'cash_trans/mp_deposit.html', {'form': form})
