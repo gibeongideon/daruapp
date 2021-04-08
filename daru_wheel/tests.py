@@ -4,7 +4,7 @@ import random
 from django.utils import timezone
 from time import sleep
 from daru_wheel.models import (
-    Stake, CashStore, OutCome, Market, WheelSpin, Selection,
+    Stake, CashStore, OutCome, WheelSpin, Selection,
     current_account_trialbal_of,)
 
 from account.models import Account, CashDeposit ,current_account_bal_of
@@ -34,27 +34,27 @@ class MarketTestCase(TestCase):
     def test_create_rit_market(self):
 
         WheelSpin.objects.create()
-        WheelSpin.objects.create()
-        self.assertEqual(Market.objects.count(), 1)        
+        # WheelSpin.objects.create()
+        self.assertEqual(WheelSpin.objects.count(), 1)        
 
 class StakeTestCase(TestCase):
     def setUp(self):
         self.user = create_user()
         CashDeposit.objects.create(user=self.user, amount=10000)  
         self.spin = WheelSpin.objects.create()        
-        self.market = Market.objects.get(id=1)
+        # self.market = Market.objects.get(id=1)
 
-        market = WheelSpin.objects.create()
+        # market = WheelSpin.objects.create()
 
         self.marketselection1, _ = Selection.objects.get_or_create(
             id=1,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='RED',
             odds=2)
 
         self.marketselection2, _ = Selection.objects.get_or_create(
             id=2,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='YELLOW',
             odds=2)
 
@@ -251,17 +251,17 @@ class StakeTestCase(TestCase):
 
     def test_create_stake_for_rit_market(self):
         self.spin = WheelSpin.objects.create()        
-        self.market = Market.objects.get(id=1)
+        # self.market = Market.objects.get(id=1)
    
         self.marketselection1, _ = Selection.objects.get_or_create(
             id=1,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='RED',
             odds=2)
 
         self.marketselection2, _ = Selection.objects.get_or_create(
             id=2,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='YELLOW',
             odds=2)
 
@@ -292,17 +292,17 @@ class BetLogicTest(TestCase):
 
     def setUp(self):
         self.spin = WheelSpin.objects.create()        
-        self.market = Market.objects.get(id=1)        
+        # self.market = Market.objects.get(id=1)        
 
         self.marketselection1, _ = Selection.objects.get_or_create(
             id=1,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='RED',
             odds=2)
 
         self.marketselection2, _ = Selection.objects.get_or_create(
             id=2,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='YELLOW',
             odds=2)
 
@@ -328,7 +328,7 @@ class BetLogicTest(TestCase):
             current_account_bal_of(self.user3.id),
             1000)
 
-        self.assertEqual(Market.objects.count(),1)    
+        # self.assertEqual(Market.objects.count(),1)    
   
         # BET
     def test_deduct_bet_amount(self):  

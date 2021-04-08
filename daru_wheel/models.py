@@ -80,44 +80,53 @@ except Exception as me:
     print("MEE", me)
     pass
 
-class Market(models.Model):
-    '''Market place wit different market types  '''
-    name = models.CharField(max_length=100, blank=True, null=True)
-    # class Meta:
-    #     abstract = True
+# class Market(models.Model):
+#     '''Market place wit different market types  '''
+#     name = models.CharField(max_length=100, blank=True, null=True)
+#     # class Meta:
+#     #     abstract = True
 
-    def __str__(self):
-        return f'{self.name} market of id {self.id} '.lower()
+#     def __str__(self):
+#         return f'{self.name} market of id {self.id} '.lower()
 
-    def all_selection(self):
-        return Selection.objects.filter(mrtype_id=self.id).all()
+#     def all_selection(self):
+#         return Selection.objects.filter(mrtype_id=self.id).all()
 
-    def this_market_selection_id_list(self):
-        return [_mselect.id for _mselect in self.all_selection() ]
+#     def this_market_selection_id_list(self):
+#         return [_mselect.id for _mselect in self.all_selection() ]
 
-    def this_market_selection_verbose_list(self):
-        return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
+#     def this_market_selection_verbose_list(self):
+#         return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in self.all_selection()]
         
 class Selection(TimeStamp):
-    mrtype = models.ForeignKey(
-        Market, on_delete=models.CASCADE,
-        related_name='mrtypes', blank=True, null=True)
+    # mrtype = models.ForeignKey(
+    #     Market, on_delete=models.CASCADE,
+    #     related_name='mrtypes', blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     odds = models.FloatField(max_length=10, blank=True, null=True)
 
     def __str__(self):
         return f'{self.name}'
 
-    def market_id(self):
-        return self.mrtype
-  
+
+    @classmethod
+    def all_selection(cls):
+        return cls.objects.all()
+
+    @classmethod
+    def selection_id_list(cls):
+        return [_mselect.id for _mselect in cls.objects.all()]
+
+    @classmethod
+    def selection_verbose_list(cls):
+        return [(_mselect.id, _mselect.name, _mselect.odds) for _mselect in cls.objects.all()]   
   
 class WheelSpin(TimeStamp):
     '''Create WheelSpin market instance'''
-    market = models.ForeignKey(
-        Market,
-        on_delete=models.CASCADE,
-        related_name='markets', blank=True, null=True)
+    # market = models.ForeignKey(
+    #     Market,
+    #     on_delete=models.CASCADE,
+    #     related_name='markets', blank=True, null=True)
 
     open_at = models.DateTimeField(default=timezone.now, blank=True, null=True)
     closed_at = models.DateTimeField(blank=True, null=True)
@@ -154,7 +163,7 @@ class WheelSpin(TimeStamp):
 
     def market_selection_id_list(self):
         try:
-            return self.market.this_market_selection_id_list()
+            return Selection.selection_id_list()
         except Exception as e:
             return e    
 
@@ -188,7 +197,7 @@ class WheelSpin(TimeStamp):
     def selection_bet_amount(self):
         try:
             mrkt_bet_amount = []
-            for selecn in self.market.this_market_selection_id_list():
+            for selecn in self.market_selection_id_list():
                 mrkt_bet_amount.append(self.market_stake_amount(selecn))
             return mrkt_bet_amount
         except Exception as e:
@@ -216,21 +225,12 @@ class WheelSpin(TimeStamp):
         self.results_at = self.open_at + timedelta(minutes=set_up.results_at)
 
         if self.active and not self.place_stake_is_active:
-            self.active = False
+            self.active = False  
+                  
+        super().save(*args, **kwargs)
 
-        try:
-            market, _ = Market.objects.get_or_create(
-                name='spinner')
-            self.market = market
-            
-            super().save(*args, **kwargs)
-
-        except Exception as e:
-            print(f'Daru:Market craete Error:{e} ')
-            return 
 
 class CumulativeGain(TimeStamp):
-
     gain = models.FloatField(default=0, blank =True,null= True)
 
     @property
@@ -280,7 +280,7 @@ class Stake (TimeStamp):
                 except Exception as e:
                     return e
         else:
-            return False        
+            return False
 
     def deduct_amount_from_this_user_account(self):
         if not self.bet_on_real_account:
@@ -297,8 +297,8 @@ class Stake (TimeStamp):
                 if not self.market:
                     return OutCome.objects.get(stake_id=self.id).win_status
                 if  self.marketselection_id== OutCome.objects.get(market_id=self.market.id).result:
-                    return 'win'                    
-                return   'lose'
+                    return 'wind'                    
+                return   'losed'
             except  Exception as e:
                 print(f'daru_STATUS1 ERROR:{e}')
                 return 'pending'                    

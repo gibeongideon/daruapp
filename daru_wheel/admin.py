@@ -2,16 +2,16 @@ from django.contrib import admin
 from .models import (
     Stake, WheelSpin, CumulativeGain, Selection,
     OutCome, Selection, DaruWheelSetting,
-    CashStore, Market)
+    CashStore)
 
-class MarketAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'this_market_selection_id_list',
-        'this_market_selection_verbose_list',)
-    list_display_links = ('id',)
-    # list_editable = ('',)
+# class MarketAdmin(admin.ModelAdmin):
+#     list_display = ('id','name', 'this_market_selection_id_list',
+#         'this_market_selection_verbose_list',)
+#     list_display_links = ('id',)
+#     # list_editable = ('',)
 
 
-admin.site.register(Market, MarketAdmin) 
+# admin.site.register(Market, MarketAdmin) 
 class DaruWheelSettingAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'return_val', 'min_redeem_refer_credit',
@@ -29,10 +29,11 @@ admin.site.register(DaruWheelSetting, DaruWheelSettingAdmin)
 
 class SelectionAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'market_id', 'odds', 'name', 'created_at','updated_at')
+        'id', 'odds', 'name','selection_id_list',
+        'selection_verbose_list', 'created_at','updated_at')
     list_display_links = ('name',)
     search_fields = ('name',)
-    list_filter = ('mrtype', 'odds')
+    list_filter = ('id', 'odds')
 
 
 admin.site.register(Selection, SelectionAdmin)
@@ -41,7 +42,7 @@ admin.site.register(Selection, SelectionAdmin)
 class WheelSpinAdmin(admin.ModelAdmin):
 
     list_display = (
-        'id', 'market','receive_results','place_stake_is_active', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
+        'id','receive_results','place_stake_is_active','market_selection_id_list', 'open_at', 'closed_at', 'updated_at','total_bet_amount_per_marktinstance',
         'selection_bet_amount',
         'offset', 'gain_after_relief',)
 

@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from .models import (
     OutCome, CumulativeGain, WheelSpin,
-    Stake, Market)
+    Stake)
 from channels.layers import get_channel_layer
 # from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
