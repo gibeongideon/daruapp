@@ -11,17 +11,23 @@ from dashboard.models import TimeStamp
 class AccountSetting(TimeStamp):
     curr_unit = models.FloatField(default=0, blank=True, null=True)
     # min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
+    auto_approve = models.BooleanField(default=False,blank=True, null=True)
 
     class Meta:
         db_table = "d_accounts_setup"
 
-
-try:
+def account_setting():
     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
-except Exception as ce:
-    print("COUNtttt", ce) 
+    print(f'SET_up{set_up.auto_approve}')
+    return set_up
 
 
+# try:
+#     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
+# except Exception as ce:
+#     print("COUNtttt", ce) 
+
+# print(f'SET_up{set_up.auto_approve}')
 class Account(TimeStamp):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     token_count = models.IntegerField(default=0)
@@ -365,6 +371,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     address = models.CharField(max_length=100,blank= True,null =True)
     
     approved = models.BooleanField(default=False,blank= True,null =True)
+    cancelled=models.BooleanField(default =False,blank= True,null =True)
     withrawned = models.BooleanField(blank= True,null =True)
     has_record = models.BooleanField(blank= True,null =True)
     active = models.BooleanField(default =True,blank= True,null =True)
@@ -439,12 +446,14 @@ class CashWithrawal(TimeStamp): # sensitive transaction
             pass              
     @property
     def withraw_status(self):
+        if self.cancelled:
+            return 'cancelled'
         if not self.approved:
             return 'pending'
-        elif self.approved and self.withrawned:
+        if self.approved and self.withrawned:
             return 'success'
-        else:
-            return 'failed'
+
+        return 'failed'
 
     def save(self, *args, **kwargs):
         # if self.similar_trans:
@@ -454,11 +463,21 @@ class CashWithrawal(TimeStamp): # sensitive transaction
         ctotal_balanc = current_account_bal_of(self.user_id)
         #  = self.user.user_account.withrawable_balance
         withrawable_bal =float(Account.objects.get(user_id =self.user_id).withraw_power)
+        if not self.active:
+            return
+
+        if self.cancelled:
+            self.active = False
+            self.withrawned = False
 
         if self.active and self.amount > 0: # edit prevent # avoid data ma####FREFACCCC min witraw in settins
             if account_is_active:# withraw cash ! or else no cash!
                 try:
-                    if not self.withrawned and self.approved:# stop repeated withraws and withraw only id approved by ADMIN 
+                    set_up=account_setting()
+                    if set_up.auto_approve:
+                        self.approved = True
+
+                    if not self.withrawned and self.approved and not self.cancelled:# stop repeated withraws and withraw only id approved by ADMIN 
                         charges_fee = self.charges_fee # TODO settings
 
                         if ( self.amount + charges_fee) <= ctotal_balanc and ( self.amount + charges_fee) <= withrawable_bal :
@@ -485,10 +504,10 @@ class CashWithrawal(TimeStamp): # sensitive transaction
                     print('CashWithRawal:',e)
                     return  # incase of error /No withrawing should happen
                     # pass
-                if self.approved: #and self.withrawned and self.has_record:
+                if self.approved: #and self.withrawned and self.has_record:#!!!!???????
                     self.active =False
 
-                super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 # Helper functions
 

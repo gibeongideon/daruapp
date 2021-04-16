@@ -4,7 +4,8 @@ import random
 from django.utils import timezone
 from time import sleep
 from daru_wheel.models import (
-    Stake, CashStore, OutCome, WheelSpin, Selection
+    Stake, CashStore, OutCome, WheelSpin,
+    Selection,DaruWheelSetting
     )
 from account.models import (
     Account, CashDeposit, current_account_bal_of,current_account_trialbal_of
@@ -95,12 +96,16 @@ class StakeTestCase(TestCase):
         self.assertEqual(Stake.objects.count(), 2)
 
     def test_store_bank_math(self):
+        set_up, created = DaruWheelSetting.objects.get_or_create(id=1)
+
         stake1=Stake.objects.create(
             user=self.user,
             marketselection=self.marketselection1,
             bet_on_real_account=True, amount=1000)
 
         OutCome.objects.create(stake_id=stake1.id)
+
+        self.assertEqual(OutCome.objects.count(), 1)
         stake2 = Stake.objects.create(
             user=self.user,
             marketselection=self.marketselection2,
@@ -109,8 +114,12 @@ class StakeTestCase(TestCase):
 
         self.assertEqual(OutCome.objects.count(), 2)
         self.assertEqual(current_account_bal_of(self.user), 9000)
-        # self.assertEqual(current_account_trialbal_of(self.user), 49000)       
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 1000)
+        # self.assertEqual(current_account_trialbal_of(self.user), 49000)
+
+        to_keep=set_up.per_to_keep/100*1000
+        away=1000-to_keep    
+
+        self.assertEqual(CashStore.objects.get(id=1).give_away, away)
 
 
     #     #______________________________________________
@@ -126,21 +135,27 @@ class StakeTestCase(TestCase):
             bet_on_real_account=False, amount=2000) # TRIAL
         OutCome.objects.create(stake_id=stake.id)
 
-        print(f'1out_come1.result:{out_come1.result}')
+        print(f'0out_come1.result:{out_come1.result}')
         self.assertNotEqual(out_come1.result,None)
         if  out_come1.result==1: 
             self.assertEqual(current_account_bal_of(self.user), 10000)
-            self.assertEqual(CashStore.objects.get(id=1).give_away, 0)
+            self.assertEqual(CashStore.objects.get(id=1).give_away, 0)#950
             print('WIN')
         elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1000
+            _away1=1000-_to_keep
+            away=_away1+away
+            to_keep=set_up.per_to_keep/100*1000+to_keep
+
             self.assertEqual(current_account_bal_of(self.user), 8000) 
-            self.assertEqual(CashStore.objects.get(id=1).give_away, 2000)
+            self.assertEqual(CashStore.objects.get(id=1).give_away, away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
             print('LOSS')
 
         # self.assertEqual(current_account_trialbal_of(self.user), 47000) 
 
         cur_bal= current_account_bal_of(self.user)
-        stor_bal=CashStore.objects.get(id=1).give_away
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
         print('CI_BAl1', cur_bal)
         print('STO_BAl1', stor_bal)
 
@@ -161,7 +176,7 @@ class StakeTestCase(TestCase):
         self.assertNotEqual(out_come1.result,None)
 
         self.assertEqual(OutCome.objects.count(), 6)
-        print(f'2out_come1.result:{out_come1.result}')
+        print(f'1out_come1.result:{out_come1.result}')
         self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1: 
@@ -169,13 +184,19 @@ class StakeTestCase(TestCase):
             self.assertEqual(current_account_bal_of(self.user),cur_bal+1000)
             self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1000)
         elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1000
+            _away1=1000-_to_keep
+            away=_away1+stor_bal
+            to_keep=set_up.per_to_keep/100*1000+to_keep
+
             self.assertEqual(current_account_bal_of(self.user),cur_bal-1000) 
-            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal+1000)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
 
         # self.assertEqual(current_account_trialbal_of(self.user), 42000)
         
         cur_bal= current_account_bal_of(self.user)
-        stor_bal=CashStore.objects.get(id=1).give_away
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
         print('CI_BAl2', cur_bal)
         print('STO_BAl2', stor_bal)   
     #     #_____________________________________________
@@ -190,7 +211,7 @@ class StakeTestCase(TestCase):
             user=self.user,
             marketselection=self.marketselection1, amount=1000)
         out_come2=OutCome.objects.create(stake_id=stake.id) 
-        print(f'3out_come1.result:{out_come1.result}')
+        print(f'2out_come1.result:{out_come1.result}')
         self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1:  
@@ -198,13 +219,19 @@ class StakeTestCase(TestCase):
             self.assertEqual(current_account_bal_of(self.user),cur_bal+1000)
             self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1000)
         elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1000
+            _away1=1000-_to_keep
+            away=_away1+stor_bal
+
+            to_keep=set_up.per_to_keep/100*1000+to_keep            
             self.assertEqual(current_account_bal_of(self.user),cur_bal-1000) 
-            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal+1000)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
 
         # self.assertEqual(current_account_trialbal_of(self.user), 41000)#@@
 
         cur_bal= current_account_bal_of(self.user)
-        stor_bal=CashStore.objects.get(id=1).give_away
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
         print('CI_BAl3', cur_bal)
         print('STO_BAl3', stor_bal)         
     #     #_______________________________________________________________  
@@ -220,16 +247,24 @@ class StakeTestCase(TestCase):
             marketselection=self.marketselection1, amount=1100)
         OutCome.objects.create(stake_id=stake.id)
         self.assertNotEqual(out_come1.result,None)
+        print(f'3out_come1.result:{out_come1.result}')
+        if  out_come1.result==1:
 
-        if  out_come1.result==1:  
             # self.assertEqual(OutCome.objects.count(), 7)
             self.assertEqual(current_account_bal_of(self.user),cur_bal+100)
             self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-100)
         elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*100
+            _away1=100-_to_keep
+            away=_away1+stor_bal
+            to_keep=set_up.per_to_keep/100*100+to_keep
+
             self.assertEqual(current_account_bal_of(self.user),cur_bal-100) 
-            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal+100 )
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away )
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
+
         cur_bal= current_account_bal_of(self.user)
-        stor_bal=CashStore.objects.get(id=1).give_away
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
         print('CI_BAl4', cur_bal)
         print('STO_BAl4', stor_bal)  
         #________________
@@ -247,8 +282,14 @@ class StakeTestCase(TestCase):
             self.assertEqual(current_account_bal_of(self.user),cur_bal+1100)
             self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1100)
         elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1100
+            _away1=1100-_to_keep
+            away=_away1+stor_bal
+            to_keep=set_up.per_to_keep/100*1100+to_keep
+
             self.assertEqual(current_account_bal_of(self.user),cur_bal-1100) 
-            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal+1100)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
 
         # self.assertEqual(current_account_trialbal_of(self.user), 44100)
 

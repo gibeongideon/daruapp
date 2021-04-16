@@ -14,4 +14,3 @@ application = ProtocolTypeRouter({
         )
     ),
 })
-

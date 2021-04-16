@@ -8,24 +8,21 @@ try:
     from account.models import *
 except ImportError:
     pass
-
 from django.contrib.auth import get_user_model
 from dashboard.models import TimeStamp
-
-
 User = get_user_model()
-
 
 class DaruWheelSetting(TimeStamp):
     return_val = models.FloatField(default=0, blank=True, null=True)
     min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
     refer_per = models.FloatField(default=0, blank=True, null=True)
+    per_to_keep = models.FloatField(default=5, blank=True, null=True)
     closed_at = models.FloatField(help_text='sensitive settings value.Dont edit',default=4.7, blank=True, null=True)
     results_at = models.FloatField(help_text='sensitive settings value.Dont edit',default=4.8, blank=True, null=True)
     wheelspin_id = models.IntegerField(help_text='super critical setting value.DONT EDIT!',default=1, blank=True, null=True)
     curr_unit = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     min_bet = models.DecimalField(max_digits=5,default=45.9, decimal_places=2, blank=True, null=True)
-    win_algo = models.IntegerField(default=2,help_text='1=Random win_RECO,2=Sure win_to_impress_', blank=True, null=True)
+    win_algo = models.IntegerField(default=1,help_text='1=Random win_RECO,2=Sure win_to_impress_', blank=True, null=True)
     trial_algo = models.IntegerField(
         default=1,
         help_text='1=Normal win_RECO,2=Super win_to_impress,others=Use_win_algo_above',
@@ -34,18 +31,20 @@ class DaruWheelSetting(TimeStamp):
     class Meta:
         db_table = "d_daruwheel_setup"
 
-    @classmethod
-    def get_setup(self, cls):
-        set_up, _=cls.object.get_or_create(id=1)
-        return set_up
+    # @classmethod
+    # def get_setup(self, cls):
+    #     set_up, _=cls.objects.get_or_create(id=1)
+    #     return set_up
 
-
-try:
-    ''' remove no such table on make migrations'''
-    set_up, created = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
-except Exception as me:
-    print("MEE", me)
-    pass
+def wheel_setting():
+    set_up, created = DaruWheelSetting.objects.get_or_create(id=1)
+    return set_up
+# try:
+#     ''' remove no such table on make migrations'''
+#     set_up,_ = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
+# except Exception as me:
+#     print("MEE", me)
+#     pass
 
 class Selection(TimeStamp):
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -53,7 +52,6 @@ class Selection(TimeStamp):
 
     def __str__(self):
         return f'{self.name}'
-
 
     @classmethod
     def all_selection(cls):
@@ -111,8 +109,8 @@ class WheelSpin(TimeStamp):
     def total_bet_amount_per_marktinstance(self):
         try:
             total_amount = Stake.objects.filter(
-                market_id =self.id,
-                bet_on_real_account=True ).aggregate(bet_amount=Sum('amount'))
+                market_id=self.id,
+                bet_on_real_account=True).aggregate(bet_amount=Sum('amount'))
             return total_amount.get('bet_amount')
 
         except Exception as e:
@@ -144,7 +142,6 @@ class WheelSpin(TimeStamp):
         except Exception as e:
             return e
 
-
     @property
     def offset(self):
         try:
@@ -162,6 +159,7 @@ class WheelSpin(TimeStamp):
             return e   
 
     def save(self, *args, **kwargs):
+        set_up=wheel_setting()
         self.closed_at = self.open_at + timedelta(minutes=set_up.closed_at)
         self.results_at = self.open_at + timedelta(minutes=set_up.results_at)
 
@@ -205,6 +203,7 @@ class Stake (TimeStamp):
 
     @property
     def this_user_has_cash_to_bet(self):
+        set_up=wheel_setting()
         if self.amount> set_up.min_bet: # unti neative values
             if not self.bet_on_real_account:
                 try:
@@ -306,7 +305,15 @@ class OutCome(TimeStamp):
     @staticmethod
     def update_give_away(new_bal):
         CashStore.objects.filter(id =1).update(give_away= new_bal)
-    
+
+    @property
+    def current_update_to_keep(self):
+        return CashStore.objects.get(id =1).to_keep
+
+    @staticmethod
+    def update_to_keep(new_bal):
+        CashStore.objects.filter(id =1).update(to_keep= new_bal)
+
     def user_cum_depo(self):
         pass
 
@@ -319,6 +326,7 @@ class OutCome(TimeStamp):
     def real_account_result_algo(self):        
         try:                
             if float(self.current_update_give_away) >= (3*self.stake.amount):  ##TO IMPLEMENT
+                set_up=wheel_setting()
                 # return 1
                 if set_up.win_algo ==1:
                     print('Using REALrandom Algo')
@@ -334,6 +342,7 @@ class OutCome(TimeStamp):
             return e 
 
     def trial_account_result_algo(self):
+        set_up=wheel_setting()
         if set_up.trial_algo ==1: # normal win trial
             print('Using Normal_Trial Al 1')
             return randint(1,2)
@@ -465,6 +474,7 @@ class OutCome(TimeStamp):
 
     @staticmethod        
     def update_values(stake_obj):
+        set_up=wheel_setting()
         amount = float(stake_obj.amount)
         odds = float(stake_obj.marketselection.odds)
         per_for_referer = set_up.refer_per  # Settings
@@ -477,14 +487,34 @@ class OutCome(TimeStamp):
         return win_amount,ref_credit,rem_credit
 
     def update_give_away_bank(self):
+        set_up=wheel_setting()
         if self.result== 1:
             current_bal = float(self.current_update_give_away)
             new_bal = current_bal - float(self.stake.amount) 
             self.update_give_away(new_bal)
         else:
-            current_bal = float(self.current_update_give_away)
-            new_bal = current_bal + float(self.stake.amount)
-            self.update_give_away(new_bal)
+            current_give_away_bal = float(self.current_update_give_away)
+            current_to_keep_bal = float(self.current_update_to_keep)
+
+            _to_keep=(float(set_up.per_to_keep)/100)*float(self.stake.amount)
+            _away=float(self.stake.amount)-_to_keep
+
+            print(f'ALL:{float(self.stake.amount)} ')#debug
+            print(f'_TO_KEEP:{_to_keep} ')#debug            
+            print(f'_AWAY:{_away} ')#debug
+            print(f'current_give_away_bal:{current_give_away_bal} ')
+            print(f'current_to_keep_bal:{current_to_keep_bal} ')
+
+            away = current_give_away_bal + _away
+            to_keep=current_to_keep_bal+_to_keep
+
+            print(f'TO_KEEP:{to_keep} ')#debug            
+            print(f'AWAY:{away} ')#debug
+
+
+            
+            self.update_give_away(away)
+            self.update_to_keep(to_keep)
  
     @property
     def win_status(self):
@@ -505,7 +535,6 @@ class OutCome(TimeStamp):
             return_amount = (per_to_return/100)*all_gain
             per_user_return = (userstake/all_lose_stake)*return_amount
             return per_user_return
-
         except Exception as e:
             return 0
 

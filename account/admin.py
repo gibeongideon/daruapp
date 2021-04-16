@@ -6,10 +6,10 @@ from account.models import (
 
 
 class AccountSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'curr_unit',)
+    list_display = ('id', 'curr_unit','auto_approve')
     list_display_links = ('id',)
     search_fields = ('id',)
-    list_editable = ('curr_unit',)
+    list_editable = ('curr_unit','auto_approve')
 
 
 admin.site.register(AccountSetting, AccountSettingAdmin)
@@ -74,11 +74,11 @@ admin.site.register(CashDeposit, CashDepositAdmin)
 
 
 class CashWithrawalAdmin(admin.ModelAdmin):
-    list_display = ('id','user','active','approved','withrawned','withraw_status','has_record','amount','user_account','created_at','updated_at')
+    list_display = ('id','user','active','cancelled','approved','withrawned','withraw_status','has_record','amount','user_account','created_at','updated_at')
     list_display_links = ('id',)
     search_fields = ('user',)
-    list_filter =('user','approved','active')
+    list_filter =('user','approved','cancelled','active')
     readonly_fields =('withrawned','has_record','active','user_account','created_at','updated_at')
-    list_editable = ('approved',)
+    list_editable = ('approved','cancelled')
 
 admin.site.register(CashWithrawal, CashWithrawalAdmin)
