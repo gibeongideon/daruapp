@@ -39,12 +39,6 @@ class DaruWheelSetting(TimeStamp):
 def wheel_setting():
     set_up, created = DaruWheelSetting.objects.get_or_create(id=1)
     return set_up
-# try:
-#     ''' remove no such table on make migrations'''
-#     set_up,_ = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
-# except Exception as me:
-#     print("MEE", me)
-#     pass
 
 class Selection(TimeStamp):
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -478,7 +472,7 @@ class OutCome(TimeStamp):
         amount = float(stake_obj.amount)
         odds = float(stake_obj.marketselection.odds)
         per_for_referer = set_up.refer_per  # Settings
-        win_amount = amount *odds
+        win_amount = (amount *odds)-amount#@####
         if per_for_referer > 100: # Enforce 0<=p<=100 TODO
             per_for_referer = 0
 
@@ -486,11 +480,11 @@ class OutCome(TimeStamp):
         rem_credit = win_amount -ref_credit        
         return win_amount,ref_credit,rem_credit
 
-    def update_give_away_bank(self):
+    def update_give_away_bank(self,add_sub_amount=0):
         set_up=wheel_setting()
         if self.result== 1:
             current_bal = float(self.current_update_give_away)
-            new_bal = current_bal - float(self.stake.amount) 
+            new_bal = current_bal - add_sub_amount#float(self.stake.amount) 
             self.update_give_away(new_bal)
         else:
             current_give_away_bal = float(self.current_update_give_away)
@@ -499,20 +493,9 @@ class OutCome(TimeStamp):
             _to_keep=(float(set_up.per_to_keep)/100)*float(self.stake.amount)
             _away=float(self.stake.amount)-_to_keep
 
-            print(f'ALL:{float(self.stake.amount)} ')#debug
-            print(f'_TO_KEEP:{_to_keep} ')#debug            
-            print(f'_AWAY:{_away} ')#debug
-            print(f'current_give_away_bal:{current_give_away_bal} ')
-            print(f'current_to_keep_bal:{current_to_keep_bal} ')
-
             away = current_give_away_bal + _away
             to_keep=current_to_keep_bal+_to_keep
-
-            print(f'TO_KEEP:{to_keep} ')#debug            
-            print(f'AWAY:{away} ')#debug
-
-
-            
+                        
             self.update_give_away(away)
             self.update_to_keep(to_keep)
  
@@ -576,11 +559,39 @@ class OutCome(TimeStamp):
                     pass#TODO
 
             else:#ispin
-                win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
-                if self.result ==1:###
-                    # add_amount=float(self.stake.amount*2)
-                    self.update_user_real_account(user_id,rem_credit)
-                self.update_give_away_bank()           
+                try:                                                           
+                    win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
+
+                    add_sub_amount=this_user_stak_obj.amount+ref_credit 
+                    print('addAount_') 
+                    print(add_sub_amount)                    
+
+                    if self.result ==1:###
+                        print('spinWIN_R')
+                        print(ref_credit)
+                        print(rem_credit)
+                        # add_amount=float(self.stake.amount*2)
+                        self.update_user_real_account(user_id,win_credit)
+
+                        if ref_credit > 0:
+                            trans_type = 'irefer-win'
+                            print('spinWIN_Ref')
+                            self.update_reference_account(user_id,ref_credit,trans_type)
+                        
+                        # add_sub_amount=this_user_stak_obj.amount+ref_credit 
+                        # print('addAount_') 
+                        # print(add_sub_amount)            
+
+                        self.update_give_away_bank(add_sub_amount)
+
+                    else:
+                        print('LOST_ISPIN')
+                        self.update_give_away_bank(add_sub_amount)
+
+                except Exeption as e:                    
+                    print('REfeee_stuff')
+                    print(e)
+           
 
         else:#TRIAL
             if this_user_stak_obj.market is not None:#daru

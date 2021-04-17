@@ -251,7 +251,7 @@ class StakeTestCase(TestCase):
         if  out_come1.result==1:
 
             # self.assertEqual(OutCome.objects.count(), 7)
-            self.assertEqual(current_account_bal_of(self.user),cur_bal+100)
+            self.assertEqual(current_account_bal_of(self.user),cur_bal+100)#@#
             self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-100)
         elif out_come1.result==2:
             _to_keep=set_up.per_to_keep/100*100

@@ -10,7 +10,7 @@ from dashboard.models import TimeStamp
 
 class AccountSetting(TimeStamp):
     curr_unit = models.FloatField(default=0, blank=True, null=True)
-    # min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
+    min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
     auto_approve = models.BooleanField(default=False,blank=True, null=True)
 
     class Meta:
@@ -199,7 +199,7 @@ class RefCredit(TimeStamp):
 
     @property
     def min_redeam(self):
-        return BetSettingVar.objects.get(id=1).min_redeem_refer_credit #auto create
+        return AccountSetting.objects.get(id=1).min_redeem_refer_credit #auto create
 
     def update_refer_balance(self):
         try:
