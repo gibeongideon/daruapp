@@ -39,12 +39,6 @@ class DaruWheelSetting(TimeStamp):
 def wheel_setting():
     set_up, created = DaruWheelSetting.objects.get_or_create(id=1)
     return set_up
-# try:
-#     ''' remove no such table on make migrations'''
-#     set_up,_ = DaruWheelSetting.objects.get_or_create(id=1)  # fail save
-# except Exception as me:
-#     print("MEE", me)
-#     pass
 
 class Selection(TimeStamp):
     name = models.CharField(max_length=100, blank=True, null=True)
@@ -499,20 +493,9 @@ class OutCome(TimeStamp):
             _to_keep=(float(set_up.per_to_keep)/100)*float(self.stake.amount)
             _away=float(self.stake.amount)-_to_keep
 
-            print(f'ALL:{float(self.stake.amount)} ')#debug
-            print(f'_TO_KEEP:{_to_keep} ')#debug            
-            print(f'_AWAY:{_away} ')#debug
-            print(f'current_give_away_bal:{current_give_away_bal} ')
-            print(f'current_to_keep_bal:{current_to_keep_bal} ')
-
             away = current_give_away_bal + _away
             to_keep=current_to_keep_bal+_to_keep
-
-            print(f'TO_KEEP:{to_keep} ')#debug            
-            print(f'AWAY:{away} ')#debug
-
-
-            
+                        
             self.update_give_away(away)
             self.update_to_keep(to_keep)
  
