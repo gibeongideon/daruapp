@@ -4,10 +4,12 @@ import random
 from django.utils import timezone
 from time import sleep
 from daru_wheel.models import (
-    Stake, CashStore, OutCome, Market, WheelSpin, Selection,
-    current_account_trialbal_of,)
-
-from account.models import Account, CashDeposit ,current_account_bal_of
+    Stake, CashStore, OutCome, WheelSpin,
+    Selection,DaruWheelSetting
+    )
+from account.models import (
+    Account, CashDeposit, current_account_bal_of,current_account_trialbal_of
+    )
 # MODEL TESTS
 
 def create_user():
@@ -32,18 +34,30 @@ def deposit_to_test_user(user_id, amount=10000):
 
 class MarketTestCase(TestCase):
     def test_create_rit_market(self):
-
         WheelSpin.objects.create()
-        WheelSpin.objects.create()
-
-
-        self.assertEqual(Market.objects.count(), 1)
-        
+        # WheelSpin.objects.create()
+        self.assertEqual(WheelSpin.objects.count(), 1)        
 
 class StakeTestCase(TestCase):
     def setUp(self):
         self.user = create_user()
-        CashDeposit.objects.create(user=self.user, amount=10000)        
+        CashDeposit.objects.create(user=self.user, amount=10000)  
+        self.spin = WheelSpin.objects.create()        
+        # self.market = Market.objects.get(id=1)
+        # market = WheelSpin.objects.create()
+
+        self.marketselection1, _ = Selection.objects.get_or_create(
+            id=1,
+            # mrtype=self.market,
+            name='RED',
+            odds=2)
+
+        self.marketselection2, _ = Selection.objects.get_or_create(
+            id=2,
+            # mrtype=self.market,
+            name='YELLOW',
+            odds=2)
+
     
     def test_no_balance_bet(self):
 
@@ -81,128 +95,259 @@ class StakeTestCase(TestCase):
 
         self.assertEqual(Stake.objects.count(), 2)
 
-    def test_store_bank_mat(self):
+    def test_store_bank_math(self):
+        set_up, created = DaruWheelSetting.objects.get_or_create(id=1)
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000) #REAL
-        Stake.objects.create(user=self.user, amount=1000) #TRIAL
-     
+        stake1=Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True, amount=1000)
+
+        OutCome.objects.create(stake_id=stake1.id)
+
+        self.assertEqual(OutCome.objects.count(), 1)
+        stake2 = Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection2,
+            amount=1000) #TRIAL
+        OutCome.objects.create(stake_id=stake2.id)
+
+        self.assertEqual(OutCome.objects.count(), 2)
         self.assertEqual(current_account_bal_of(self.user), 9000)
-        self.assertEqual(current_account_trialbal_of(self.user), 49000)
+        # self.assertEqual(current_account_trialbal_of(self.user), 49000)
+
+        to_keep=set_up.per_to_keep/100*1000
+        away=1000-to_keep    
+
+        self.assertEqual(CashStore.objects.get(id=1).give_away, away)
+
+
+    #     #______________________________________________
+        stake=Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection2,
+            bet_on_real_account=True, amount=1000)  #REAL
+        out_come1=OutCome.objects.create(stake_id=stake.id)
+
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1,
+            bet_on_real_account=False, amount=2000) # TRIAL
+        OutCome.objects.create(stake_id=stake.id)
+
+        print(f'0out_come1.result:{out_come1.result}')
+        self.assertNotEqual(out_come1.result,None)
+        if  out_come1.result==1: 
+            self.assertEqual(current_account_bal_of(self.user), 10000)
+            self.assertEqual(CashStore.objects.get(id=1).give_away, 0)#950
+            print('WIN')
+        elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1000
+            _away1=1000-_to_keep
+            away=_away1+away
+            to_keep=set_up.per_to_keep/100*1000+to_keep
+
+            self.assertEqual(current_account_bal_of(self.user), 8000) 
+            self.assertEqual(CashStore.objects.get(id=1).give_away, away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
+            print('LOSS')
+
+        # self.assertEqual(current_account_trialbal_of(self.user), 47000) 
+
+        cur_bal= current_account_bal_of(self.user)
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
+        print('CI_BAl1', cur_bal)
+        print('STO_BAl1', stor_bal)
+
+    #     #_____________________________________________________
+
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True, amount=1000)
+        out_come1=OutCome.objects.create(stake_id=stake.id)    
+
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1,
+            amount=5000)
+
+        out_come2=OutCome.objects.create(stake_id=stake.id)
+        self.assertNotEqual(out_come1.result,None)
+
+        self.assertEqual(OutCome.objects.count(), 6)
+        print(f'1out_come1.result:{out_come1.result}')
+        self.assertNotEqual(out_come1.result,None)
+
+        if  out_come1.result==1: 
+            # self.assertEqual(OutCome.objects.count(), 7)
+            self.assertEqual(current_account_bal_of(self.user),cur_bal+1000)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1000)
+        elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1000
+            _away1=1000-_to_keep
+            away=_away1+stor_bal
+            to_keep=set_up.per_to_keep/100*1000+to_keep
+
+            self.assertEqual(current_account_bal_of(self.user),cur_bal-1000) 
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
+
+        # self.assertEqual(current_account_trialbal_of(self.user), 42000)
         
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 1000)
+        cur_bal= current_account_bal_of(self.user)
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
+        print('CI_BAl2', cur_bal)
+        print('STO_BAl2', stor_bal)   
+    #     #_____________________________________________
 
-        #______________________________________________
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection2,
+            bet_on_real_account=True, amount=1000)
+        out_come1=OutCome.objects.create(stake_id=stake.id)
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)  #REAL
-        Stake.objects.create(user=self.user,bet_on_real_account=False, amount=2000) # TRIAL
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1, amount=1000)
+        out_come2=OutCome.objects.create(stake_id=stake.id) 
+        print(f'2out_come1.result:{out_come1.result}')
+        self.assertNotEqual(out_come1.result,None)
 
-        self.assertEqual(current_account_bal_of(self.user), 8000)
-        self.assertEqual(current_account_trialbal_of(self.user), 47000)
+        if  out_come1.result==1:  
+            # self.assertEqual(OutCome.objects.count(), 7)
+            self.assertEqual(current_account_bal_of(self.user),cur_bal+1000)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1000)
+        elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1000
+            _away1=1000-_to_keep
+            away=_away1+stor_bal
 
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 2000)
+            to_keep=set_up.per_to_keep/100*1000+to_keep            
+            self.assertEqual(current_account_bal_of(self.user),cur_bal-1000) 
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
 
-        #_____________________________________________________
+        # self.assertEqual(current_account_trialbal_of(self.user), 41000)#@@
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)
-        Stake.objects.create(user=self.user,bet_on_real_account=False, amount=5000)
+        cur_bal= current_account_bal_of(self.user)
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
+        print('CI_BAl3', cur_bal)
+        print('STO_BAl3', stor_bal)         
+    #     #_______________________________________________________________  
 
-        self.assertEqual(current_account_bal_of(self.user), 7000)
-        self.assertEqual(current_account_trialbal_of(self.user), 42000)
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True, amount=100)
+        out_come1=OutCome.objects.create(stake_id=stake.id)
 
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 3000)
+        stake =Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1, amount=1100)
+        OutCome.objects.create(stake_id=stake.id)
+        self.assertNotEqual(out_come1.result,None)
+        print(f'3out_come1.result:{out_come1.result}')
+        if  out_come1.result==1:
 
-        #_____________________________________________
+            # self.assertEqual(OutCome.objects.count(), 7)
+            self.assertEqual(current_account_bal_of(self.user),cur_bal+100)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-100)
+        elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*100
+            _away1=100-_to_keep
+            away=_away1+stor_bal
+            to_keep=set_up.per_to_keep/100*100+to_keep
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1000)
-        Stake.objects.create(user=self.user, amount=1000)
-   
+            self.assertEqual(current_account_bal_of(self.user),cur_bal-100) 
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away )
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
 
-        self.assertEqual(current_account_bal_of(self.user), 8000)
-        self.assertEqual(current_account_trialbal_of(self.user), 41000)
+        cur_bal= current_account_bal_of(self.user)
+        stor_bal=float(CashStore.objects.get(id=1).give_away)
+        print('CI_BAl4', cur_bal)
+        print('STO_BAl4', stor_bal)  
+        #________________
+        
+        stake=Stake.objects.create(
+            user=self.user,
+            marketselection=self.marketselection1,
+            bet_on_real_account=True, amount=1100)
+        out_come1=OutCome.objects.create(stake_id=stake.id)
+        self.assertNotEqual(out_come1.result,None)
 
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 2000)   
-        #_______________________________________________________________  
+        print(f'4out_come1.result:{out_come1.result}')
+        if  out_come1.result==1:  
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=100)
+            self.assertEqual(current_account_bal_of(self.user),cur_bal+1100)
+            self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1100)
+        elif out_come1.result==2:
+            _to_keep=set_up.per_to_keep/100*1100
+            _away1=1100-_to_keep
+            away=_away1+stor_bal
+            to_keep=set_up.per_to_keep/100*1100+to_keep
 
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 1900)
+            self.assertEqual(current_account_bal_of(self.user),cur_bal-1100) 
+            self.assertEqual(CashStore.objects.get(id=1).give_away,away)
+            self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
 
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=500)
+        # self.assertEqual(current_account_trialbal_of(self.user), 44100)
 
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 1400)
-
-        #________________________________________________
-
-        Stake.objects.create(user=self.user,bet_on_real_account=True, amount=1100)
-
-        self.assertEqual(current_account_bal_of(self.user), 7500)
-        self.assertEqual(current_account_trialbal_of(self.user), 41000)
-
-        self.assertEqual(CashStore.objects.get(id=1).give_away, 2500)  
 
     def test_create_stake_for_rit_market(self):
+        self.spin = WheelSpin.objects.create()        
+        # self.market = Market.objects.get(id=1)
+   
+        self.marketselection1, _ = Selection.objects.get_or_create(
+            id=1,
+            # mrtype=self.market,
+            name='RED',
+            odds=2)
 
-        market = WheelSpin.objects.create()
-
+        self.marketselection2, _ = Selection.objects.get_or_create(
+            id=2,
+            # mrtype=self.market,
+            name='YELLOW',
+            odds=2)
 
         Stake.objects.create(
             user=self.user,
-            market=market,
+            market=self.spin,
+            marketselection=self.marketselection1,
             bet_on_real_account=False,
             amount=100)
 
         self.assertEqual(OutCome.objects.count(), 0)
+        self.assertEqual(self.spin.selection_bet_amount,[0,0])
 
-        Stake.objects.create(
+
+        stake=Stake.objects.create(
             user=self.user,
+            marketselection=self.marketselection2,
             bet_on_real_account=False,
             amount=100)
-            
+        OutCome.objects.create(stake_id=stake.id)    
+  
         self.assertEqual(OutCome.objects.count(), 1)
+        self.assertEqual(self.spin.selection_bet_amount,[0,0])
 
-
-
-
-class LoginPageTest(TestCase):
-
-    TEST_USERNAME = '0721399876'
-    TEST_EMAIL = 'john@casino.test'
-    TEST_PASSWORD = 'Tw0jaStaraZ4pierdala'
-
-    def test_user_can_login_with_valid_data(self):
-        User.objects.create_user(username=self.TEST_USERNAME,
-                                 email=self.TEST_EMAIL,
-                                 password=self.TEST_PASSWORD)
-        response = self.client.post('/user/login', {
-            'username': self.TEST_USERNAME,
-            'password': self.TEST_PASSWORD
-        })
-        self.assertRedirects(response, '/')
-
-# class SpinPageTest(TestCase):
-#     def test_spin_home_template(self):
-#         response = self.client.get('/daru_wheel/spin')
-#         self.assertRedirects(response, '/user/login?next=/daru_wheel/spin')
-        
-#         # self.assertTemplateUsed(response, 'home.html')
 
 
 class BetLogicTest(TestCase):
 
     def setUp(self):
         self.spin = WheelSpin.objects.create()        
-        self.market = Market.objects.get(id=1)
-        
+        # self.market = Market.objects.get(id=1)        
 
         self.marketselection1, _ = Selection.objects.get_or_create(
             id=1,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='RED',
             odds=2)
 
         self.marketselection2, _ = Selection.objects.get_or_create(
             id=2,
-            mrtype=self.market,
+            # mrtype=self.market,
             name='YELLOW',
             odds=2)
 
@@ -228,10 +373,10 @@ class BetLogicTest(TestCase):
             current_account_bal_of(self.user3.id),
             1000)
 
-        self.assertEqual(Market.objects.count(),1)    
+        # self.assertEqual(Market.objects.count(),1)    
   
         # BET
-    def test_test_deduct_bet_amount(self):  
+    def test_deduct_bet_amount(self):  
         #BEFORE  
         self.assertEqual(
             current_account_bal_of(self.user1.id),
@@ -275,7 +420,7 @@ class BetLogicTest(TestCase):
             current_account_bal_of(self.user2.id),
             5800)
 
-    def test_test_add_winner_account_amount(self):  #1
+    def test_add_winner_account_amount(self):  #1
         '''#1 test/let it not failed: It determine precise stake culculations'''
         #BEFORE  
         self.assertEqual(
@@ -348,9 +493,9 @@ class BetLogicTest(TestCase):
             current_account_bal_of(self.user3.id),
             1000)
 
-        self.assertEqual(
-            current_account_trialbal_of(self.user3.id),
-            50300)
+        # self.assertEqual(
+        #     current_account_trialbal_of(self.user3.id),
+        #     50300)
 
     def test_total_bet_amount_per_market(self):
              #BET
@@ -361,7 +506,7 @@ class BetLogicTest(TestCase):
             bet_on_real_account=False,
             amount=100)
 
-        Stake.objects.create(
+        stake_w=Stake.objects.create(
             user=self.user2,
             market=self.spin,
             marketselection=self.marketselection2,
@@ -390,3 +535,15 @@ class BetLogicTest(TestCase):
             amount=600)
         #MARKET STATE
         self.assertEqual(self.spin.selection_bet_amount,[450,200]) 
+
+        # self.assertEqual(stake_w.bet_status(),'pending')
+
+
+# # TEST VIEWS
+
+# # class DaruWeelTest(TestCase):
+
+# #     def test_uses_seed_template(self):
+# #         response = self.client.get('/daru_wheel/spin')
+# #         print('RESSS',response)
+# #         self.assertTemplateUsed(response, 'daru_wheel/ispin.html')

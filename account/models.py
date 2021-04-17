@@ -5,47 +5,55 @@ from decimal import Decimal
 import math
 from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
+from dashboard.models import TimeStamp
 
-
-class TimeStamp(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True,blank =True,null=True)
-    updated_at = models.DateTimeField(auto_now=True,blank =True,null=True)
-    # is_active = models.BooleanField(default=True)
-
-    class Meta:
-        abstract = True
 
 class AccountSetting(TimeStamp):
     curr_unit = models.FloatField(default=0, blank=True, null=True)
     # min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
+    auto_approve = models.BooleanField(default=False,blank=True, null=True)
 
     class Meta:
         db_table = "d_accounts_setup"
 
-
-try:
+def account_setting():
     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
-except Exception as ce:
-    print("COUNtttt", ce) 
+    print(f'SET_up{set_up.auto_approve}')
+    return set_up
 
 
+# try:
+#     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
+# except Exception as ce:
+#     print("COUNtttt", ce) 
+
+# print(f'SET_up{set_up.auto_approve}')
 class Account(TimeStamp):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     token_count = models.IntegerField(default=0)
 
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     actual_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    withrawable_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    withraw_power = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     trial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=50000)
-    active = models.BooleanField(default= True)
+
+    cum_deposit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    cum_withraw = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    active = models.BooleanField(default=True)
 
     def __str__(self): 
-        return 'Account No: {0} Balance: {1}'.format(self.user,self.balance)
+        return 'Account No: {0} Balance: {1}'.format(self.user, self.balance)
     class Meta:
         db_table = "d_accounts"
         ordering = ('-user_id',)
+
+    def withrawable_balance(self):
+        return min(self.withraw_power, self.balance)
+        # if self.withraw_powe,< self.balance:
+        #     return self.withraw_power
+        # return self.balance
 
     def add_tokens(self, number):
         """Increase user tokens amount watch over not to use negative value.
@@ -90,7 +98,6 @@ class Account(TimeStamp):
    
 class Curr_Variable(TimeStamp):
     """Store currencies with specified name and rate to token amount."""
-
     name = models.CharField(max_length=30, blank =True,null=True)
     curr_unit = models.DecimalField(max_digits=12, decimal_places=5,default= 1)
 
@@ -104,7 +111,6 @@ class Curr_Variable(TimeStamp):
     #         cls.objects.get(id=1).update(curr_unit= value)
     #     except Exception as e :
     #         print(f'update_curr_unit{e}')
-
 
 
 
@@ -282,6 +288,7 @@ class CashDeposit(TimeStamp):
     # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     deposited = models.BooleanField(blank =True ,null= True)
+    deposit_type=models.CharField(max_length=100 ,default='Shop Deposit',blank =True,null=True)
     has_record = models.BooleanField(blank =True ,null= True)
 
     user = models.ForeignKey(
@@ -305,6 +312,17 @@ class CashDeposit(TimeStamp):
     @property
     def current_bal(self): 
         return current_account_bal_of(self.user_id)
+
+    def update_cum_depo(self):
+        try:
+            if not self.deposited :
+                ctotal_balanc = current_account_cum_depo_of(self.user_id) #F' 
+                new_bal = ctotal_balanc + int(self.amount)
+                update_account_cum_depo_of(self.user_id,new_bal) #F
+                # self.deposited = True
+        except Exception as e:
+            print(f'Daru:CashDeposit-update_cum_depo Error:{e}') # Debug
+            pass  
             
 
     def save(self, *args, **kwargs):
@@ -318,17 +336,15 @@ class CashDeposit(TimeStamp):
                         ctotal_balanc = current_account_bal_of(self.user_id) #F
                         new_bal = ctotal_balanc + int(self.amount)
                         update_account_bal_of(self.user_id,new_bal) #F
+                        self.update_cum_depo() #####
                         self.deposited = True
                 except Exception as e:
                     print(f'Daru:CashDeposit-Deposited Error:{e}') # Debug
-                    pass        
-
-
-
+                    pass      
 
                 try:
                     if not self.has_record:
-                        log_record(self.user_id,self.amount,'Shop Deposit')
+                        log_record(self.user_id,self.amount,str(self.deposit_type))
                         self.has_record = True
                 except  Exception as e:
                     print(f'Daru:CashDeposit-Log Error:{e}') # Debug
@@ -355,6 +371,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     address = models.CharField(max_length=100,blank= True,null =True)
     
     approved = models.BooleanField(default=False,blank= True,null =True)
+    cancelled=models.BooleanField(default =False,blank= True,null =True)
     withrawned = models.BooleanField(blank= True,null =True)
     has_record = models.BooleanField(blank= True,null =True)
     active = models.BooleanField(default =True,blank= True,null =True)
@@ -381,16 +398,29 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     def user_account(self):
         return current_account_bal_of(self.user)# Account.objects.get(user_id =self.user_id)
 
+    @classmethod
+    def withraw_amount(cls):
+        return cls.objects.all()
+
+    # @property
+    # def similar_trans(self):
+    #     all_trans=self.withraw_amount()
+    #     le=len(all_trans.filter(user_id=self.user_id))
+    #     pre=all_trans.filter(user_id=self.user_id)[le-2]
+    #     if  self.amount==pre.amount:
+    #         return    True
+    #     return    False
+
     def update_user_withrawable_balance(self):
         try:
-            now_withrawable = float(Account.objects.get(user_id=self.user_id).withrawable_balance)
+            now_withrawable = float(Account.objects.get(user_id=self.user_id).withraw_power)
             print(f'now_withrawableW:{now_withrawable}')
             deduct_amount = float(self.amount)
             print(f'added_amountW:{deduct_amount}')
             total_withwawable = now_withrawable - deduct_amount
 
             if total_withwawable > 0:
-                Account.objects.filter(user =self.user).update(withrawable_balance= total_withwawable)
+                Account.objects.filter(user =self.user).update(withraw_power= total_withwawable)
         except Exception as e:
             print('update_user_withrawable_balance',e)
             pass
@@ -403,32 +433,58 @@ class CashWithrawal(TimeStamp): # sensitive transaction
             return 0
         else:
             return 0
+
+    def update_cum_withraw(self):
+        try:
+            if not self.withrawned:
+                ctotal_balanc = current_account_cum_withraw_of(self.user_id) #F
+                new_bal = ctotal_balanc + int(self.amount)
+                update_account_cum_withraw_of(self.user_id,new_bal) #F
+                
+        except Exception as e:
+            print(f'Daru:CashWit-update_cum_wit Error:{e}') # Debug
+            pass              
     @property
     def withraw_status(self):
+        if self.cancelled:
+            return 'cancelled'
         if not self.approved:
             return 'pending'
-        elif self.approved and self.withrawned:
+        if self.approved and self.withrawned:
             return 'success'
-        else:
-            return 'failed'
+
+        return 'failed'
 
     def save(self, *args, **kwargs):
+        # if self.similar_trans:
+        #     return
         ''' Overrride internal model save method to update balance on deposit  '''
         account_is_active = self.user.active
         ctotal_balanc = current_account_bal_of(self.user_id)
         #  = self.user.user_account.withrawable_balance
-        withrawable_bal =float(Account.objects.get(user_id =self.user_id).withrawable_balance)
+        withrawable_bal =float(Account.objects.get(user_id =self.user_id).withraw_power)
+        if not self.active:
+            return
+
+        if self.cancelled:
+            self.active = False
+            self.withrawned = False
 
         if self.active and self.amount > 0: # edit prevent # avoid data ma####FREFACCCC min witraw in settins
             if account_is_active:# withraw cash ! or else no cash!
                 try:
-                    if not self.withrawned and self.approved:# stop repeated withraws and withraw only id approved by ADMIN 
+                    set_up=account_setting()
+                    if set_up.auto_approve:
+                        self.approved = True
+
+                    if not self.withrawned and self.approved and not self.cancelled:# stop repeated withraws and withraw only id approved by ADMIN 
                         charges_fee = self.charges_fee # TODO settings
 
                         if ( self.amount + charges_fee) <= ctotal_balanc and ( self.amount + charges_fee) <= withrawable_bal :
                             try:                                
                                 new_bal = ctotal_balanc - float(self.amount) - charges_fee
                                 update_account_bal_of(self.user_id,new_bal) # F
+                                self.update_cum_withraw()##
                                 self.withrawned = True # transaction done
                                 self.update_user_withrawable_balance()
 
@@ -448,10 +504,10 @@ class CashWithrawal(TimeStamp): # sensitive transaction
                     print('CashWithRawal:',e)
                     return  # incase of error /No withrawing should happen
                     # pass
-                if self.approved: #and self.withrawned and self.has_record:
+                if self.approved: #and self.withrawned and self.has_record:#!!!!???????
                     self.active =False
 
-                super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 # Helper functions
 
@@ -473,9 +529,58 @@ def update_account_bal_of(user_id,new_bal): #F3
     except Exception as e:
         return e
 
+
+def current_account_trialbal_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).trial_balance)
+    except Exception as e:
+        return e
+
+def update_account_trialbal_of(user_id, new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(trial_balance=new_bal)
+        else:
+            log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
 def refer_credit_create(credit_to_user,credit_from_username,amount):
     try:
         RefCredit.objects.update_or_create(user = credit_to_user,credit_from = credit_from_username, amount= amount)
     except Exception as e:
         print(f'RRR{e}')
 
+
+def current_account_cum_depo_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).cum_deposit)
+    except Exception as e:
+        return e
+
+def update_account_cum_depo_of(user_id,new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(cum_deposit= new_bal)
+        else:
+            pass
+            # log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
+def current_account_cum_withraw_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).cum_withraw)
+    except Exception as e:
+        return e
+
+def update_account_cum_withraw_of(user_id,new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(cum_withraw= new_bal)
+        else:
+            pass
+            # log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+        

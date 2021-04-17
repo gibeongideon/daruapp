@@ -7,7 +7,6 @@ router = DefaultRouter()
 router.register(r'', api_view.StakeViewSet,basename='Stake')
 
 
-
 app_name = 'daru_wheel'
 
 urlpatterns = [

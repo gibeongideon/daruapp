@@ -6,10 +6,10 @@ from account.models import (
 
 
 class AccountSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'curr_unit',)
+    list_display = ('id', 'curr_unit','auto_approve')
     list_display_links = ('id',)
     search_fields = ('id',)
-    list_editable = ('curr_unit',)
+    list_editable = ('curr_unit','auto_approve')
 
 
 admin.site.register(AccountSetting, AccountSettingAdmin)
@@ -17,16 +17,15 @@ admin.site.register(AccountSetting, AccountSettingAdmin)
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'user_id', 'user', 'balance', 'actual_balance',
-        'withrawable_balance', 'refer_balance', 'trial_balance', 'active',
-        'created_at', 'updated_at')
+        'id', 'user_id', 'user', 'balance', 'actual_balance','withraw_power',
+        'withrawable_balance', 'refer_balance', 'trial_balance',
+        'cum_deposit','cum_withraw','active','created_at', 'updated_at')
     list_display_links = ('user_id',)
     search_fields = ('user_id',)
     list_editable = ('active',)
 
 
 admin.site.register(Account, AccountAdmin)
-
 
 class Curr_VariableAdmin(admin.ModelAdmin):
     list_display = ('id','name','curr_unit',)
@@ -64,10 +63,10 @@ admin.site.register(TransactionLog, TransactionLogAdmin)
 
 
 class CashDepositAdmin(admin.ModelAdmin):
-    list_display = ('user','deposited','has_record','amount','current_bal','created_at','updated_at')
+    list_display = ('user','deposited','deposit_type','has_record','amount','current_bal','created_at','updated_at')
     list_display_links = ('amount',)
     search_fields = ('amount',)
-    list_filter =('user',)
+    list_filter =('user','deposit_type')
     readonly_fields = ('deposited','has_record','current_bal','created_at','updated_at')
 
 
@@ -75,11 +74,11 @@ admin.site.register(CashDeposit, CashDepositAdmin)
 
 
 class CashWithrawalAdmin(admin.ModelAdmin):
-    list_display = ('id','user','active','approved','withrawned','withraw_status','has_record','amount','user_account','created_at','updated_at')
+    list_display = ('id','user','active','cancelled','approved','withrawned','withraw_status','has_record','amount','user_account','created_at','updated_at')
     list_display_links = ('id',)
     search_fields = ('user',)
-    list_filter =('user','approved','active')
+    list_filter =('user','approved','cancelled','active')
     readonly_fields =('withrawned','has_record','active','user_account','created_at','updated_at')
-    list_editable = ('approved',)
+    list_editable = ('approved','cancelled')
 
 admin.site.register(CashWithrawal, CashWithrawalAdmin)

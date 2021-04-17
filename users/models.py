@@ -22,14 +22,14 @@ class User(AbstractUser):
             mobile.startswith("07") or mobile.startswith("01"))\
                 and len(mobile) == 10:
             return "254"+mobile[1:]
-        elif mobile.startswith("254") and len(mobile) == 12:
+        if mobile.startswith("254") and len(mobile) == 12:
             return mobile
-        elif (
+        if (
             mobile.startswith("7") or mobile.startswith("1"))\
                 and len(mobile) == 9:
             return "254"+mobile
-        else:
-            return mobile+"-invalid"
+            
+        return mobile+"-invalid"
 
     def save(self, *args, **kwargs):
         if not self.pk:

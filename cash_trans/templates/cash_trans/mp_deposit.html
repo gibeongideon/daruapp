@@ -1,0 +1,75 @@
+
+{% extends "dashboard/layouts/base.html" %}
+
+{% block content %}
+<div class="alert alert-info">
+  <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
+    <i class="tim-icons icon-simple-remove"></i>
+  </button>
+  <span>{{notice}}.</span>
+</div>
+  <form action="{% url 'cash_trans:mpesa_deposit' %}" method="post">
+    {% csrf_token %}
+    
+      <div>
+        {{ form.amount }}
+      </div>
+
+    <button type="submit">Deposit</button>
+    
+  </form>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title"> Recent Deposits</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table tablesorter " id="">
+              <thead class=" text-primary">
+                <tr>
+                  <th>
+                    Date
+                  </th>
+                  <th>
+                    Amount
+                  </th>
+                  <!-- <th>
+                    Approved
+                  </th> -->
+                  <th class="text-center">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for trans in trans_logz%}
+  
+                <tr>
+                  <td>
+                    {{trans.created_at}}
+                  </td>
+                  <td>
+                    {{trans.amount}}
+                  </td>
+                  <!-- <td>
+                    {{trans.approved}}
+                  </td> -->
+                  <td class="text-center">
+                    {{trans.withraw_status}}
+                  </td>
+                </tr>
+  
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </div>
+
+
+{% endblock content %}

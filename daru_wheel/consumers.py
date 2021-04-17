@@ -3,8 +3,7 @@ from channels.generic.websocket import (
     AsyncWebsocketConsumer, WebsocketConsumer)
 from asgiref.sync import async_to_sync
 from random import randint
-from .models import OutCome
-
+from .models import OutCome, Stake
 
 class SpinConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -137,32 +136,42 @@ class IspinConsumer(AsyncWebsocketConsumer):
 
 class QspinConsumer(WebsocketConsumer):
     def connect(self):
-        self.user =self.scope["user"]
+        self.user=self.scope["user"]
         self.accept()
 
     def disconnect(self, close_code):
         pass
+    
+    def user_spins(self):
 
+        return [obj.id for obj in Stake.objects.filter(
+            user=self.user,
+            spinned=False)]
+
+    def update_stake_as_spinned(self, stakeid):
+        Stake.objects.filter(
+            user=self.user,
+            id=stakeid).update(spinned=True)     
+
+
+    def return_pointer(self):
+        spinz = self.user_spins()
+
+        if len(spinz) > 0:
+            spin_id = spinz[0]   
+            self.update_stake_as_spinned(spin_id)  
+            pointer_obj, _ = OutCome.objects.get_or_create(stake_id=spin_id)
+            return pointer_obj.pointer
+        else:
+            return ''
 
     # Receive pointer from spin group
-    def return_pointer(self):#user_id):
-        # slist = IoutCome.objects.get(id=1).pointer
-        # act_l=[slval in slist if slval.active=True]
-        # if len(act_l)==0:
-        #     return ""
-        # else:
-        #     act_l[0].active = False  # update field/
-        #     return act_l[0].ipointer  
-        #        # 
-  
-        # return slist
-        return randint(1,28) #IoutCome.objects.get(id=5).pointer
-
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         ipointer = text_data_json['ipointer']
         
         ipointer = self.return_pointer()
+        print(f'POINTERRR:{ipointer} ')
         # spinet = self.return_pointer()[1]
 
 

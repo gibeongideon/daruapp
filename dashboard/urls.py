@@ -14,7 +14,7 @@ urlpatterns = [
     # The home page
     path('', spin, name='index'),
     # path('', views.index, name='index'),
-    path('icons', views.icons, name='icons'),
+    path('deposit_withraw', views.deposit_withraw, name='deposit_withraw'),
     path('maps', views.maps, name='maps'),
     path('topo', views.topo, name='topo'),
     path('support', views.support, name='support'),

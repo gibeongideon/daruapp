@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 # from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 from django.urls import path, include
-from .template_views import trans_log,refer_credit
+from .template_views import trans_log, refer_credit, mpesa_withrawal
 
 
 router = DefaultRouter()
@@ -26,8 +26,6 @@ urlpatterns = [
     # templates
     path('trans_log/', trans_log, name="trans_log"),
     path('refer_credit/', refer_credit, name="refer_credit"),
+    path('mpesa_withrawal/', mpesa_withrawal, name="mpesa_withrawal"),
     
 ]
-
-#posts?_start=$startIndex&_limit=$limit
-

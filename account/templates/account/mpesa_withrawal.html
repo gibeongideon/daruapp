@@ -1,0 +1,135 @@
+
+{% extends "dashboard/layouts/base.html" %}
+
+{% block content %}
+
+
+  <!-- <div class="alert alert-info">
+    <button type="button" aria-hidden="false" class="close" data-dismiss="alert" aria-label="Close">
+      <i class="tim-icons icon-simple-remove"></i>
+    </button>
+    <span>{{notice}}Withrawals</span>
+  </div> -->
+  
+
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title">Withraw</h4>
+        </div>
+        <div class="card-body">
+
+<form action="{% url 'account:mpesa_withrawal' %}" method="post">
+    {% csrf_token %}
+    
+    <div class="col-md-4 pl-md-1">
+      <div class="form-group">
+        <!-- <label>Amount</label> -->
+        <!-- {{ form.amount }} -->
+        <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount"">      
+      </div>
+    </div>
+    
+    
+      <!-- <div>
+        Enter amount
+        {{ form.amount }}
+      </div> -->
+
+    <button class="btn btn-secondary type="submit">Withraw</button>
+  </form>
+        </div>
+      </div>
+    </div>
+
+    
+      <!-- <a href="{% url 'account:mpesa_withrawal' %}" >
+        <button class="btn btn-secondary">
+          <i class="tim-icons icon-refresh-01"></i>                    
+          Refresh 
+        </button>
+  
+      </a>
+
+   -->
+
+
+
+
+
+
+
+  <!-- <div class="col-sm-4"> </div> -->
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+
+      <a href="{% url 'account:mpesa_withrawal' %}" >
+        <button class="btn btn-secondary">
+          <i class="tim-icons icon-refresh-01"></i>                    
+          Refresh 
+        </button>
+  
+      </a>
+
+
+
+          <h4 class="card-title"> Recent Withrawals</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table tablesorter " id="">
+              <thead class=" text-primary">
+                <tr>
+                  <th>
+                    Date
+                  </th>
+                  <th>
+                    Amount
+                  </th>
+                  <!-- <th>
+                    Approved
+                  </th> -->
+                  <th class="text-center">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for trans in trans_logz%}
+  
+                <tr>
+                  <td>
+                    {{trans.created_at}}
+                  </td>
+                  <td>
+                    {{trans.amount}}
+                  </td>
+                  <!-- <td>
+                    {{trans.approved}}
+                  </td> -->
+                  <td class="text-center">
+                    {{trans.withraw_status}}
+                  </td>
+                </tr>
+  
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <a href="{% url 'account:mpesa_withrawal' %}" >
+      <button class="btn btn-secondary">
+        <i class="tim-icons icon-refresh-01"></i>                    
+        Refresh 
+      </button>
+
+    </a> -->
+  </div>
+
+
+{% endblock content %}

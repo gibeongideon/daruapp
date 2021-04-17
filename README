@@ -4,7 +4,8 @@
 
 DARUAPP _App for betting with real cash
 
-This is a CASINO kinda application implemented with Django-python ,HTML & Javascript-FroantEnd.Planning to implement froatEnd with React.JS.
+
+This is a CASINO  application implemented with Django-python ,HTML & Javascript-FroantEnd.Planning to implement froatEnd with React.JS.
 
 Apps:
   daru_wheel

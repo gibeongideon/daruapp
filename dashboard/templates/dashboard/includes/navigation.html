@@ -23,11 +23,31 @@
 
             {% if user.is_authenticated %}
             <ul class="navbar-nav ml-auto">
+
               <!-- <li class="search-bar input-group">
                 <button class="btn btn-link" id="search-button" data-toggle="modal" data-target="#searchModal"><i class="tim-icons icon-zoom-split" ></i>
-                  <span class="d-lg-none d-md-block">Search</span>
+                  <span class="d-lg-none d-md-block">Deposit</span>
                 </button>
               </li> -->
+
+            <li class="dropdown nav-item">
+              <a href="{% url 'dashboard:deposit_withraw' %}" >
+                <button class="btn " >                  
+                  <i class="tim-icons icon-credit-card" ></i>
+                  <span class="d-lg-none d-md-block"><p class='text-info'>Deposit & Withraw</p></span>
+                  <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block"><h6 class='text-info'>Deposit & Withraw</h6></span>             
+
+              </button> 
+              </a>    
+             
+            </li>  
+
+            <li class="separator d-lg-none"></li>
+
+
+
+
+
               <li class="dropdown nav-item">
                 <a href="javascript:void(0)" class="dropdown-toggle nav-link" data-toggle="dropdown">
                   <div class="notification d-none d-lg-block d-xl-block"></div>
@@ -37,8 +57,9 @@
                   </p>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right dropdown-navbar">
-                  <li class="nav-link"><a href="{% url 'dashboard:icons' %}" class="nav-item dropdown-item"><h5 class="text-info">Actual Balance: {{user.user_accounts.balance}}</h5></a></li>
-                  <li class="nav-link"><a href="{% url 'dashboard:icons' %}" class="nav-item dropdown-item"><h5 class="text-info"> Withrawable: {{user.user_accounts.withrawable_balance}}</h5></a></li>
+                  <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info">Actual Balance: {{user.user_accounts.balance}}</h5></a></li>
+                  <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info"> Withrawable Balannce: {{user.user_accounts.withrawable_balance}}</h5></a></li>
+                  <li class="nav-link"><a href="{% url 'dashboard:deposit_withraw' %}" class="nav-item dropdown-item"><h5 class="text-info"> Withraw Power: {{user.user_accounts.withraw_power}}</h5></a></li>
                   <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item"><h5 class="text-info">Refer Balance: {{user.user_accounts.refer_balance}}</h5></a></li>
                   <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item"><h5 class="text-info">Trial Balance: {{user.user_accounts.trial_balance}}</h5></a></li>
             
