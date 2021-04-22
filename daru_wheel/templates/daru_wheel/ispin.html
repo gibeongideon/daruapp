@@ -34,11 +34,10 @@
 
     <div class="col-sm-4">
       <button class="btn big-login" id="bet_button" data-toggle="modal" data-target="#betModal"><i class="tim-icons icon-coins" ></i>
-        <span class="d-lg-none d-md-block">Bet 4</span>
-        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Bet 2</span>
+        <span class="d-lg-none d-md-block">Bet to</span>
+        <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Bet to</span>
         <div class="text-info"> spin</div>
       </button>
-
       <button class="btn big-login" id="spin_button" >{{spins}}
         <span class="d-lg-none d-md-block">SPIN NOW</span>
         <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">SPIN NOW</span>
@@ -46,28 +45,7 @@
      
     </div>
 
-    <!-- <button class="btn btn-link" id="search-button" data-toggle="modal" data-target="#searchModal"><i class="tim-icons icon-zoom-split" ></i>
-      <span class="d-lg-none d-md-block">Stake</span>
-    </button> -->
-
-
-    <div class="card-body">
-
-      <div class="modal modal-search fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModal" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <i class="tim-icons icon-simple-remove"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-     
-    
+    <div class="card-body">  
     </div>
 
 
@@ -111,15 +89,11 @@
                 </div>    
               </div>
             </div>
+
             <div class="col-lg-4">
-              <div class="text-info">Amount to bet ( min:5 )</div>
-              
-              <div class="card card-chart">
-    
-                <div class="search-bar input-group">
-                  <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount" required="id_amount" >
-                </div>
-    
+              <div class="form-group">
+                <!-- <label for="number">Amount</label> -->
+                <input type="number" id="amount_id"   placeholder="amount to bet" name="amount" required="id_amount" >
               </div>
             </div>
 
@@ -209,8 +183,6 @@
                 </td>
                 <td>
 
-                <!-- </td> class="action-checkbox"> -->
-                  <!-- <input type="checkbox" name="_selected_action" value={{trans.bet_on_real_account}} class="action-select"> -->
                   {{trans.bet_on_real_account}}
                 </td>
               </tr>

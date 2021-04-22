@@ -25,20 +25,29 @@ def create_user_account(sender, instance, created, **kwargs):
 def update_account_balance_on_mpesa_deposit(sender, instance, created, **kwargs):
     # if created:
     try:
-        if int(instance.result_code) == 0:
-            try:
-                this_user = User.objects.get(
-                    phone_number=str(instance.phone)
-                    )
-            except :
-                print(f'user of {str(instance.phone)} does not Exist')#onlyinpaybill/notTiz
-                this_user = User.objects.create_user(username=str(instance.phone),password=str(instance.phone))#3#??
-                         
+        try:
+            this_user = User.objects.get(
+                phone_number=str(instance.phone)
+                )
+        except :
+            print(f'user of {str(instance.phone)} does not Exist')#onlyinpaybill/notTiz
+            this_user = User.objects.create_user(username=str(instance.phone),password=str(instance.phone))#3#??   
+
+
+        if int(instance.result_code) == 0:                         
             CashDeposit.objects.create(
                 user=this_user,
                 amount=instance.amount,
-                deposit_type='M-pesa Deposit'
+                deposit_type='M-pesa Deposit',
+                confirmed=True
                 ) 
+        else:        
+            CashDeposit.objects.create(
+                user=this_user,
+                amount=instance.amount,
+                deposit_type='M-pesa Deposit',
+                confirmed=False
+                )         
 
             # new_bal = current_current_account_bal_ofaccount_bal_of(this_user) + float(deposited_amount)  # F2 # fix unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
             # update_account_bal_of(this_user, new_bal)  #F3

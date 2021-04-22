@@ -287,6 +287,7 @@ class CashDeposit(TimeStamp):
     """
     # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
+    confirmed = models.BooleanField(default=False,blank= True,null =True)
     deposited = models.BooleanField(blank =True ,null= True)
     deposit_type=models.CharField(max_length=100 ,default='Shop Deposit',blank =True,null=True)
     has_record = models.BooleanField(blank =True ,null= True)
@@ -332,7 +333,7 @@ class CashDeposit(TimeStamp):
 
             try:
                 try:
-                    if not self.deposited :
+                    if self.confirmed and not self.deposited:
                         ctotal_balanc = current_account_bal_of(self.user_id) #F
                         new_bal = ctotal_balanc + int(self.amount)
                         update_account_bal_of(self.user_id,new_bal) #F

@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'phone_number',
-            'daru_code',
+            'referer_code',
             'first_name',
             'last_name',
             'email',
