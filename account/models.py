@@ -18,7 +18,8 @@ class AccountSetting(TimeStamp):
 
 def account_setting():
     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
-    print(f'SET_up{set_up.auto_approve}')
+    print(f'SET_up_auto_approve:{set_up.auto_approve}')
+    print(f'SET_up_min_redeem_refer_credit:{set_up.min_redeem_refer_credit}')
     return set_up
 
 
@@ -83,6 +84,14 @@ class Account(TimeStamp):
             self.token_count -= int_num
         else:
             raise NegativeTokens()
+
+    # def transfer_refer_credit_to_balance(user=None,amount=None):
+    #     if user and amount is not None:
+    #         print('Yes')
+    #         set_up=account_setting()
+    #         if amount>set_up.min_redeem_refer_credit:
+                
+    #     pass
 
     # @staticmethod
     # def inter_account_transfer(sending_user,receiving_user,amount):
@@ -195,11 +204,11 @@ class RefCredit(TimeStamp):
     
     @property
     def refer_balance(self):
-        return float(Account.objects.get(user_id = self.user_id).refer_balance)
-
-    @property
-    def min_redeam(self):
-        return AccountSetting.objects.get(id=1).min_redeem_refer_credit #auto create
+        try:
+            return float(Account.objects.get(user_id = self.user_id).refer_balance)
+        except Exception as e:
+            print(e)
+            return e
 
     def update_refer_balance(self):
         try:
@@ -212,20 +221,19 @@ class RefCredit(TimeStamp):
             print('update_refer_balance',e)
             pass
             
-    def tranfer_to_main_account(self):
-        try:
-            main_balance= current_account_bal_of(self.user_id)#F 
-            main_new_bal = self.refer_balance + main_balance
+    # def tranfer_to_main_account(self):
+    #     try:
+    #         main_balance= current_account_bal_of(self.user_id)#F 
+    #         main_new_bal = self.refer_balance + main_balance
 
-            Account.objects.filter(user_id= self.user_id).update(refer_balance= 0)
-            update_account_bal_of(self.user_id,main_new_bal) #F
-            log_record(self.user_id,self.refer_balance,'RDM') #F
-            self.closed = True
+    #         Account.objects.filter(user_id= self.user_id).update(refer_balance= 0)
+    #         update_account_bal_of(self.user_id,main_new_bal) #F
+    #         log_record(self.user_id,self.refer_balance,'RDM') #F
+    #         self.closed = True
 
-        except Exception as e:
-            print('tranfer_to_main_account2',e)
-            pass
-        self.closed = True        
+    #     except Exception as e:
+    #         print('tranfer_to_main_account2',e)
+    #         pass                
     
     def save(self, *args, **kwargs):
 
@@ -233,23 +241,59 @@ class RefCredit(TimeStamp):
         # if not self.closed:
         try:
             if not self.closed:
-                if self.refer_balance < self.min_redeam:
-                    print('Usual Refer Cash')
-                    self.update_refer_balance()
-
-                elif self.refer_balance > self.min_redeam and self.approved:
-                    print('Updating Account of Refer CASH!')
-                    self.tranfer_to_main_account()
-
+                self.update_refer_balance()   
+  
             if not self.has_record:
                 log_record(self.user_id,self.amount,'RC')
                 self.has_record =True
 
         except Exception as e:
             print('RefCredit:',e)
-            return 
+            pass
+            # return 
 
         super().save(*args, **kwargs)
+
+class RefCreditTransfer(TimeStamp):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_refer_credit_trans',blank =True,null=True) # NOT CASCADE #CK
+    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    succided = models.BooleanField(default=False,blank= True,null =True)
+    class Meta:
+        db_table = "d_refcredit_trans"
+        ordering = ('-created_at',)
+    
+    def __str__(self):
+        return 'User {0}:{1}'.format(self.user,self.amount)  
+
+    def transfer_refer_credit_to_balance(self):
+        set_up=account_setting()
+        curr_refer_bal=current_account_referbal_of(self.user_id)
+        if self.amount<=curr_refer_bal and self.amount >= set_up.min_redeem_refer_credit:
+      
+            new_refer_bal=curr_refer_bal-float(self.amount)
+            update_account_referbal_of(self.user_id,new_refer_bal)
+
+            curr_bal=current_account_bal_of(self.user_id)
+            new_bal=curr_bal+float(self.amount)
+            update_account_bal_of(self.user_id,new_bal)
+            self.succided=True
+        else:
+            pass    
+
+    def save(self, *args, **kwargs):
+        ''' Overrride internal model save method to update balance on deposit  '''
+        if not self.pk and self.amount>0:
+            try:
+                self.transfer_refer_credit_to_balance()
+            except Exception as e:
+                print('ReferTransERROR:',e)
+                pass
+        else:
+            return    
+
+        super().save(*args, **kwargs)            
+                  
+
 
 class TransactionLog(TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_transactions_logs',blank =True,null=True) # NOT CASCADE #CK
@@ -513,7 +557,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
 # Helper functions
 
 def log_record(user_id,amount,trans_type):# F1
-    TransactionLog.objects.update_or_create(user_id =user_id,amount= amount ,trans_type = trans_type)
+    TransactionLog.objects.create(user_id =user_id,amount= amount ,trans_type = trans_type)
 
 def current_account_bal_of(user_id): #F2
     try:
@@ -546,9 +590,25 @@ def update_account_trialbal_of(user_id, new_bal): #F3
     except Exception as e:
         return e
 
+def current_account_referbal_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).refer_balance)
+    except Exception as e:
+        return e
+
+def update_account_referbal_of(user_id,new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(refer_balance= new_bal)
+        else:
+            log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
+
 def refer_credit_create(credit_to_user,credit_from_username,amount):
     try:
-        RefCredit.objects.update_or_create(user = credit_to_user,credit_from = credit_from_username, amount= amount)
+        RefCredit.objects.create(user = credit_to_user,credit_from = credit_from_username, amount= amount)
     except Exception as e:
         print(f'RRR{e}')
 

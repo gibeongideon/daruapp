@@ -539,15 +539,16 @@ class OutCome(TimeStamp):
         # print(user_id,ref_credit,trans_type)
         try:
             this_user = User.objects.get(id = user_id)         
-            this_user_ReferCode = this_user.referer_code # first name is used as referer code
-            if not this_user_ReferCode:              
-                this_user_ReferCode =User.objects.get(id=1).code  # settings
+            this_user_refercode = this_user.referer_code # first name is used as referer code
+            if not this_user_refercode:              
+                this_user_refercode =User.objects.get(id=1).code  # settings
             
-            referer_users = User.objects.filter(code = this_user_ReferCode)
+            referer_users = User.objects.filter(code = this_user_refercode)
             for referer in referer_users:
-                # print(referer,'RefererUser')
+                print(referer,'RefererUser')
                 refer_credit_create(referer,this_user.username,ref_credit) #F4
                 # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
+                print('REFER_DONNE')
         except Exception as e:
             return e#TODO
 

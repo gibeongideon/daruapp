@@ -1,6 +1,6 @@
 from django.test import TestCase  #,Client
 from django.urls import reverse
-from account.models import CashDeposit, CashWithrawal, Account
+from account.models import CashDeposit, CashWithrawal, Account, RefCredit,RefCreditTransfer
 from users.models import User
 from daru_wheel.models import  Stake
 import random
@@ -91,3 +91,69 @@ class CashDepositWithrawalTestCase(TestCase):
         self.assertEqual(Account.objects.get(user=self.usera).cum_deposit,11000)
 
  
+class RefCreditTestCase(TestCase):
+    def setUp(self):
+       self.usera=User.objects.create(username="0710001000", email="testa@gmail.com",referer_code="ADMIN")
+       self.userb=User.objects.create(username="0123456787", email="testb@gmail.com", referer_code="ADMIN")
+      
+    def test_correct_user_cu_credit(self):
+        RefCredit.objects.create(amount=10,user=self.usera)
+        RefCredit.objects.create(amount=10,user=self.usera)
+        balla = Account.objects.get(user=self.usera).refer_balance
+
+        self.assertEqual(balla, 20)
+
+        RefCredit.objects.create(amount=100,user=self.usera)
+        ballb = Account.objects.get(user=self.userb).refer_balance
+        ballc = Account.objects.get(user=self.usera).refer_balance
+        
+        
+        self.assertEqual(ballb, 0)
+        self.assertEqual(ballc, 120)
+
+        RefCredit.objects.create(amount=800,user=self.userb)
+        ballb = Account.objects.get(user=self.userb).refer_balance
+
+        self.assertEqual(ballb, 800)
+
+        RefCredit.objects.create(amount=500,user=self.userb)
+        ballb = Account.objects.get(user=self.userb).refer_balance
+
+        self.assertEqual(ballb, 1300)
+# 
+    def test_correct_user_cu_credit_after_witraw(self):
+
+        RefCredit.objects.create(amount=800,user=self.userb)
+        ballb = Account.objects.get(user=self.userb).refer_balance
+
+        self.assertEqual(ballb, 800)
+
+        RefCredit.objects.create(amount=500,user=self.userb)
+        ballb = Account.objects.get(user=self.userb).refer_balance
+        
+        self.assertEqual(ballb, 1300) 
+
+        RefCreditTransfer.objects.create(user=self.userb,amount=2000) 
+        self.assertEqual(Account.objects.get(user=self.userb).refer_balance, 1300)
+        self.assertEqual(Account.objects.get(user=self.userb).balance, 0)
+
+        RefCreditTransfer.objects.create(user=self.userb,amount=1000) 
+        self.assertEqual(Account.objects.get(user=self.userb).refer_balance, 300)
+        self.assertEqual(Account.objects.get(user=self.userb).balance, 1000)
+
+        RefCredit.objects.create(amount=1700,user=self.userb)
+        ballb = Account.objects.get(user=self.userb).refer_balance
+        
+        self.assertEqual(ballb, 2000)
+
+        RefCreditTransfer.objects.create(user=self.userb,amount=-1000) 
+        self.assertEqual(Account.objects.get(user=self.userb).refer_balance, 2000)
+        self.assertEqual(Account.objects.get(user=self.userb).balance, 1000)
+
+        RefCreditTransfer.objects.create(user=self.userb,amount=3000) 
+        self.assertEqual(Account.objects.get(user=self.userb).refer_balance, 2000)
+        self.assertEqual(Account.objects.get(user=self.userb).balance, 1000)
+
+        RefCreditTransfer.objects.create(user=self.userb,amount=300) 
+        self.assertEqual(Account.objects.get(user=self.userb).refer_balance, 2000)
+        self.assertEqual(Account.objects.get(user=self.userb).balance, 1000)
