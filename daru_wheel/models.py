@@ -198,7 +198,7 @@ class Stake (TimeStamp):
     @property
     def this_user_has_cash_to_bet(self):
         set_up=wheel_setting()
-        if self.amount> set_up.min_bet: # unti neative values
+        if float(self.amount)> set_up.min_bet: # unti neative values
             if not self.bet_on_real_account:
                 try:
                     if current_account_trialbal_of(self.user_id) >=self.amount:
@@ -493,11 +493,12 @@ class OutCome(TimeStamp):
             print('update_al_error')
             print(e) 
 
-    def update_give_away_bank(self,add_sub_amount=0):
+    def update_give_away_bank(self,add_sub_amount=0):#RRRRRRRRRRRRRRRRRRRRRRREOE
         set_up=wheel_setting()
         if self.result== 1:
             current_bal = float(self.current_update_give_away)
-            new_bal = current_bal - float(self.stake.amount) 
+            add_sub_amount=float(self.stake.marketselection.odds)*float(self.stake.amount)-float(self.stake.amount)
+            new_bal = current_bal - add_sub_amount
             self.update_give_away(new_bal)
         else:
             current_give_away_bal = float(self.current_update_give_away)
@@ -545,10 +546,9 @@ class OutCome(TimeStamp):
             
             referer_users = User.objects.filter(code = this_user_refercode)
             for referer in referer_users:
-                print(referer,'RefererUser')
                 refer_credit_create(referer,this_user.username,ref_credit) #F4
                 # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
-                print('REFER_DONNE')
+
         except Exception as e:
             return e#TODO
 
@@ -563,9 +563,7 @@ class OutCome(TimeStamp):
                     try:
                         win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
                         trans_type = 'win'
-                        all_amount=rem_credit+float(this_user_stak_obj.amount)
-                        print('to_aDDd')
-                        print(all_amount)                    
+                        all_amount=win_amount+float(this_user_stak_obj.amount)                  
                         self.update_user_real_account(user_id,all_amount)
                         log_record(user_id,rem_credit,trans_type) #F1
                         if ref_credit > 0:
@@ -583,21 +581,44 @@ class OutCome(TimeStamp):
                 win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
                 if self.result ==1:###
                     trans_type='ispin_win'
-                    print('spinWIN_R')
-                    print(ref_credit)
-                    print(rem_credit)
-                    # add_amount=float(self.stake.amount*2)
-                    all_amount=rem_credit+float(self.stake.amount)
-                    print('to_aDD')
-                    print(all_amount)
+
+                    all_amount=win_amount+float(this_user_stak_obj.amount)
+
                     self.update_user_real_account(user_id,all_amount)
                     log_record(user_id,rem_credit,trans_type) #F1
 
                     if ref_credit > 0:
-                        trans_type = 'irefer-win'
-                        print('spinWIN_Ref')
+                        trans_type = 'irefer-win-on_W'
                         self.update_reference_account(user_id,ref_credit,trans_type)
-                self.update_give_away_bank()           
+
+                    #UUB
+                    current_bal = float(self.current_update_give_away)
+                    add_sub_amount=float(self.stake.marketselection.odds)*float(self.stake.amount)-float(self.stake.amount)
+                    new_bal = current_bal - add_sub_amount-ref_credit
+                    self.update_give_away(new_bal)
+
+
+                elif self.result ==2:
+                    if ref_credit > 0:
+                        trans_type = 'irefer-win-on_L'
+
+                        self.update_reference_account(user_id,ref_credit,trans_type)
+                    #UUB
+                    set_up=wheel_setting()
+                    current_give_away_bal = float(self.current_update_give_away)
+                    current_to_keep_bal = float(self.current_update_to_keep)
+
+                    _to_keep=(float(set_up.per_to_keep)/100)*float(self.stake.amount)
+                    _away=float(self.stake.amount)-_to_keep-ref_credit#re
+
+                    away = current_give_away_bal + _away
+                    to_keep=current_to_keep_bal+_to_keep
+                        
+                    self.update_give_away(away)
+                    self.update_to_keep(to_keep)
+
+
+                # self.update_give_away_bank()           
 
         else:#TRIAL
             if this_user_stak_obj.market is not None:#daru
