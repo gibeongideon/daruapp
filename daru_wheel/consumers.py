@@ -168,17 +168,18 @@ class QspinConsumer(WebsocketConsumer):
     # Receive pointer from spin group
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        ipointer = text_data_json['ipointer']
-        
-        ipointer = self.return_pointer()
-        print(f'POINTERRR:{ipointer} ')
-        # spinet = self.return_pointer()[1]
+        # ipointer = text_data_json['ipointer']        
+        ipointer = self.return_pointer()        
 
+        if ipointer:
+            self.send(text_data=json.dumps({
+                'ipointer': ipointer,
+            }))
 
-        self.send(text_data=json.dumps({
-            'ipointer': ipointer,
-            # 'spinet': spinet
-        }))
+        # self.send(text_data=json.dumps({
+        #     'ipointer': ipointer,
+        #     # 'spinet': spinet
+        # }))
         
 
         #normal ttp request return no of available spins//

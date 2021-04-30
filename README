@@ -1,9 +1,5 @@
 
-
-
-
 DARUAPP _App for betting with real cash
-
 
 This is a CASINO  application implemented with Django-python ,HTML & Javascript-FroantEnd.Planning to implement froatEnd with React.JS.
 
@@ -17,9 +13,7 @@ Apps:
   Payment:
   _Mpesa intergrated
   _Paypall Intergrated
-  _Stripe integrated_using DJSTRIPE
-  
- 
+  _Stripe integrated_using DJSTRIPE 
  
  
  

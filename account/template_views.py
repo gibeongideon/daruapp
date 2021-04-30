@@ -17,7 +17,7 @@ def trans_log(request):
 
 @login_required(login_url='/users/login')
 def refer_credit(request):
-    refer_credit = RefCredit.objects.filter(user =request.user)
+    refer_credit = RefCredit.objects.filter(user =request.user).order_by('-created_at')
     
     return render(request, 'account/refer_credit.html',{'refer_credit': refer_credit})
 

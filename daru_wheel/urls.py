@@ -13,6 +13,8 @@ urlpatterns = [
     path('stake', include(router.urls)),
 
     path('', views.spin, name="spin"),
+    path('spin_it', views.spin_it, name="spin_it"),
+
     path('spin', views.daru_spin, name="daru_spin"),
-        
+  
 ]
