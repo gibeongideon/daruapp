@@ -69,9 +69,9 @@ admin.site.register(CumulativeGain, CumulativeGainAdmin)
 class StakeAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'user','market', 'marketselection',
-        'amount', 'bet_on_real_account','this_user_has_cash_to_bet',
+        'amount', 'bet_on_real_account','spinned',
         'stake_placed', 'has_record','bet_status','active_spins',
-        'created_at', 'updated_at')
+        'this_user_has_cash_to_bet','created_at', 'updated_at')
 
     list_display_links = ('user',)
     search_fields = ('user',)
