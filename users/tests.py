@@ -9,11 +9,11 @@ from django.core.exceptions import ValidationError
 class UserTestCase(TestCase):
     def setUp(self):
         self.usera = User.objects.create(
-            username="0710087634", email="testa@gmail.com", daru_code="ADMIN")
+            username="0710087634", email="testa@gmail.com", referer_code="ADMIN")
         self.userb = User.objects.create(
-            username="254181008768", email="testb@gmail.com",daru_code="ADMIN")
+            username="254181008768", email="testb@gmail.com",referer_code="ADMIN")
         self.userc = User.objects.create(
-            username="181008773", email="testc@gmail.com",daru_code="ADMIN")
+            username="181008773", email="testc@gmail.com",referer_code="ADMIN")
         self.userd = User.objects.create(
             username="2548773", email="testd@gmail.com",
             phone_number="2548773")
@@ -31,14 +31,14 @@ class UserTestCase(TestCase):
         self.assertEqual(self.usera.phone_number, "254710087634")
         self.assertEqual(self.userb.phone_number, "254181008768")
         self.assertEqual(self.userc.phone_number, "254181008773")
-        self.assertEqual(self.userd.phone_number, "2548773-invalid")# pone verification later
+        self.assertEqual(self.userd.phone_number, "2548773-invalid_phone_number")# pone verification later
 
     def test_catch_invalid_daru_code(self):
         '''test if daru code is valid'''
         user_with_invalid_code = User(
             username='725100456',
             email='usertest@casino22.com',
-            daru_code='')
+            referer_code='')
         with self.assertRaises(ValidationError):
             user_with_invalid_code.save()
             user_with_invalid_code.full_clean()        

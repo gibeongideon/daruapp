@@ -4,31 +4,55 @@ from django.contrib.auth.decorators import login_required
 from django.forms.utils import ErrorList
 from django.http import HttpResponse
 
-from .models import TransactionLog, RefCredit, CashWithrawal
-from .forms import CashWithrawalForm
+from .models import TransactionLog, RefCredit, CashWithrawal ,Account ,AccountSetting
+from .forms import CashWithrawalForm,ReferTranferForm
 
 
 # Use redis cashing here for speed
 @login_required(login_url='/users/login')
 def trans_log(request):
-    trans_logz =TransactionLog.objects.filter(user =request.user)
-    
+    trans_logz =TransactionLog.objects.filter(user =request.user)    
     return render(request, 'account/trans_log.html',{'trans_logz': trans_logz})
 
 @login_required(login_url='/users/login')
 def refer_credit(request):
-    refer_credit = RefCredit.objects.filter(user =request.user)
+    form = ReferTranferForm()
+    if request.method == 'POST':
+        data = {}
+        data['user'] = request.user
+        data['amount'] = request.POST.get('amount')
+        form = ReferTranferForm(data=data)
+        if form.is_valid():
+            form.save()
+            print('YES Transer!')   
+
+    min_wit = float(AccountSetting.objects.get(id=1).min_redeem_refer_credit)
+    account_bal = float(Account.objects.get(user=request.user).balance)
+    refer_bal = float(Account.objects.get(user=request.user).refer_balance)
+    refer_credit = RefCredit.objects.filter(user =request.user).order_by('-created_at')
+    if refer_bal<min_wit:
+        re_to_wit=min_wit-refer_bal        
+    elif float(refer_bal)<min_wit:
+        re_to_wit=0
+    else:
+        re_to_wit=0   
     
-    return render(request, 'account/refer_credit.html',{'refer_credit': refer_credit})
-
-
+    return render(
+        request,
+        'account/refer_credit.html',
+        {
+            'form': form,
+            'refer_credit': refer_credit,
+            'account_bal':account_bal,
+            'refer_bal': refer_bal,
+            'min_wit': min_wit,
+            're_to_wit':re_to_wit
+            })
 
 
 
 @login_required(login_url='/users/login')
 def mpesa_withrawal(request):
-    print(request.user)
-    print(request.user.phone_number)
     form = CashWithrawalForm()
     if request.method == 'POST':
         data = {}
@@ -38,8 +62,9 @@ def mpesa_withrawal(request):
         if form.is_valid():
             form.save()
             print('YES DONECW!')
-        else:
-            print('ERRRRR', form.errors)
+
     trans_logz = CashWithrawal.objects.filter(user =request.user).order_by('-id')[:10]        
 
-    return render(request, 'account/mpesa_withrawal.html',{'form': form,'trans_logz': trans_logz})
+    return render(
+        request,
+         'account/mpesa_withrawal.html',{'form': form,'trans_logz': trans_logz})

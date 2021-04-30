@@ -8,6 +8,35 @@
 {% endblock stylesheets %}
 
 {% block content %}
+<div class="col-md-12">
+  <div class="card ">
+    <div class="card-header">
+      <!-- <h5 class="card-title"><h5 class="text-info">Min Withrawable: {{min_wit}}</h5></h5> -->
+      <h5 class="card-title">Account Balance: <p class="text-info">{{account_bal}}</p></h6>
+      <h5 class="card-title">Refer Balance: <p class="text-info">{{refer_bal}}</p></h6>
+      <!-- <h5 class="card-title"><h5 class="text-info">Remaining Amount to Withraw: {{re_to_wit}}</h5></h5> -->
+
+      <h5 class="card-title">Send To Main Account<p class="text-info">Minimum Amount to Send: {{min_wit}}</p></h5>
+    </div>
+    <div class="card-body">
+
+<form action="{% url 'account:refer_credit' %}" method="post">
+{% csrf_token %}
+
+<div class="col-md-4 pl-md-1">
+  <div class="form-group">
+    <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount"">      
+  </div>
+</div>
+
+<button class="btn btn-secondary type="submit">Send</button>
+</form>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 <div class="row">

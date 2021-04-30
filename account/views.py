@@ -4,12 +4,7 @@ from account.models import Account,TransactionLog
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-# from rest_framework import status
-# from rest_framework.permissions import IsAdminUser
-# # from django.contrib.auth.models import User
-from django.http import Http404 # HttpResponse
-# from rest_framework import generics #, permissions, viewsets, serializers, permissions, filters, status
-
+from django.http import Http404
 
 
 class AccountViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,6 @@
 from .views import mpesa_deposit
 from django.urls import path
 
-
 app_name = 'cash_trans'
 
 
