@@ -8,6 +8,34 @@
 {% endblock stylesheets %}
 
 {% block content %}
+<div class="col-md-12">
+  <div class="card ">
+    <div class="card-header">
+      <h5 class="card-title"><h5 class="text-info">Min Withrawable: {{min_wit}}</h5></h5>
+      <h5 class="card-title"><h5 class="text-info">Refer Balance: {{refer_bal}}</h5></h5>
+
+      <h5 class="card-title">Send to main Account</h5>
+    </div>
+    <div class="card-body">
+
+<form action="{% url 'account:send_refer_to_main' %}" method="post">
+{% csrf_token %}
+
+<div class="col-md-4 pl-md-1">
+  <div class="form-group">
+    <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount"">      
+  </div>
+</div>
+
+
+<button class="btn btn-secondary type="submit">Send</button>
+</form>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 <div class="row">

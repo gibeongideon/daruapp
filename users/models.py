@@ -5,10 +5,10 @@ import uuid
 
 class User(AbstractUser):
     """Add three fields to existing Django User model.
-      : daru_code  and my_code for reference
+      : referer_code  , code n 4ne-nuber for reference
     """
-    my_code = models.CharField(max_length=150,unique=True,null=True)
-    daru_code = models.CharField(max_length=150, blank=True, null=True)
+    code = models.CharField(max_length=150,unique=True,null=True)
+    referer_code = models.CharField(max_length=150, blank=True, null=True)
     phone_number = models.CharField(max_length=150, blank=True, null=True)
     active = models.BooleanField(default=True)
 
@@ -29,11 +29,12 @@ class User(AbstractUser):
                 and len(mobile) == 9:
             return "254"+mobile
             
-        return mobile+"-invalid"
+        return mobile+"-invalid_phone_number"
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.my_code = str(uuid.uuid4()).upper()[:3]+'D'+str(self.username[-3:]).upper()
+            self.code = str(uuid.uuid4()).upper()[:3]+'D'+str(self.username[-3:]).upper()
+            # if self.phone_number is None:
             self.phone_number = self.format_mobile_no(self.username)
 
         super(User, self).save(*args, **kwargs)

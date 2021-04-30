@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from daru_wheel.models import Stake # DD
 
 User = get_user_model()
+from .models import account_setting
 
 
 @receiver(post_save, sender=User) 
@@ -21,7 +22,7 @@ def create_user_account(sender, instance, created, **kwargs):
 
 
 
-@receiver(post_save, sender= OnlineCheckoutResponse) #TODO
+@receiver(post_save, sender=OnlineCheckoutResponse) #TODO
 def update_account_balance_on_mpesa_deposit(sender, instance, created, **kwargs):
     # if created:
     try:
@@ -30,20 +31,18 @@ def update_account_balance_on_mpesa_deposit(sender, instance, created, **kwargs)
                 this_user = User.objects.get(
                     phone_number=str(instance.phone)
                     )
-            except :
-                print(f'user of {str(instance.phone)} does not Exist')#onlyinpaybill/notTiz
+            except User.DoesNotExist:
                 this_user = User.objects.create_user(username=str(instance.phone),password=str(instance.phone))#3#??
-                         
+        
             CashDeposit.objects.create(
                 user=this_user,
                 amount=instance.amount,
-                deposit_type='M-pesa Deposit'
-                ) 
+                deposit_type='M-pesa Deposit',
+                confirmed=True
+                )
+        else:
+            pass
 
-            # new_bal = current_current_account_bal_ofaccount_bal_of(this_user) + float(deposited_amount)  # F2 # fix unsupported operand type(s) for +: 'float' and 'decimal.Decimal'
-            # update_account_bal_of(this_user, new_bal)  #F3
-            # log_record(this_user.id, deposited_amount, "mpesa online deposit")
-            
     except Exception as e:
         print('MPESA DEPO',e)
 
@@ -52,9 +51,10 @@ def update_account_balance_on_mpesa_deposit(sender, instance, created, **kwargs)
 def update_user_withraw_power_onstake(sender, instance, created, **kwargs):
     try:        
         if created and instance.bet_on_real_account is True:
+            set_up=account_setting()
             now_withrawable = float(Account.objects.get(user_id =instance.user_id).withraw_power)
             # print(f'now_withrawableS:{now_withrawable}')
-            added_amount = float(instance.amount)
+            added_amount = float(instance.amount)/set_up.withraw_factor
             # print(f'added_amountS:{added_amount}')
             total_withwawable = now_withrawable + added_amount
 

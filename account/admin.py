@@ -1,15 +1,15 @@
 from django.contrib import admin
 from account.models import (
-    Account, Currency, RefCredit, TransactionLog, CashDeposit,
-    CashWithrawal, Curr_Variable, AccountSetting
+    Account, Currency, RefCredit, RefCreditTransfer,
+    TransactionLog, CashDeposit, CashWithrawal, Curr_Variable, AccountSetting
     )
 
 
 class AccountSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'curr_unit','auto_approve')
+    list_display = ('id', 'curr_unit','min_redeem_refer_credit','auto_approve','withraw_factor')
     list_display_links = ('id',)
     search_fields = ('id',)
-    list_editable = ('curr_unit','auto_approve')
+    list_editable = ('curr_unit','min_redeem_refer_credit','auto_approve','withraw_factor')
 
 
 admin.site.register(AccountSetting, AccountSettingAdmin)
@@ -51,6 +51,14 @@ class RefCreditAdmin(admin.ModelAdmin):
     list_editable = ('approved',)
 
 admin.site.register(RefCredit, RefCreditAdmin)
+
+class RefCreditTransferAdmin(admin.ModelAdmin):
+    list_display = ('user_id','user','amount','succided','created_at','updated_at')
+    list_display_links = ('user_id',)
+    search_fields = ('user_id',)
+    # list_editable = ('approved',)
+
+admin.site.register(RefCreditTransfer, RefCreditTransferAdmin)
 
 class TransactionLogAdmin(admin.ModelAdmin):
     list_display = ('id','user','amount','now_bal','trans_type','created_at','updated_at')

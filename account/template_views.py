@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.forms.utils import ErrorList
 from django.http import HttpResponse
 
-from .models import TransactionLog, RefCredit, CashWithrawal
+from .models import TransactionLog, RefCredit, CashWithrawal ,Account ,AccountSetting
 from .forms import CashWithrawalForm
 
 
@@ -17,9 +17,11 @@ def trans_log(request):
 
 @login_required(login_url='/users/login')
 def refer_credit(request):
-    refer_credit = RefCredit.objects.filter(user =request.user)
+    min_wit = AccountSetting.objects.get(id=1).min_redeem_refer_credit
+    refer_bal = Account.objects.get(user=request.user).refer_balance
+    refer_credit = RefCredit.objects.filter(user =request.user).order_by('-created_at')
     
-    return render(request, 'account/refer_credit.html',{'refer_credit': refer_credit})
+    return render(request, 'account/refer_credit.html',{'refer_credit': refer_credit,'refer_bal': refer_bal,'min_wit': min_wit})
 
 
 
@@ -27,8 +29,6 @@ def refer_credit(request):
 
 @login_required(login_url='/users/login')
 def mpesa_withrawal(request):
-    print(request.user)
-    print(request.user.phone_number)
     form = CashWithrawalForm()
     if request.method == 'POST':
         data = {}
