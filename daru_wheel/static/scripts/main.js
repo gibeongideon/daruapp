@@ -4,23 +4,24 @@ $(function() {
     // Submit post on submit
     $('#stake-form').on('submit', function(event){
         event.preventDefault();
-        console.log("form submitted!")  // sanity check
+        // console.log("form submitted!")  // sanity check
         create_stake();
     });
 
     // AJAX for posting
     function create_stake() {
-        console.log("create post is working!") // sanity check
+        // console.log("create post is working!") // sanity check
         $.ajax({
             url : "/daru_wheel/spin_it", // the endpoint
             type : "POST", // http method
-            data :{ amount : $('#amount_id').val() ,marketselection : $('#id_marketselection').val(),bet_on_real_account : $('#id_bet_on_real_account').val() }, // data sent with the post request
+            data :{ amount : $('#amount_id').val() ,bet_on_real_account : $('#id_bet_on_real_account').val() }, // data sent with the post request
             // handle a successful response            
 
             success : function(json) {
-                console.log("Subitted post is working!"); // sanity check
+                // console.log("Subitted post is working!"); // sanity check
                 $('#amount_id').val(''); // remove the value from the input
-                console.log(json); // log the returned json to the console
+                $('#id_bet_on_real_account').val(''); // remove the value from the input
+                // console.log(json); // log the returned json to the console
                 $("#talk").prepend("<tr><td>"+json.created_at+"</td> <td> "+json.marketselection+"</td> <td> "+json.amount+
                     "</td> <td>"+json.bet_status+"</td><td>"+json.bet_on_real_account+"</td></tr>");
                 alert('Bet placed Successfully.Spin now!');    

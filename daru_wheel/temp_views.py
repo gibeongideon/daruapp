@@ -7,7 +7,7 @@ from .models import Stake, WheelSpin,Selection
 import json
 
 @login_required(login_url='/user/login')
-def spin_old(request):    
+def spin(request):    
     trans_logz = Stake.objects.filter(
         user=request.user,market=None,has_market=False).order_by('-created_at')[:12]
 
@@ -110,7 +110,7 @@ def daru_spin(request):
     return render(request, 'daru_wheel/daru_spin.html', context)
 
 @login_required(login_url='/user/login')
-def spin(req):
+def spine(req):
 
     tmpl_vars = {
         'trans_logz': Stake.objects.filter(
@@ -138,6 +138,13 @@ def spin_it(request):
         bet_on_real_account = request.POST.get('bet_on_real_account')
         print('REL_FAK')
         print(bet_on_real_account)
+        if bet_on_real_account=='on'or True:
+            bet_on_real_account=True
+        else:
+            bet_on_real_account=False 
+
+        print('REL_FAK2')
+        print(bet_on_real_account)              
         response_data = {}
 
         stake = Stake(

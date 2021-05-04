@@ -4,6 +4,7 @@ from account.models import CashDeposit, CashWithrawal, Account, RefCredit,RefCre
 from users.models import User
 from daru_wheel.models import  Stake
 import random
+from mpesa_api.core.models import OnlineCheckoutResponse
 
 
 # MODEL TESTS
@@ -79,6 +80,27 @@ class CashDepositWithrawalTestCase(TestCase):
 
         self.assertEqual(Account.objects.get(user=self.usera).balance,9000)
         # self.assertEqual(Account.objects.get(user=self.usera).withraw_power , 200)#failin
+
+
+    def test_pesa_account_update_deposit_correctrly(self) :
+        user=User.objects.create(username='0710000111',password='kjedrr9ufu4ccjk')
+        OnlineCheckoutResponse.objects.create(
+            amount=10000,
+            mpesa_receipt_number='254710000111',
+            phone='254710000111',
+            result_code=0) 
+        OnlineCheckoutResponse.objects.create(
+            amount=10000,
+            mpesa_receipt_number='254710000111',
+            phone='254710000111',
+            result_code=23455)
+        OnlineCheckoutResponse.objects.create(
+            amount=5000,
+            phone='254710000101',
+            result_code=0)       
+
+        self.assertEqual(Account.objects.get(user=user).balance,10000)
+
 
 
     def test_cu_deposit_update_correctly(self):
@@ -157,3 +179,6 @@ class RefCreditTestCase(TestCase):
         RefCreditTransfer.objects.create(user=self.userb,amount=300) 
         self.assertEqual(Account.objects.get(user=self.userb).refer_balance, 2000)
         self.assertEqual(Account.objects.get(user=self.userb).balance, 1000)
+
+
+

@@ -8,6 +8,12 @@ DONE
 @isible_bet_aount_entry/16#DONE
 @win_or_loz_referer_cassss25/@Correct_refer_bot_aspin_daru#DONE
 @ispin_bet_no_refres##DONE!
+@ispin_Looks_fix#22/30$$$#DONE
+@witrawable_factor_in_settins$$#DONE
+@preent_wit_wen_no_oney_no_fail#17###ERROR_insufficient_funds-NO_DB_RECORD#DONE
+@fail_autoatically0_less_account_balane#17#NDONE
+@witraw_refer_to_ain_USER@$$$$
+
 
 PENDIN
 
@@ -16,9 +22,6 @@ PENDIN
 @trans_los_sow_all_
 @sare_wit_oters_
 @cleanWallet?FE/BE=16
-@preent_wit_wen_no_oney_no_fail#17
-@fail_autoatically0_less_account_balane#17
-@ispin_Looks_fix#22/30$$$
 @Algo_ready_uniersal$$$
 
 ##add25
@@ -29,15 +32,20 @@ PENDIN
 no_reduce_spin_doujble_spin_@@@@@/All_spin
 #list_refres
 #ANIFEST_FILE/APP_LIKE
+#NOTE_refer_ore_users_to_et_tiz
 
 30
-@witraw_refer_to_ain_USER@$$$$
+
 
 
 
 @deposit_page#17
-@witrawable_factor_in_settins$$
+
 @credit_fro_cuulatie_reainin_to_redee_info$$
+
+1st
+@separate_file_4_scripts
+edit_profile
 
 
 
@@ -47,24 +55,6 @@ IDEALAPP
 weel-flexible_selection_
 Algo_ready
 Account/fexible_accept_all_currencies_+convertion
-
-
-
-
-
-
-Production NOTES
-# release: python manage.py migrate
-# web: daphne daruapp.asgi:application --port $PORT --bind 0.0.0.0 -v2
-# worker: python manage.py runworker channels --settings=daruapp.settings -v2
-# worker: python manage.py qcluster
-
-# daphne -p 8001 daruapp.asgi:application
-
-#Refer_for_ispin_also_
-#
-
-
 
 ##ISSUES
 

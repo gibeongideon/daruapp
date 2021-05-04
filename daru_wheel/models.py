@@ -325,18 +325,15 @@ class OutCome(TimeStamp):
                 set_up=wheel_setting()
                 # return 1
                 if set_up.win_algo ==1:
-                    print('Using REALrandom Algo')
                     return randint(1,2)
 
                 if set_up.win_algo ==2:
-                    print('Using i win rate  Algo')
                     resu=randint(1,3)
                     if resu!=1:
                         return 1
                     return 2                    
 
                 if set_up.win_algo ==3:
-                    print('Using REALsure win Algo')
                     return 1
                 else:
                     return 2    
@@ -347,17 +344,14 @@ class OutCome(TimeStamp):
     def trial_account_result_algo(self):
         set_up=wheel_setting()
         if set_up.trial_algo ==1: # normal win trial
-            print('Using Normal_Trial Al 1')
             return randint(1,2)
 
         elif set_up.trial_algo ==2:# super win trial
-            print('Using super_WinTrial Al 2')
             random_val = randint(1,3)
             if random_val == 3:
                 return 2
             return 1
         else:
-            print('Using REALNormal4Trial Win Algo')
             pass #toREALNormal Win Algo
 
     def  auto_spin_result_algo(self):
@@ -366,7 +360,6 @@ class OutCome(TimeStamp):
             W = self.market.selection_bet_amount[1]            
             # if self.market.place_stake_is_active == False:
             if B == W:
-                print('UsinRandoAl')
                 return randint(1,2) # fix me to get random 1 or 2
             if B > W :
                 return 2
@@ -397,9 +390,7 @@ class OutCome(TimeStamp):
             B = self.market.selection_bet_amount[0]
             W = self.market.selection_bet_amount[1]            
             # if self.market.place_stake_is_active == False:
-            print(B)
-            print('AND')
-            print(W)
+     
             max_resu=B
             min_resu=W
 

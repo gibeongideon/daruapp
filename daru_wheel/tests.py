@@ -136,14 +136,12 @@ class StakeTestCase(TestCase):
             bet_on_real_account=False, amount=2000) # TRIAL
         OutCome.objects.create(stake_id=stake.id)
 
-        print(f'0out_come1.result:{out_come1.result}')
         self.assertNotEqual(out_come1.result,None)
         if  out_come1.result==1:
 
-            print('1WIN') 
             self.assertEqual(current_account_bal_of(self.user), 10000)
             self.assertEqual(CashStore.objects.get(id=1).give_away, 0)#950
-            print('WIN')
+
         elif out_come1.result==2:
             _to_keep=set_up.per_to_keep/100*1000
             _away1=1000-_to_keep
@@ -153,14 +151,12 @@ class StakeTestCase(TestCase):
             self.assertEqual(current_account_bal_of(self.user), 8000) 
             self.assertEqual(CashStore.objects.get(id=1).give_away, away)
             self.assertEqual(CashStore.objects.get(id=1).to_keep, to_keep)
-            print('LOSS')
+ 
 
         # self.assertEqual(current_account_trialbal_of(self.user), 47000) 
 
         cur_bal= current_account_bal_of(self.user)
         stor_bal=float(CashStore.objects.get(id=1).give_away)
-        print('CI_BAl1', cur_bal)
-        print('STO_BAl1', stor_bal)
 
     #     #_____________________________________________________
 
@@ -179,11 +175,10 @@ class StakeTestCase(TestCase):
         self.assertNotEqual(out_come1.result,None)
 
         self.assertEqual(OutCome.objects.count(), 6)
-        print(f'1out_come1.result:{out_come1.result}')
+
         self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1:
-            print('1WIN')
 
             # self.assertEqual(OutCome.objects.count(), 7)
             self.assertEqual(current_account_bal_of(self.user),cur_bal+1000)
@@ -202,8 +197,7 @@ class StakeTestCase(TestCase):
         
         cur_bal= current_account_bal_of(self.user)
         stor_bal=float(CashStore.objects.get(id=1).give_away)
-        print('CI_BAl2', cur_bal)
-        print('STO_BAl2', stor_bal)   
+           
     #     #_____________________________________________
 
         stake =Stake.objects.create(
@@ -217,11 +211,10 @@ class StakeTestCase(TestCase):
             marketselection=self.marketselection1, amount=1000)
 
         out_come2=OutCome.objects.create(stake_id=stake.id) 
-        print(f'2out_come1.result:{out_come1.result}')
+
         self.assertNotEqual(out_come1.result,None)
 
         if  out_come1.result==1:
-            print('1WIN')
 
             # self.assertEqual(OutCome.objects.count(), 7)
             self.assertEqual(current_account_bal_of(self.user),cur_bal+1000)#ISSUE
@@ -240,8 +233,7 @@ class StakeTestCase(TestCase):
 
         cur_bal= current_account_bal_of(self.user)
         stor_bal=float(CashStore.objects.get(id=1).give_away)
-        print('CI_BAl3', cur_bal)
-        print('STO_BAl3', stor_bal)         
+        
     #     #_______________________________________________________________  
 
         stake =Stake.objects.create(
@@ -255,7 +247,7 @@ class StakeTestCase(TestCase):
             marketselection=self.marketselection1, amount=1100)
         OutCome.objects.create(stake_id=stake.id)
         self.assertNotEqual(out_come1.result,None)
-        print(f'3out_come1.result:{out_come1.result}')
+
         if  out_come1.result==1:
 
             # self.assertEqual(OutCome.objects.count(), 7)
@@ -274,8 +266,7 @@ class StakeTestCase(TestCase):
 
         cur_bal= current_account_bal_of(self.user)
         stor_bal=float(CashStore.objects.get(id=1).give_away)
-        print('CI_BAl4', cur_bal)
-        print('STO_BAl4', stor_bal)  
+
         #________________
         
         stake=Stake.objects.create(
@@ -285,10 +276,8 @@ class StakeTestCase(TestCase):
         out_come1=OutCome.objects.create(stake_id=stake.id)
         self.assertNotEqual(out_come1.result,None)
 
-        print(f'4out_come1.result:{out_come1.result}')
         if  out_come1.result==1:
-            print('1WIN') 
-
+  
             self.assertEqual(current_account_bal_of(self.user),cur_bal+1100)#ISSUE
             self.assertEqual(CashStore.objects.get(id=1).give_away,stor_bal-1100)
         elif out_come1.result==2:
@@ -362,8 +351,7 @@ class BetLogicTest(TestCase):
             odds=2)
 
         self.user1 = create_test_user('07000000001')
-        print('CODE')
-        print(self.user1.code)
+
         self.user2 = create_test_user('07000000002',referer_code=self.user1.code)
         self.user3 = create_test_user('07000000003',referer_code=self.user1.code)
 

@@ -6,10 +6,10 @@ from account.models import (
 
 
 class AccountSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'curr_unit','min_redeem_refer_credit','auto_approve')
+    list_display = ('id', 'curr_unit','min_redeem_refer_credit','auto_approve','withraw_factor')
     list_display_links = ('id',)
     search_fields = ('id',)
-    list_editable = ('curr_unit','min_redeem_refer_credit','auto_approve')
+    list_editable = ('curr_unit','min_redeem_refer_credit','auto_approve','withraw_factor')
 
 
 admin.site.register(AccountSetting, AccountSettingAdmin)

@@ -12,23 +12,17 @@ class AccountSetting(TimeStamp):
     curr_unit = models.FloatField(default=0, blank=True, null=True)
     min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
     auto_approve = models.BooleanField(default=False,blank=True, null=True)
+    withraw_factor = models.FloatField(default=1, blank=True, null=True)
 
     class Meta:
         db_table = "d_accounts_setup"
 
 def account_setting():
     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
-    print(f'SET_up_auto_approve:{set_up.auto_approve}')
-    print(f'SET_up_min_redeem_refer_credit:{set_up.min_redeem_refer_credit}')
     return set_up
 
 
-# try:
-#     set_up, created = AccountSetting.objects.get_or_create(id=1)  # fail save 
-# except Exception as ce:
-#     print("COUNtttt", ce) 
 
-# print(f'SET_up{set_up.auto_approve}')
 class Account(TimeStamp):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     token_count = models.IntegerField(default=0)
@@ -220,21 +214,7 @@ class RefCredit(TimeStamp):
         except Exception as e:
             print('update_refer_balance',e)
             pass
-            
-    # def tranfer_to_main_account(self):
-    #     try:
-    #         main_balance= current_account_bal_of(self.user_id)#F 
-    #         main_new_bal = self.refer_balance + main_balance
 
-    #         Account.objects.filter(user_id= self.user_id).update(refer_balance= 0)
-    #         update_account_bal_of(self.user_id,main_new_bal) #F
-    #         log_record(self.user_id,self.refer_balance,'RDM') #F
-    #         self.closed = True
-
-    #     except Exception as e:
-    #         print('tranfer_to_main_account2',e)
-    #         pass                
-    
     def save(self, *args, **kwargs):
 
         ''' Overrride internal model save method to update balance on staking  '''
@@ -447,21 +427,11 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     def withraw_amount(cls):
         return cls.objects.all()
 
-    # @property
-    # def similar_trans(self):
-    #     all_trans=self.withraw_amount()
-    #     le=len(all_trans.filter(user_id=self.user_id))
-    #     pre=all_trans.filter(user_id=self.user_id)[le-2]
-    #     if  self.amount==pre.amount:
-    #         return    True
-    #     return    False
 
     def update_user_withrawable_balance(self):
         try:
             now_withrawable = float(Account.objects.get(user_id=self.user_id).withraw_power)
-            print(f'now_withrawableW:{now_withrawable}')
             deduct_amount = float(self.amount)
-            print(f'added_amountW:{deduct_amount}')
             total_withwawable = now_withrawable - deduct_amount
 
             if total_withwawable > 0:
@@ -505,9 +475,13 @@ class CashWithrawal(TimeStamp): # sensitive transaction
         #     return
         ''' Overrride internal model save method to update balance on deposit  '''
         account_is_active = self.user.active
+        # wit_able_bal=current_account_withrawable_bal_of(self.user_id)
         ctotal_balanc = current_account_bal_of(self.user_id)
         #  = self.user.user_account.withrawable_balance
         withrawable_bal =float(Account.objects.get(user_id =self.user_id).withraw_power)
+
+        # if wit_able_bal<self.amount:
+        #     return
         if not self.active:
             return
 
@@ -564,7 +538,11 @@ def current_account_bal_of(user_id): #F2
         return float(Account.objects.get(user_id =user_id).balance)
     except Exception as e:
         return e
-
+def current_account_withrawable_bal_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).withrawable_balance())
+    except Exception as e:
+        return e
 def update_account_bal_of(user_id,new_bal): #F3
     try:
         if new_bal >= 0:

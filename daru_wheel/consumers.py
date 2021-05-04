@@ -163,13 +163,16 @@ class QspinConsumer(WebsocketConsumer):
             pointer_obj, _ = OutCome.objects.get_or_create(stake_id=spin_id)
             return pointer_obj.pointer
         else:
-            return ''
+            return 777
 
     # Receive pointer from spin group
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        # ipointer = text_data_json['ipointer']        
-        ipointer = self.return_pointer()        
+        ipointer = text_data_json['ipointer']        
+        ipointer = self.return_pointer()  
+        # print(text_data_json)
+        print('POINTER')   
+        print(ipointer)   
 
         if ipointer:
             self.send(text_data=json.dumps({

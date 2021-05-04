@@ -215,15 +215,14 @@
 <script type="text/javascript" src="/static/wheel/js/TweenMax.min.js"></script>
 
 <script> 
-    
-    
-    const spinSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/daru_wheel/'
-            // + roomName
-            + '/'
-        );
+       // Correctly decide between ws:// and wss://
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + "/daru_wheel/";
+    console.log("Connecting to " + ws_path);
+
+
+    const spinSocket = new WebSocket(ws_path);    
+
 
         spinSocket.onmessage = function(e) {
             
