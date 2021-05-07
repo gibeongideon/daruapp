@@ -23,6 +23,7 @@ class AccountAdmin(admin.ModelAdmin):
     list_display_links = ('user_id',)
     search_fields = ('user_id',)
     list_editable = ('active',)
+    list_filter =('user','created_at', 'updated_at')
 
 
 admin.site.register(Account, AccountAdmin)
