@@ -2,26 +2,74 @@
 {% extends "dashboard/layouts/base.html" %}
 
 {% block content %}
-<div class="alert alert-info">
-  <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close">
-    <i class="tim-icons icon-simple-remove"></i>
-  </button>
-  <span>{{notice}}.</span>
-</div>
-  <form action="{% url 'cash_trans:mpesa_deposit' %}" method="post">
-    {% csrf_token %}
-    
-      <div>
-        {{ form.amount }}
-      </div>
+<div class="col-md-12">
+  <div class="card ">
+    <div class="card-header">
+      <h4 class="card-title">M-pesa-Deposit</h4>
+    </div>
+    <div class="card-body">
+      {{mpesa_header_depo_msg}}
 
-    <button type="submit">Deposit</button>
-    
-  </form>
+<form action="{% url 'cash_trans:mpesa_deposit' %}" method="post">
+{% csrf_token %}
+
+<div class="col-md-4 pl-md-1">
+  <div class="form-group">
+    <input type="number" name="amount" class="form-control" placeholder="amount here" required id="id_amount"">      
+  </div>
+</div>
+
+<button class="btn btn-secondary type="submit">Send</button>
+</form>
+    </div>
+  </div>
+  
+</div>
+
+
+
+<div class="col-md-12">
+  <div class="card ">
+    <div class="card-header">
+      <h4 class="card-title">Paypal-Deposit</h4>
+    </div>
+    <div class="card-body">
+      Coming soon!
+
+<form  method="post">
+{% csrf_token %}
+
+<div class="col-md-4 pl-md-1">
+  <div class="form-group">
+    <input type="number" name="amount" class="form-control" placeholder="amount here" required id="id_amount"">      
+  </div>
+</div>
+
+<button class="btn btn-secondary type="submit">Send</button>
+</form>
+    </div>
+  </div>
+  
+</div>
+
+
+
+
+
   <div class="row">
     <div class="col-md-12">
       <div class="card ">
         <div class="card-header">
+
+          <a href="{% url 'cash_trans:mpesa_deposit' %}" >
+            <button class="btn btn-secondary">
+              <i class="tim-icons icon-refresh-01"></i>                    
+              Refresh 
+            </button>
+      
+          </a>
+
+
           <h4 class="card-title"> Recent Deposits</h4>
         </div>
         <div class="card-body">
@@ -57,10 +105,9 @@
                     {{trans.approved}}
                   </td> -->
                   <td class="text-center">
-                    {{trans.withraw_status}}
+                    {{trans.status}}
                   </td>
-                </tr>
-  
+                </tr>  
                 {% endfor %}
               </tbody>
             </table>
