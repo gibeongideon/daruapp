@@ -27,7 +27,7 @@ SECRET_KEY = '2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','0.0.0.0', '.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -95,7 +95,7 @@ ASGI_APPLICATION = 'daruapp.routing.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+        'NAME': BASE_DIR / '../db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
     }
 }
 
@@ -136,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -210,9 +210,9 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'logfile': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / "./logfile",
+            'level':'DEBUG',
+            'class':'logging.FileHandler',
+            'filename': BASE_DIR / "../logfile",
         },
     },
     'root': {
@@ -220,6 +220,7 @@ LOGGING = {
         'handlers': ['console', 'logfile']
     },
 }
+
 
 # db_from_env = dj_database_url.config()
 # DATABASES['default'].update(db_from_env)
@@ -240,46 +241,6 @@ MIN_BET = 10  # R
 #        'LOCATION': '127.0.0.1:11211',
 #    }
 # }
-
-# # MPESA Configs
-# MPESA_URL = "https://sandbox.safaricom.co.ke"
-
-# # C2B (Paybill) Configs
-# # See https://developer.safaricom.co.ke/c2b/apis/post/registerurl
-
-# #Consumer Secret
-# MPESA_C2B_ACCESS_KEY = config('MPESA_C2B_ACCESS_KEY', default='')
-# # Consumer Key
-# MPESA_C2B_CONSUMER_SECRET = config('MPESA_C2B_CONSUMER_SECRET', default='')
-# # Url for registering your paybill replace it the url you get from safaricom after you have passed the UATS
-# C2B_REGISTER_URL = config('C2B_REGISTER_URL', default='')
-# #ValidationURL
-# # replace http://mpesa.ngrok.io/ with your url ow here this app is running
-# C2B_VALIDATE_URL = config('C2B_VALIDATE_URL', default='')
-# #ConfirmationURL
-# # replace http://mpesa.ngrok.io/ with your url ow here this app is running
-# C2B_CONFIRMATION_URL = config('C2B_CONFIRMATION_URL', default='')
-# #ShortCode (Paybill)
-# C2B_SHORT_CODE = config('C2B_SHORT_CODE', default='')
-# #ResponseType
-# C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='')
-
-# # C2B (STK PUSH) Configs
-# # https://developer.safaricom.co.ke/lipa-na-m-pesa-online/apis/post/stkpush/v1/processrequest
-
-# #replace http://mpesa.ngrok.io/ with your url ow here this app is running
-# C2B_ONLINE_CHECKOUT_CALLBACK_URL = config('C2B_ONLINE_CHECKOUT_CALLBACK_URL', default='')
-# # The Pass Key provided by Safaricom when you pass UAT's
-# # See https://developer.safaricom.co.ke/test_credentials
-# C2B_ONLINE_PASSKEY = config('C2B_ONLINE_PASSKEY', default='')
-# # Your Short code
-# C2B_ONLINE_SHORT_CODE = config('C2B_ONLINE_SHORT_CODE', default='')
-# # your paybill or till number
-# C2B_ONLINE_PARTY_B = config('C2B_ONLINE_PARTY_B', default='')
-# # number of seconds from the expiry we consider the token expired the token expires after an hour
-# # so if the token is 600 sec (10 minutes) to expiry we consider the token expired.
-# TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600) #, cast=int)
-
 
 
 # Safaricom Configs

@@ -26,16 +26,17 @@ def refer_credit(request):
             form.save()
             print('YES Transer!')   
 
-    min_wit = float(AccountSetting.objects.get(id=1).min_redeem_refer_credit)
+    min_wit,_ = AccountSetting.objects.get_or_create(id=1)
+    min_wit=min_wit.min_redeem_refer_credit
     account_bal = float(Account.objects.get(user=request.user).balance)
     refer_bal = float(Account.objects.get(user=request.user).refer_balance)
     refer_credit = RefCredit.objects.filter(user =request.user).order_by('-created_at')
-    if refer_bal<min_wit:
-        re_to_wit=min_wit-refer_bal        
-    elif float(refer_bal)<min_wit:
-        re_to_wit=0
-    else:
-        re_to_wit=0   
+    # if refer_bal<min_wit:
+    #     re_to_wit=min_wit-refer_bal        
+    # elif float(refer_bal)<min_wit:
+    #     re_to_wit=0
+    # else:
+    #     re_to_wit=0   
     
     return render(
         request,
@@ -46,7 +47,7 @@ def refer_credit(request):
             'account_bal':account_bal,
             'refer_bal': refer_bal,
             'min_wit': min_wit,
-            're_to_wit':re_to_wit
+            # 're_to_wit':re_to_wit
             })
 
 

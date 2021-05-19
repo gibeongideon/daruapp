@@ -27,7 +27,7 @@ SECRET_KEY = '2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -53,11 +53,12 @@ INSTALLED_APPS = [
     'mpesa_api.util',
     'rest_framework',
     # 'rest_framework.authtoken',
+    'cash_trans'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,8 +86,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'daruapp.wsgi.application'
-ASGI_APPLICATION = "daruapp.routing.application"
-# ASGI_APPLICATION = 'daruapp.asgi.application'  # AD
+ASGI_APPLICATION = 'daruapp.routing.application'
 
 
 # Database
@@ -95,11 +95,10 @@ ASGI_APPLICATION = "daruapp.routing.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+        'NAME': BASE_DIR / '../db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
     }
 }
 
-# P
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -137,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -168,38 +167,37 @@ LOGOUT_REDIRECT_URL = '/user/login'
 # http://channels.readthedocs.io/en/latest/topics/channel_layers.html
 
 CHANNEL_LAYERS = {
-    "default": {
-        # This example app uses the Redis channel layer implementation channels_redis
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-        "CONFIG": {
-         
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
         },
-    },
+    }
 }
 
 
 # CELERY
 
-# CELERY_BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
-# CELERY_BEAT_SCHEDULE = {
+CELERY_BEAT_SCHEDULE = {
 
-#     'create_spin_wheel_market': {
-#          'task': 'daru_wheel.tasks.create_spinwheel',
-#          'schedule': crontab(minute=[
-#              0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-#         },
-#     'run_count_down_timer': {
-#          'task': 'daru_wheel.tasks.start_count_down',
-#          'schedule': crontab(minute=[
-#              0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-#         }
-# }
+    'create_spin_wheel_market': {
+         'task': 'daru_wheel.tasks.create_spinwheel',
+         'schedule': crontab(minute=[
+             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+        },
+    'run_count_down_timer': {
+         'task': 'daru_wheel.tasks.start_count_down',
+         'schedule': crontab(minute=[
+             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+        }
+}
 
 
 # log stuff to console
@@ -212,9 +210,9 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'logfile': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / "./logfile",
+            'level':'DEBUG',
+            'class':'logging.FileHandler',
+            'filename': BASE_DIR / "../logfile",
         },
     },
     'root': {
@@ -222,6 +220,7 @@ LOGGING = {
         'handlers': ['console', 'logfile']
     },
 }
+
 
 # db_from_env = dj_database_url.config()
 # DATABASES['default'].update(db_from_env)
@@ -232,6 +231,8 @@ DATABASES['default'].update(db_from_env)
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+JET_SIDE_MENU_COMPACT = True
+
 MIN_BET = 10  # R
 
 # CACHES = {
@@ -241,8 +242,31 @@ MIN_BET = 10  # R
 #    }
 # }
 
-# MPESA Configs
-MPESA_URL = "https://sandbox.safaricom.co.ke"
+
+# Safaricom Configs
+
+# B2C (Bulk Payment) Configs
+# see https://developer.safaricom.co.ke/test_credentials
+# https://developer.safaricom.co.ke/b2c/apis/post/paymentrequest
+
+#Consumer Key
+MPESA_B2C_ACCESS_KEY = config('MPESA_B2C_ACCESS_KEY', default='')
+#Consumer Secret
+MPESA_B2C_CONSUMER_SECRET = config('MPESA_B2C_CONSUMER_SECRET', default='')
+# This is the encryption of the scurity Credentials I used the Developer site to encrypt it.
+B2C_SECURITY_TOKEN =  config('B2C_SECURITY_TOKEN', default='')
+#InitiatorName
+B2C_INITIATOR_NAME = config('B2C_INITIATOR_NAME', default='')
+# CommandID
+B2C_COMMAND_ID = config('B2C_COMMAND_ID', default='')
+#PartyA
+B2C_SHORTCODE = config('B2C_SHORTCODE', default='')
+# this is the url where Mpesa  will post in case of a time out. Replace http://mpesa.ngrok.io/  with your url ow here this app is running
+B2C_QUEUE_TIMEOUT_URL = config('B2C_QUEUE_TIMEOUT_URL', default='')
+# this is the url where Mpesa will post the result. Replace http://mpesa.ngrok.io/  with your url ow here this app is running
+B2C_RESULT_URL = config('B2C_RESULT_URL', default='')
+# this is the url where we post the B2C request to Mpesa. Replace this with the url you get from safaricom after you have passed the UATS
+MPESA_URL = config('MPESA_URL', default='')
 
 # C2B (Paybill) Configs
 # See https://developer.safaricom.co.ke/c2b/apis/post/registerurl
@@ -278,4 +302,4 @@ C2B_ONLINE_SHORT_CODE = config('C2B_ONLINE_SHORT_CODE', default='')
 C2B_ONLINE_PARTY_B = config('C2B_ONLINE_PARTY_B', default='')
 # number of seconds from the expiry we consider the token expired the token expires after an hour
 # so if the token is 600 sec (10 minutes) to expiry we consider the token expired.
-TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600) #, cast=int)
+TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600)#, cast=int)
