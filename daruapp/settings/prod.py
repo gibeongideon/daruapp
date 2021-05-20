@@ -3,7 +3,7 @@ import os
 from decouple import config
 
 
-SECRET_KEY = config('SECRET_KEY', default='2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s')
+SECRET_KEY = config('SECRET_KEY', default='zecredcode2021!')
 
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '198.XX.XX.XX.XX','dwinnings.com', 'www.dwinnings.com',]

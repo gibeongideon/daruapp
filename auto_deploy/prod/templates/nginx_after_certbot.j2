@@ -2,11 +2,14 @@ server {
     listen 80;
     server_name {{ domain_name }} www.{{ domain_name }};
 
-    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /favicon.ico { access_log off; log_not_found off; }    
+    location /static/ {
+        root {{ app_dir }};
+    }
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/run/gunicorn.sock;
+        proxy_pass http://unix:{{ app_dir }}/{{ django_project_name }}/{{ django_project_name }}.sock;
     }
 
     listen 443 ssl; # managed by Certbot
@@ -17,3 +20,4 @@ server {
 
 
 }
+

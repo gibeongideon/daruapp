@@ -85,8 +85,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'daruapp.wsgi.application'
-ASGI_APPLICATION = 'daruapp.routing.application'
+WSGI_APPLICATION = f'{config("PROJECT_NAME")}.wsgi.application'
+ASGI_APPLICATION = f'{config("PROJECT_NAME")}.routing.application'
 
 
 # Database
@@ -154,7 +154,16 @@ STATIC_ROOT = BASE_DIR / '../staticfiles'#a os.path.abspath(os.path.join(BASE_DI
 AUTH_USER_MODEL = 'users.User'
 
 # email backend
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'daru<noreply@dwinnings.com>'
+
+
+BASE_URL = "http://<ip_from_digital_ocean>"####
 
 # login/logout redirect
 LOGIN_REDIRECT_URL = '/'

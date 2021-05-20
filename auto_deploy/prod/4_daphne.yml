@@ -1,0 +1,46 @@
+# install_daphne.yml
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/default.yml
+  tasks:
+
+  # Run apt update && apt upgrade
+    - name: sudo apt update && sudo apt upgrade 
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #one day
+
+  # Ensure daphne is installed
+    - name: pip install daphne
+      pip:
+        name: gunicorn
+        virtualenv: "{{ app_dir }}/venv"
+
+  # Copy daphne boot file
+    - name: copy daphne_on_boot file to /root
+      template:
+        src: templates/boot.sh
+        dest: /root/boot.sh
+
+  # Copy daphne systemd file
+    - name: copy daphne systemd file to /etc/systemd/system/daphne.service
+      template:
+        src: templates/daphne.service.j2
+        dest: /etc/systemd/system/daphne.service
+        
+  # Ensure daphne socket and system service is running
+    - name: force systemd to reread configs (2.4 and above)
+      systemd:
+        daemon_reload: yes
+    - name: Start/Make sure the daphne.socket//on_boot systemd service is running/Started
+      systemd:
+        state: started
+        name: daphne_on_boot.service
+        
+    - name: Enable/Make sure the daphne.socket//on_boot systemd service is running/Enabled
+      systemd:
+        state: enabled
+        name: daphne_on_boot.service        
