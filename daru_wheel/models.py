@@ -243,7 +243,7 @@ class Stake (TimeStamp):
 
     @classmethod        
     def unspinned(cls,user_id):
-        return len(cls.objects.filter(user_id=user_id,market=None,spinned=False))  
+        return [cls.objects.filter(user_id=user_id,market=None,spinned=False)]  
 
     @property
     def active_spins(self):
@@ -396,8 +396,8 @@ class OutCome(TimeStamp):
         try:
             all_players_B=20
             all_playesa_W=10
-            total_amount_B=1000
-            total_amount_W=800
+            total_amount_B=100
+            total_amount_W=80
             current_give_away=300           
 
 
@@ -408,13 +408,19 @@ class OutCome(TimeStamp):
             max_resu=B
             min_resu=W
 
-            if self.current_update_give_away+min_resu>2*(max_resu):
+            bank=self.current_update_give_away
+
+            if bank+min_resu>(max_resu):
+                
                 print('top_Players_win')
+                return 1                
 
-            elif self.current_update_give_away+max_resu>2*(min_resu):
+            elif bank+max_resu>(min_resu):
                 print('low_Players_win')
+                return 2
 
-            return 1
+            # else:
+            #     return randint(1,2) 
         except Exception as e:
             print(e)
             return  e
@@ -428,8 +434,12 @@ class OutCome(TimeStamp):
                 return self.real_account_result_algo() 
 
         elif self.market:
-            self.back_store_daruspin_result_algo()#TODO
-            return self.auto_spin_result_algo()
+            print('YESSSSSS!!!')
+            # self.back_store_daruspin_result_algo()#TODO
+            # return self.auto_spin_result_algo()
+            resu=self.back_store_daruspin_result_algo()
+            # print(resu)
+            return resu
 
 
     @staticmethod
@@ -498,7 +508,7 @@ class OutCome(TimeStamp):
         except Exception as e:
             print('update_acc_n_bal_record ERROR',e)
 
-    @staticmethod        
+    @staticmethod
     def update_values(stake_obj): 
         try:
             set_up=wheel_setting()
@@ -568,10 +578,17 @@ class OutCome(TimeStamp):
                         trans_type = 'win'
                         all_amount=win_amount+float(this_user_stak_obj.amount)                  
                         self.update_user_real_account(user_id,all_amount)
-                        log_record(user_id,rem_credit,trans_type) #F1
+
+                        #UUB#Cec
+                        current_bal = float(self.current_update_give_away)
+                        new_bal = current_bal - win_amount-ref_credit
+                        self.update_give_away(new_bal)
+
+                        log_record(user_id,win_amount,trans_type) #F1
                         if ref_credit > 0:
                             trans_type = 'refer-win'
                             self.update_reference_account(user_id,ref_credit,trans_type)
+
                     except Exception as e:
                         print('EXXXX')
                         print(e)    
@@ -580,7 +597,7 @@ class OutCome(TimeStamp):
                 elif this_user_stak_obj.marketselection_id != self.result:
                     pass#TODO
 
-            else:#ispin
+            elif this_user_stak_obj.market is None:#ispin
                 win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
                 if self.result ==1:###
                     trans_type='Ispin Win'
@@ -593,7 +610,7 @@ class OutCome(TimeStamp):
                     new_bal = current_bal - win_amount-ref_credit
                     self.update_give_away(new_bal)
 
-                    log_record(user_id,rem_credit,trans_type) #F1                    
+                    log_record(user_id,win_amount,trans_type) #F1                    
                     if ref_credit > 0:
                         trans_type = 'credit on R Win'
                         self.update_reference_account(user_id,ref_credit,trans_type)
@@ -641,7 +658,7 @@ class OutCome(TimeStamp):
                     trans_type = 'trial-win'
                     #######
                     self.update_user_trial_account(user_id,rem_credit)
-                    log_record(user_id,rem_credit,trans_type) #F1
+                    log_record(user_id,win_amount,trans_type) #F1
                     # if ref_credit > 0:
                     #     trans_type = 'trial-refer-win'
                     #     self.update_reference_account(user_id,ref_credit,trans_type)
@@ -651,7 +668,8 @@ class OutCome(TimeStamp):
             else:#ispin
                 win_amount,ref_credit,rem_credit =self.update_values(this_user_stak_obj)
                 if self.result ==1: 
-                    self.update_user_trial_account(user_id,rem_credit)
+                    all_amount=win_amount+float(this_user_stak_obj.amount)
+                    self.update_user_trial_account(user_id,all_amount)
 
                
     def run_account_update(self):

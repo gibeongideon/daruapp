@@ -286,7 +286,7 @@ C2B_CONFIRMATION_URL = config('C2B_CONFIRMATION_URL', default='')
 #ShortCode (Paybill)
 C2B_SHORT_CODE = config('C2B_SHORT_CODE', default='')
 #ResponseType
-C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='')
+C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='Completed')
 
 # C2B (STK PUSH) Configs
 # https://developer.safaricom.co.ke/lipa-na-m-pesa-online/apis/post/stkpush/v1/processrequest

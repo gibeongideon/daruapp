@@ -141,12 +141,6 @@ class QspinConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         pass
-    
-    def user_spins(self):
-
-        return [obj.id for obj in Stake.objects.filter(
-            user=self.user,
-            spinned=False)]
 
     def update_stake_as_spinned(self, stakeid):
         Stake.objects.filter(
@@ -155,8 +149,7 @@ class QspinConsumer(WebsocketConsumer):
 
 
     def return_pointer(self):
-        spinz = self.user_spins()
-
+        spinz = Stake.unspinned(self.user)
         if len(spinz) > 0:
             spin_id = spinz[0]   
             self.update_stake_as_spinned(spin_id)  
