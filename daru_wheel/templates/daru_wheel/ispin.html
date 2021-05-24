@@ -100,10 +100,10 @@
 </div>       
 
 
-
 <div class="col-lg-6 col-md-12">
   <div class="card ">
     <div class="card-header">
+
       <h4 class="card-title"> Stake History</h4>
     </div>
     <div class="card-body">
@@ -115,10 +115,7 @@
                 Time
               </th>
               <th>
-                Market
-              </th>
-              <th>
-                Selection
+                Choice
               </th>
               <th>
                 Amount
@@ -128,18 +125,15 @@
               </th>
               <th>
                 Real
-              </th>              
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="talk">
             {%for trans in trans_logz%}
 
             <tr>
               <td>
                 {{trans.created_at}}
-              </td>
-              <td>
-                {{trans.market}}
               </td>
               <td>
                 {{trans.marketselection}}
@@ -153,7 +147,6 @@
               <td>
                 {{trans.bet_on_real_account}}
               </td>
-
             </tr>
             {%endfor%}
           </tbody>
@@ -162,8 +155,8 @@
     </div>
   </div>
 </div>
-</div>
 
+</div>
 
          
 {% endblock content %}

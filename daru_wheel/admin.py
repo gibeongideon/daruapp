@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Stake, WheelSpin, CumulativeGain, Selection,
+    Stake, WheelSpin, Analytic, Selection,
     OutCome, Selection, DaruWheelSetting,
     CashStore)
 
@@ -57,13 +57,13 @@ admin.site.register(WheelSpin, WheelSpinAdmin)
 
 
 
-class CumulativeGainAdmin(admin.ModelAdmin):
+class AnalyticAdmin(admin.ModelAdmin):
     list_display = ('id', 'gain', 'gainovertime', 'created_at', 'updated_at')
     list_display_links = ('id',)
     # list_editable = ('',)
 
 
-admin.site.register(CumulativeGain, CumulativeGainAdmin) 
+admin.site.register(Analytic, AnalyticAdmin) 
 
 
 class StakeAdmin(admin.ModelAdmin):

@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'mpesa_api.util',
     'rest_framework',
     # 'rest_framework.authtoken',
-    'cash_trans'
 ]
 
 MIDDLEWARE = [

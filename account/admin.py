@@ -1,9 +1,19 @@
 from django.contrib import admin
-from account.models import (
+
+from .models import (
     Account, Currency, RefCredit, RefCreditTransfer,
     TransactionLog, CashDeposit, CashWithrawal, Curr_Variable, AccountSetting
     )
 
+from .models import C2BTransaction
+
+# Register your models here.
+class C2BTransactionAdmin(admin.ModelAdmin):
+    list_display = ('id','phone_number','amount','success','created_at','updated_at')
+    list_display_links = ('id',)
+    # list_editable = ('',)
+
+admin.site.register(C2BTransaction, C2BTransactionAdmin) 
 
 class AccountSettingAdmin(admin.ModelAdmin):
     list_display = ('id', 'curr_unit','min_redeem_refer_credit','auto_approve','withraw_factor')

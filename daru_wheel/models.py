@@ -164,20 +164,6 @@ class WheelSpin(TimeStamp):
         super().save(*args, **kwargs)
 
 
-class CumulativeGain(TimeStamp):
-    gain = models.FloatField(default=0, blank =True,null= True)
-
-    @property
-    def gainovertime(self): 
-
-        try:
-            total_amount = Result.objects.filter(cumgain_id = self.id ).aggregate(cum_amount =Sum('gain'))
-            if  total_amount.get('cum_amount'):
-                return total_amount.get('cum_amount')
-            return total_amount
-            
-        except Exception as e:
-            return e
 
 class Stake (TimeStamp):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_istakes',blank =True,null=True)
@@ -243,7 +229,7 @@ class Stake (TimeStamp):
 
     @classmethod        
     def unspinned(cls,user_id):
-        return [cls.objects.filter(user_id=user_id,market=None,spinned=False)]  
+        return [obj.id for obj in cls.objects.filter(user=user_id,market=None,spinned=False)]
 
     @property
     def active_spins(self):
@@ -281,7 +267,7 @@ class OutCome(TimeStamp):
     pointer = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(default = False,blank =True,null= True)
 
-    cumgain = models.ForeignKey(CumulativeGain,on_delete=models.CASCADE,related_name='gains',blank =True,null= True)
+    cumgain = models.ForeignKey("Analytic",on_delete=models.CASCADE,related_name='gains',blank =True,null= True)
     return_per =models.FloatField(blank =True,null= True)
     gain = models.DecimalField(('gain'), max_digits=100, decimal_places=5,blank =True,null= True)
     active = models.BooleanField(blank =True,null= True)
@@ -719,3 +705,19 @@ class OutCome(TimeStamp):
                 super().save(*args, **kwargs)                
             except Exception as e:
                 return
+
+
+class Analytic(TimeStamp):
+    gain = models.FloatField(default=0, blank =True,null= True)
+
+    @property
+    def gainovertime(self): 
+
+        try:
+            total_amount = Result.objects.filter(cumgain_id = self.id ).aggregate(cum_amount =Sum('gain'))
+            if  total_amount.get('cum_amount'):
+                return total_amount.get('cum_amount')
+            return total_amount
+            
+        except Exception as e:
+            return e

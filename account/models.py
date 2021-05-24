@@ -6,6 +6,7 @@ import math
 from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
 from dashboard.models import TimeStamp
+from .wallet.mpesa.m_pesa_c2b import  C2BTransaction
 
 
 class AccountSetting(TimeStamp):

@@ -4,13 +4,15 @@
 {% block content %}
 <div class="col-md-12">
   <div class="card ">
+    
     <div class="card-header">
-      <h4 class="card-title">M-pesa-Deposit</h4>
+        <!-- <a href="#"><img src={{web.image.url}} alt=""></a> -->
+         <h4 class="card-title"><img class="avatar" src="/static/mpesalogo.png" alt="Mpesa logo"> Mpesa</h4>
     </div>
     <div class="card-body">
-      {{mpesa_header_depo_msg}}
+      <div class="text-info"> {{mpesa_header_depo_msg}} </div>      
 
-<form action="{% url 'cash_trans:mpesa_deposit' %}" method="post">
+<form action="{% url 'account:mpesa_deposit' %}" method="post">
 {% csrf_token %}
 
 <div class="col-md-4 pl-md-1">
@@ -19,7 +21,7 @@
   </div>
 </div>
 
-<button class="btn btn-secondary type="submit">Send</button>
+<button class="btn btn-secondary type="submit">Submit</button>
 </form>
     </div>
   </div>
@@ -31,10 +33,10 @@
 <div class="col-md-12">
   <div class="card ">
     <div class="card-header">
-      <h4 class="card-title">Paypal-Deposit</h4>
+      <h4 class="card-title"><img class="avatar" src="/static/paypalogo.png" alt="Paypal logo">Paypal</h4>
+
     </div>
     <div class="card-body">
-      Coming soon!
 
 <form  method="post">
 {% csrf_token %}
@@ -45,7 +47,7 @@
   </div>
 </div>
 
-<button class="btn btn-secondary type="submit">Send</button>
+<button class="btn btn-secondary type="submit">Submit</button>
 </form>
     </div>
   </div>
@@ -61,7 +63,7 @@
       <div class="card ">
         <div class="card-header">
 
-          <a href="{% url 'cash_trans:mpesa_deposit' %}" >
+          <a href="{% url 'account:mpesa_deposit' %}" >
             <button class="btn btn-secondary">
               <i class="tim-icons icon-refresh-01"></i>                    
               Refresh 

@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from .models import (
-    OutCome, CumulativeGain, WheelSpin,
+    OutCome, Analytic, WheelSpin,
     Stake)
 from channels.layers import get_channel_layer
 # from channels.db import database_sync_to_async
@@ -41,7 +41,7 @@ def on_results_save(sender, instance, **kwargs):
 
         try:
             try:  # need test
-                cum, created = CumulativeGain.objects.update_or_create(id=1)
+                cum, created = Analytic.objects.update_or_create(id=1)
                 if created:
                     pass
             except Exception as ce:
