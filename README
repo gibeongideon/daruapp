@@ -1,37 +1,51 @@
+ansible-django
+A repo of Ansible playbooks to deploy a Django web app on Digital Ocean. The Django deployment uses gunicorn, nginx and an sqlite database. Assumed that static files are hosted by Django using whitenoise. Static files are not served by nginx.
 
-DARUAPP _App for betting with real cash
+Create Droplet, link to domain name
+Create a Digital Ocean droplet with Ubuntu 20.04. Link domain name to droplet IP address. The DNS changeover takes the longest, so do this first thing.
 
-This is a CASINO  application implemented with Django-python ,HTML & Javascript-FroantEnd.Planning to implement froatEnd with React.JS.
+Create virtual environment, install requirements.txt
+python -m venv venv
+source venv/bin/activate
+python -m pip install -r requirements.txt
+ansible --version
+# ansible 2.10.3
+Copy vars and hosts files
+cp vars/default_example.yml vars/default.yml
+cp hosts_example hosts
+fill in vars/default.yml and hosts files.
 
-Apps:
-  daru_wheel
-     Real time spinning wheel implemented with Django channels/Redis
-      Features:
-      Outcome can be Red or Yellow:
-      _OutCome is determine by Betting Pool Algorithms/Ensure fair Randomness??
-      
-  Payment:
-  _Mpesa intergrated
-  _Paypall Intergrated
-  _Stripe integrated_using DJSTRIPE 
- 
- 
- 
- 
- Running in your Local Server:
- 
- 
- run redis server : you know how to do it if you are here  ...cd redis/src and  run 
- $ ./redis-server
- 
- run beat.sh     ie 
- $ ./beat.sh
- 
- run workers     ie 
- $ ./worker.sh   
- 
- then run 
- 
- $ ./manage.py runserver 
+Run initial server setup playbook
+# verify the IP address of the server
+ansible -i hosts --list-hosts all
+# verify server connection
+ansible -i hosts -m ping all
+If this is the first time communicating with the server, it will ask you to verify the host key. Answer yes.
+
+If this doesn't work. Try to log into the server with SSH. May need to remove a known host ssh-keygen -f "/home/gai/.ssh/known_hosts" -R "XX.XXXX.XX"
+
+ansible-playbook -i hosts server.yml
+Use SSH to log into the server as the non-root sudo user.
+
+ssh peter@XXX.XXX.XX.XX
+Run the django playbook
+ansible-playbook -i hosts django.yml
+Now you can test the Django app using Django's built-in server. Log into the server change into your app's directory and start the development server. Don't forget to open the ufw firewall to open port 8000.
+
+ssh peter@XXX.XXX.XXXX
+cd app-dir
+source venv/bin/activate
+sudo ufw allow 8000
+python manage.py runserver 0.0.0.0:8000
+# browse to https://XXX.XXX.XXXX:8000
+sudo ufw deny 8000
+Run the gunicorn playbook
+ansible-playbook -i hosts gunicorn.yml
+Run the nginx playbook
+ansible-playbook -i hosts nginx.yml
+Run the ssl playbook
+Ensure that the DNS record went through. Can check the domain name on: https://www.whatsmydns.net/
+
+ansible-playbook -i hosts ssl.yml
  
  
