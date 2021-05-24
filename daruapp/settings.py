@@ -88,8 +88,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = f'{config("PROJECT_NAME")}.wsgi.application'
-ASGI_APPLICATION = f'{config("PROJECT_NAME")}.routing.application'
+WSGI_APPLICATION = 'daruap.wsgi.application'
+ASGI_APPLICATION = 'daruapp.routing.application'
 
 
 # Database
