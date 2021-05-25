@@ -107,17 +107,17 @@ ASGI_APPLICATION = 'daruapp.routing.application'
 #     }
 # }
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),  # Set to empty string for default.
+        'NAME': config("DB_NAME"),
+        'USER': config("DB_USER"),
+        'PASSWORD': config("DB_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 
 # Password validation
@@ -159,6 +159,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / '../staticfiles'#a os.path.abspath(os.path.join(BASE_DIR, '../static'))
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, '../staticfiles'),
+]
 AUTH_USER_MODEL = 'users.User'
 
 # email backend

@@ -51,7 +51,7 @@ ssh peter@XXX.XXX.XX.XX
 ## Run the django playbook
 
 ```
-ansible-playbook -i hosts 02_django.yml
+ansible-playbook -i hosts django.yml
 ```
 
 Now you can test the Django app using Django's built-in server. Log into the server change into your app's directory and start the development server. Don't forget to open the ufw firewall to open port 8000.
