@@ -90,25 +90,34 @@ ASGI_APPLICATION = f'{config("PROJECT_NAME")}.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / '../db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DB_PASSWORD'),
-#         'HOST': config('DB_HOST'),
-#         'PORT': config('DB_PORT'),  # Set to empty string for default.
+#         'NAME': os.environ['DB_NAME'],
+#         'USER': os.environ['DB_USER'],
+#         'PASSWORD': os.environ['DB_PASSWORD'],
+#         'HOST': os.environ['DB_HOST'],
+#         'PORT': os.environ['DB_PORT'],  # Set to empty string for default.
+#     }
+# }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / '../db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
 #     }
 # }
 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config("DB_NAME"),
+        'USER': config("DB_USER"),
+        'PASSWORD': config("DB_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
 
 # Password validation
@@ -150,19 +159,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / '../staticfiles'#a os.path.abspath(os.path.join(BASE_DIR, '../static'))
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, '../staticfiles'),
+]
 AUTH_USER_MODEL = 'users.User'
 
 # email backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'daru<noreply@dwinnings.com>'
-
-
-BASE_URL = "http://<ip_from_digital_ocean>"####
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # login/logout redirect
 LOGIN_REDIRECT_URL = '/'
@@ -209,25 +212,25 @@ CELERY_BEAT_SCHEDULE = {
 
 
 # log stuff to console
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-        'logfile': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': BASE_DIR / "../logfile",
-        },
-    },
-    'root': {
-        'level': 'INFO',
-        'handlers': ['console', 'logfile']
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#         'logfile': {
+#             'level':'DEBUG',
+#             'class':'logging.FileHandler',
+#             'filename': BASE_DIR / "../logfile",
+#         },
+#     },
+#     'root': {
+#         'level': 'INFO',
+#         'handlers': ['console', 'logfile']
+#     },
+# }
 
 
 # db_from_env = dj_database_url.config()
@@ -294,7 +297,7 @@ C2B_CONFIRMATION_URL = config('C2B_CONFIRMATION_URL', default='')
 #ShortCode (Paybill)
 C2B_SHORT_CODE = config('C2B_SHORT_CODE', default='')
 #ResponseType
-C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='')
+C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='Completed')
 
 # C2B (STK PUSH) Configs
 # https://developer.safaricom.co.ke/lipa-na-m-pesa-online/apis/post/stkpush/v1/processrequest

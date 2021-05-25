@@ -21,7 +21,7 @@
         force: yes
 
   # Create Virtual Env and install Python packages
-    - name: pip install /my_app/requirements.txt
+    - name: pip install /daruapp/requirements.txt
       pip:
         requirements: "{{ app_dir }}/requirements.txt"
         virtualenv: "{{ app_dir }}/venv"
