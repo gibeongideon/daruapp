@@ -1,5 +1,0 @@
-# hosts_example
-
-[djserver]
-64.225.1.128 ansible_user=root
-/auto_deploy/prod
