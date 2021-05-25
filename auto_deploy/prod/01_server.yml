@@ -12,11 +12,11 @@
   tasks:
 
   # Run apt update && apt upgrade
-    - name: sudo apt update && sudo apt upgrade 
-      apt:
-        upgrade: yes
-        update_cache: yes
-        cache_valid_time: 86400 #one day
+    # - name: sudo apt update && sudo apt upgrade 
+    #   apt:
+    #     upgrade: yes
+    #     update_cache: yes
+    #     cache_valid_time: 86400 #one day
   # Sudo Group Setup
     - name: Make sure we have a 'wheel' group
       group:

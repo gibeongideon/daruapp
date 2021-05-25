@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-from django.core.management.utils import get_random_secret_key
-import sys
 import os
 from pathlib import Path
 from celery.schedules import crontab
@@ -23,15 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = '2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -88,29 +84,28 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'daruap.wsgi.application'
+WSGI_APPLICATION = 'daruapp.wsgi.application'
 ASGI_APPLICATION = 'daruapp.routing.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
-
-if DEVELOPMENT_MODE is True:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PORT'],  # Set to empty string for default.
     }
-elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-    if os.getenv("DATABASE_URL", None) is None:
-        raise Exception("DATABASE_URL environment variable not defined")
-    DATABASES = {
-        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
-    }
+}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / '../db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -162,21 +157,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / './staticfiles'#a os.path.abspath(os.path.join(BASE_DIR, '../static'))
+STATIC_ROOT = BASE_DIR / '../staticfiles'#a os.path.abspath(os.path.join(BASE_DIR, '../static'))
 
 AUTH_USER_MODEL = 'users.User'
 
 # email backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'daru<noreply@dwinnings.com>'
-
-
-BASE_URL = "http://<ip_from_digital_ocean>"####
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # login/logout redirect
 LOGIN_REDIRECT_URL = '/'
@@ -223,33 +209,33 @@ CELERY_BEAT_SCHEDULE = {
 
 
 # log stuff to console
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-        'logfile': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': BASE_DIR / "../logfile",
-        },
-    },
-    'root': {
-        'level': 'INFO',
-        'handlers': ['console', 'logfile']
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#         'logfile': {
+#             'level':'DEBUG',
+#             'class':'logging.FileHandler',
+#             'filename': BASE_DIR / "../logfile",
+#         },
+#     },
+#     'root': {
+#         'level': 'INFO',
+#         'handlers': ['console', 'logfile']
+#     },
+# }
 
 
 # db_from_env = dj_database_url.config()
 # DATABASES['default'].update(db_from_env)
 # DATABASES['default']['CONN_MAX_AGE'] = 500
 
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# DATABASES['default'].update(db_from_env)
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -308,7 +294,7 @@ C2B_CONFIRMATION_URL = config('C2B_CONFIRMATION_URL', default='')
 #ShortCode (Paybill)
 C2B_SHORT_CODE = config('C2B_SHORT_CODE', default='')
 #ResponseType
-C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='')
+C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='Completed')
 
 # C2B (STK PUSH) Configs
 # https://developer.safaricom.co.ke/lipa-na-m-pesa-online/apis/post/stkpush/v1/processrequest
