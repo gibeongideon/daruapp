@@ -1,6 +1,5 @@
 ansible==2.10.3
 ansible-base==2.10.3
-Jinja2==2.11.2
 MarkupSafe==1.1.1
 packaging==20.7
 pycparser==2.20
