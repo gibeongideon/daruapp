@@ -2,6 +2,7 @@
 from time import sleep
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync, sync_to_async
+from .models import WheelSpin, OutCome
 
 def countD(n, str1="Market Active till {} count down is ZERO."):
     countDown = n
@@ -9,7 +10,7 @@ def countD(n, str1="Market Active till {} count down is ZERO."):
         cc = []
         if countDown != 0:
             cc.append(countDown)
-            print(str1.format(cc[0]),end='\r')
+            #print(str1.format(cc[0]),end='\r')
             sleep(1)
             cc.clear()
             countDown = countDown - 1
@@ -33,8 +34,8 @@ def countC(n):
             break 
 
 def spin_manager():
-    print('MAKO POLLO')
-    from .models import WheelSpin, OutCome
+    #print('MAKO POLLO')
+    #from .models import WheelSpin, OutCome
     # from core.models import BetSettingVar
 
     try:
@@ -52,7 +53,7 @@ def spin_manager():
         this_wheelspin = WheelSpin.objects.get(id=id)
             #  create on demand
         if not this_wheelspin.place_stake_is_active:
-            print('NOTTTTT')
+          #  print('NOTTTTT')
             WheelSpin.objects.create(id=id+1)
 
         # WheelSpin.objects.create(id=id+1) # create WheeSpin of id current +1  
