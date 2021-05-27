@@ -1,9 +1,19 @@
 from django.contrib import admin
-from account.models import (
+
+from .models import (
     Account, Currency, RefCredit, RefCreditTransfer,
     TransactionLog, CashDeposit, CashWithrawal, Curr_Variable, AccountSetting
     )
 
+from .models import C2BTransaction
+
+# Register your models here.
+class C2BTransactionAdmin(admin.ModelAdmin):
+    list_display = ('id','phone_number','amount','success','created_at','updated_at')
+    list_display_links = ('id',)
+    # list_editable = ('',)
+
+admin.site.register(C2BTransaction, C2BTransactionAdmin) 
 
 class AccountSettingAdmin(admin.ModelAdmin):
     list_display = ('id', 'curr_unit','min_redeem_refer_credit','auto_approve','withraw_factor')
@@ -23,6 +33,7 @@ class AccountAdmin(admin.ModelAdmin):
     list_display_links = ('user_id',)
     search_fields = ('user_id',)
     list_editable = ('active',)
+    list_filter =('user','created_at', 'updated_at')
 
 
 admin.site.register(Account, AccountAdmin)
@@ -71,7 +82,7 @@ admin.site.register(TransactionLog, TransactionLogAdmin)
 
 
 class CashDepositAdmin(admin.ModelAdmin):
-    list_display = ('user','deposited','deposit_type','has_record','amount','current_bal','created_at','updated_at')
+    list_display = ('user','deposited','status','deposit_type','has_record','amount','current_bal','created_at','updated_at')
     list_display_links = ('amount',)
     search_fields = ('amount',)
     list_filter =('user','deposit_type')

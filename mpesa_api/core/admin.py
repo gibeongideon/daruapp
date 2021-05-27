@@ -1,12 +1,15 @@
 from django.contrib import admin
 #from rangefilter.filter import DateRangeFilter
 from mpesa_api.core.models import (
+    AuthToken,
     B2CRequest,
     B2CResponse,
     C2BRequest,
     OnlineCheckout,
     OnlineCheckoutResponse,
 )
+
+admin.site.register(AuthToken)
 
 
 @admin.register(B2CRequest)

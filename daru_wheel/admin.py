@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Stake, WheelSpin, CumulativeGain, Selection,
+    Stake, WheelSpin, Analytic, Selection,
     OutCome, Selection, DaruWheelSetting,
     CashStore)
 
@@ -16,11 +16,11 @@ class DaruWheelSettingAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'return_val', 'min_redeem_refer_credit',
         'refer_per','per_to_keep', 'closed_at', 'results_at','min_bet', 'wheelspin_id',
-        'win_algo','trial_algo','created_at', 'updated_at',)
+        'win_algo','trial_algo','big_win_multiplier','created_at', 'updated_at',)
     list_display_links = ('id',)
     list_editable = (
         'return_val', 'min_redeem_refer_credit', 'refer_per',
-        'per_to_keep','win_algo','trial_algo','closed_at', 'results_at',
+        'per_to_keep','win_algo','trial_algo','big_win_multiplier','closed_at', 'results_at',
         'min_bet', 'wheelspin_id',)
 
 
@@ -57,13 +57,13 @@ admin.site.register(WheelSpin, WheelSpinAdmin)
 
 
 
-class CumulativeGainAdmin(admin.ModelAdmin):
+class AnalyticAdmin(admin.ModelAdmin):
     list_display = ('id', 'gain', 'gainovertime', 'created_at', 'updated_at')
     list_display_links = ('id',)
     # list_editable = ('',)
 
 
-admin.site.register(CumulativeGain, CumulativeGainAdmin) 
+admin.site.register(Analytic, AnalyticAdmin) 
 
 
 class StakeAdmin(admin.ModelAdmin):

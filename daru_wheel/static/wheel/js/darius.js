@@ -12,13 +12,11 @@
 
         // console.log(data.ipointer)
         if (data.ipointer == 777){
-            alert('Place a Bet to Spin!Select Red or Yellow Enter Amount and click Place bet');
+            alert('Place a Bet to Spin!Select Red or Yellow, Enter amount and click Bet.Deposit money to bet real by clicking bet real button then click SPIN.');
         }
 
         if (data.ipointer<30){
-
             startSpinB(data.ipointer);
-
         } 
     };
 
