@@ -7,7 +7,7 @@ django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
     # Django's ASGI application to handle traditional HTTP requests
-    "http": django_asgi_app,    #ttp is added by default in production
+    "http": django_asgi_app,    #http is added by default in production
     'websocket': AuthMiddlewareStack(
         URLRouter(
             daru_wheel.routing.websocket_urlpatterns

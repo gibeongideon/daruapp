@@ -24,7 +24,7 @@ def spin(request):
         stake_form = IstakeForm()
         # print(stake_form.errors)
 
-    spins = Stake.unspinned(request.user.id)         
+    spins = len(Stake.unspinned(request.user.id))         
 
     context = {
         'user': request.user, 'stake_form': stake_form,

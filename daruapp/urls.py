@@ -25,5 +25,4 @@ urlpatterns = [
     path('daru_wheel/', include('daru_wheel.urls', namespace='daru_wheel')),
     path('account/', include('account.urls', namespace='account')),
     path('mpesa/', include('mpesa_api.core.urls', 'mpesa')),
-    path('cash_trans/', include('cash_trans.urls', 'cash_trans')),
 ]

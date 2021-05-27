@@ -6,6 +6,7 @@ import math
 from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
 from dashboard.models import TimeStamp
+from .wallet.mpesa.m_pesa_c2b import  C2BTransaction
 
 
 class AccountSetting(TimeStamp):
@@ -338,6 +339,12 @@ class CashDeposit(TimeStamp):
     def current_bal(self): 
         return current_account_bal_of(self.user_id)
 
+    @property
+    def status(self):
+        if self.deposited:
+            return 'Succided'
+        return 'Failed'
+
     def update_cum_depo(self):
         try:
             if not self.deposited :
@@ -354,7 +361,6 @@ class CashDeposit(TimeStamp):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
         if self.amount > 0:
-
             try:
                 try:
                     if self.confirmed and not self.deposited:

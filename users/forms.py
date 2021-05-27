@@ -62,7 +62,7 @@ class SignUpForm(UserCreationForm):
             'placeholder': 'Email...'
         }))
 
-    daru_code = forms.CharField(
+    referer_code = forms.CharField(
         max_length=150,
         required=True,
         label='',
@@ -90,11 +90,11 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'daru_code', 'password1', 'password2')
+        fields = ('username', 'email', 'referer_code', 'password1', 'password2')
 
-        error_messages = {
-            'daru_code': {'required': "Daru code required.Dont have ? Enter ADMIN"}
-            }
+        # error_messages = {
+        #     'referer_code': {'required': "Daru code required.Dont have ? Enter ADMIN"}
+        #     }
 
     # def cleaned_daru_code(self):
     #     user =User.objects.get(username=self.username)

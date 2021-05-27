@@ -11,14 +11,16 @@
 <div class="col-md-12">
   <div class="card ">
     <div class="card-header">
-      <h5 class="card-title"><h5 class="text-info">Min Withrawable: {{min_wit}}</h5></h5>
-      <h5 class="card-title"><h5 class="text-info">Refer Balance: {{refer_bal}}</h5></h5>
+      <!-- <h5 class="text-info"><h5 class="text-info">Min Withrawable: {{min_wit}}</h5></h5> -->
+      <h5 class="card-title">Account Balance:[{{account_bal}}]</h5>
+      <h5 class="card-title">Refer Balance:[{{refer_bal}}]</h5>
+      <!-- <h5 class="card-title"><h5 class="text-info">Remaining Amount to Withraw: {{re_to_wit}}</h5></h5> -->
 
-      <h5 class="card-title">Send to main Account</h5>
+      <h5 class="card-title">Send To Main Account [ Min:{{min_wit}}]</h5>
     </div>
     <div class="card-body">
 
-<form action="{% url 'account:send_refer_to_main' %}" method="post">
+<form action="{% url 'account:refer_credit' %}" method="post">
 {% csrf_token %}
 
 <div class="col-md-4 pl-md-1">
@@ -26,7 +28,6 @@
     <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount"">      
   </div>
 </div>
-
 
 <button class="btn btn-secondary type="submit">Send</button>
 </form>
@@ -61,9 +62,9 @@
                 <th class="text-center">
                   Current balance
                 </th>
-                <th>
+                <!-- <th>
                   Approved
-                </th>
+                </th> -->
               </tr>
             </thead>
             <tbody>
@@ -82,9 +83,9 @@
                 <td class="text-center">
                   {{trans.current_bal}}
                 </td>
-                <td>
+                <!-- <td>
                   {{trans.approved}}
-                </td>
+                </td> -->
               </tr>
 
               {% endfor %}
