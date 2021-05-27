@@ -1,4 +1,4 @@
 # hosts_example
 
 [djserver]
-64.225.1.128 ansible_user=root
+161.35.136.21 ansible_user=root

@@ -9,7 +9,7 @@ app_name: daruapp
 django_project_name: daruapp
 app_dir: "/home/{{ user_name }}/{{ app_name }}"
 django_secret_key: 2x4o=3b1n-n*_ls9bg@*$pcx3^pz)z7b@9o)=hz7^0%9&!wo0s
-server_IP: 64.225.1.128
+server_IP: 161.35.136.21
 fixture_path: /home/user/app-dir/djano-app/fixtures/data.json
 
 django_superuser: darius

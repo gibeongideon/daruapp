@@ -72,7 +72,7 @@
   # Change allowed hosts to include the server IP address
     - name: add server IP address to allowed hosts
       lineinfile:
-        path: "{{ app_dir }}/{{ django_project_name }}/settings/prod.py"
+        path: "{{ app_dir }}/{{ django_project_name }}/settings"
         state: present
         regexp: '^ALLOWED_HOSTS = '
         line: "ALLOWED_HOSTS = ['{{ server_IP }}','{{ domain_name }}']"

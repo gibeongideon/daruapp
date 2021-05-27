@@ -3,10 +3,11 @@ from fabric.api import env, local, run
 import random
 
 REPO_URL = 'https://github.com/gibeongideon/daruapp.git'
+projectname='daruapp'
 
 
 def _create_directory_structure_if_necessary(site_folder):
-    for subfolder in ('database', 'static', 'venv', 'source'):
+    for subfolder in ('database', 'static', 'denv', 'source'):
         run(f'mkdir -p {site_folder}/{subfolder}')
 
 
@@ -21,8 +22,9 @@ def _get_latest_source(source_folder):
 
 
 
+
 def _update_virtualenv(source_folder):
-    virtualenv_folder = source_folder + '/../virtualenv'
+    virtualenv_folder = source_folder + '/../denv'
     if not exists(virtualenv_folder + '/bin/pip'):
         run(f'python3.8 -m venv {virtualenv_folder}')
     run(f'{virtualenv_folder}/bin/pip install -r {source_folder}/requirements.txt')
@@ -31,23 +33,23 @@ def _update_virtualenv(source_folder):
 def _update_static_files(source_folder):
     run(
         f'cd {source_folder}'
-        ' && ../virtualenv/bin/python manage.py collectstatic --noinput'
+        ' && ../denv/bin/python manage.py collectstatic --noinput'
         )
 
 
 def _update_database(source_folder):
     run(
         f'cd {source_folder}'
-        ' && ../virtualenv/bin/python manage.py migrate --noinput'
+        ' && ../denv/bin/python manage.py migrate --noinput'
         )
 
 
 def deploy():
-    site_folder = f'/home/gai/Desktop/projects/testf'
-    source_folder = site_folder +'daruapp'
+    site_folder = f'/home/{env.user}/{projectname}'
+    source_folder = site_folder + '/source'
 
     _create_directory_structure_if_necessary(site_folder)
-   # _get_latest_source(source_folder)
-   # _update_virtualenv(source_folder)
-   # _update_static_files(source_folder)
-  #  _update_database(source_folder)
+    _get_latest_source(source_folder)
+    #_update_virtualenv(source_folder)
+    #_update_static_files(source_folder)
+    #_update_database(source_folder)
