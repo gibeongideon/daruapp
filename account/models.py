@@ -320,7 +320,8 @@ class CashDeposit(TimeStamp):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='user_deposits')
+        related_name='user_deposits',
+        blank=True, null=True)
 
     currency_id = models.ForeignKey(
         Currency,
@@ -410,7 +411,8 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='user_withrawals'
+        related_name='user_withrawals',
+        blank=True, null=True
         )    
     currency_id = models.ForeignKey(
         Currency,
