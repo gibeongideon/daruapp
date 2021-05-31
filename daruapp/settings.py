@@ -26,7 +26,7 @@ SECRET_KEY =config('SECRET_KEY', default='2x4o=3b1n-n*_ls9bg@*$pcx3^pz')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ["161.35.136.21","localhost"]
+ALLOWED_HOSTS = ["64.227.25.110","161.35.136.21","localhost","127.0.0.1"]
 
 # Application definition
 
@@ -185,7 +185,8 @@ CHANNEL_LAYERS = {
 
 
 ###### CELERY-specific settings
-
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+#CELERY_BROKER_URL = 'amqp://localhost:5672'
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
