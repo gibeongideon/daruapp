@@ -14,6 +14,7 @@ from pathlib import Path
 from celery.schedules import crontab
 import dj_database_url
 from decouple import config
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY =config('SECRET_KEY', default='2x4o=3b1n-n*_ls9bg@*$pcx3^pz')
+# SECRET_KEY =config('SECRET_KEY', default='2x4o=3b1n-n*_ls9bg@*$pcx3^pz')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+# DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["64.227.25.110","161.35.136.21","localhost","127.0.0.1"]
+# ALLOWED_HOSTS = ["64.227.25.110","161.35.136.21","localhost","127.0.0.1"]
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 # Application definition
 
 INSTALLED_APPS = [
@@ -89,26 +94,41 @@ ASGI_APPLICATION = 'daruapp.routing.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if DEBUG is True:
+if DEVELOPMENT_MODE is True:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / './db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-
-
-else:
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config("DB_NAME", default='darius_db'),
-        'USER': config("DB_USER",default='darius'),
-        'PASSWORD': config("DB_PASSWORD",default='darius!passcode'),
-        'HOST': 'localhost',
-        'PORT': '',
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
     }
-}
+
+
+# if DEBUG is True:
+#     DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / './db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+#         }
+#     }
+
+
+# else:
+#     DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': config("DB_NAME", default='darius_db'),
+#         'USER': config("DB_USER",default='darius'),
+#         'PASSWORD': config("DB_PASSWORD",default='darius!passcode'),
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 
 
