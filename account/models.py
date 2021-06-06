@@ -631,3 +631,34 @@ def update_account_cum_withraw_of(user_id,new_bal): #F3
     except Exception as e:
         return e
         
+
+class TransferCash(TimeStamp):
+    user_from = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_fromss',blank =True,null=True)
+    user_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_toss',blank =True,null=True)
+    amount  = models.DecimalField(max_digits=20, decimal_places=2)
+    success = models.BooleanField(default=False, blank=True,null=True)
+
+
+    def tranfer_cash_to_other_user(self):
+        user_from_bal=current_account_bal_of(self.user_from)
+        if user_from_bal>=self.amount and self.user_from!=self.user_to:###
+            user_to_bal=current_account_bal_of(self.user_to)
+
+            new_bal_from=user_from_bal-float(self.amount)
+            update_account_bal_of(self.user_from,new_bal_from)
+
+            new_bal_to=user_to_bal+float(self.amount)
+            update_account_bal_of(self.user_to,new_bal_to) 
+            self.success = True
+
+
+    def save(self, *args, **kwargs):
+        try:
+            if not self.success:
+                self.tranfer_cash_to_other_user()
+            
+        except Exception as tx:
+            print(f'TransferCash:{tx}')
+            pass
+            # return
+        super().save(*args, **kwargs)        
