@@ -106,17 +106,26 @@ def cash_trans(request):
     form = TransferCashForm()
     if request.method == 'POST':
         data = {}
-        data['user_from'] = request.user_from
-        user_to=User.objects.get(username=request.POST.get('user_to'))
+        data['sender'] = request.user
+        recipient=request.POST.get('recipient')
 
-        data['user_to'] = user_to
+        try:
+            recipient=User.objects.get(username=recipient.strip())
+        except Exception:
+            pass
+
+        print('USSER_T',recipient)
+
+        data['recipient'] = recipient
         data['amount'] = request.POST.get('amount')
         form = TransferCashForm(data=data)
         if form.is_valid():
             form.save()
-            print('YES DONECW!')
+            print('YES DONE_TRANSFER!')
+        if form.errors:
+            print(form.errors)   
 
-    trans_logz = TransferCash.objects.filter(user =request.user_from).order_by('-id')[:10]        
+    trans_logz = TransferCash.objects.filter(sender =request.user).order_by('-id')[:10]        
 
     return render(
         request,

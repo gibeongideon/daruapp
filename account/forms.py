@@ -22,4 +22,4 @@ class C2BTransactionForm(forms.ModelForm):
 class TransferCashForm(forms.ModelForm):
     class Meta:
         model = TransferCash
-        fields = ('user_from','user_to', 'amount',)
+        fields = ('sender','recipient', 'amount',)

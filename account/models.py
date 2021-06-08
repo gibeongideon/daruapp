@@ -633,28 +633,39 @@ def update_account_cum_withraw_of(user_id,new_bal): #F3
         
 
 class TransferCash(TimeStamp):
-    user_from = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_fromss',blank =True,null=True)
-    user_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_toss',blank =True,null=True)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='senderss',blank =True,null=True)
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='recipientss',blank =True,null=True)
     amount  = models.DecimalField(max_digits=20, decimal_places=2)
-    success = models.BooleanField(default=False, blank=True,null=True)
+    approved = models.BooleanField(default=False, blank=True,null=True)
+    success = models.BooleanField(blank=True,null=True)
 
 
     def tranfer_cash_to_other_user(self):
-        user_from_bal=current_account_bal_of(self.user_from)
-        if user_from_bal>=self.amount and self.user_from!=self.user_to:###
-            user_to_bal=current_account_bal_of(self.user_to)
+        sender_bal=current_account_bal_of(self.sender)
+        if sender_bal>=self.amount and self.sender!=self.recipient:###
+            recipient_bal=current_account_bal_of(self.recipient)
 
-            new_bal_from=user_from_bal-float(self.amount)
-            update_account_bal_of(self.user_from,new_bal_from)
+            new_bal_from=sender_bal-float(self.amount)
+            update_account_bal_of(self.sender,new_bal_from)
 
-            new_bal_to=user_to_bal+float(self.amount)
-            update_account_bal_of(self.user_to,new_bal_to) 
+            new_bal_to=recipient_bal+float(self.amount)
+            update_account_bal_of(self.recipient,new_bal_to) 
             self.success = True
+        else:
+            self.success=False    
+
+    def status(self):
+        if self.success is True:
+            return 'succided'
+        if self.approved is False:
+            return 'pending'
+
+
 
 
     def save(self, *args, **kwargs):
         try:
-            if not self.success:
+            if self.approved and not self.success:
                 self.tranfer_cash_to_other_user()
             
         except Exception as tx:

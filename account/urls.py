@@ -30,7 +30,7 @@ urlpatterns = [
     path('refer_credit/', refer_credit, name="refer_credit"),
     path('mpesa_withrawal/', mpesa_withrawal, name="mpesa_withrawal"),
     path('mpesa_deposit/', mpesa_deposit, name="mpesa_deposit"),
-    # path('cash_trans/', cash_trans, name="cash_trans"),
+    path('cash_trans/', cash_trans, name="cash_trans"),
 
     
 ]

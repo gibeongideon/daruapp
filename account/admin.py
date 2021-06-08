@@ -106,8 +106,8 @@ admin.site.register(CashWithrawal, CashWithrawalAdmin)
 
 
 class TransferCashAdmin(admin.ModelAdmin):
-    list_display = ('id','user_from','user_to','amount','success','created_at','updated_at')
+    list_display = ('id','sender','recipient','amount','approved','success','created_at','updated_at')
     list_display_links = ('id',)
-    list_editable = ('amount',)
+    list_editable = ('amount','approved')
 
 admin.site.register(TransferCash, TransferCashAdmin) 

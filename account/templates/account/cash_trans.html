@@ -10,12 +10,24 @@
         </div>
         <div class="card-body">
 
-<form action="{% url 'account:mpesa_withrawal' %}" method="post">
+<form action="{% url 'account:cash_trans' %}" method="post">
     {% csrf_token %}
-    
+
+    <div>
+      {% if form.errors %}
+      <span class="text-danger">{{ form.errors }}</span>
+      {% endif %}
+    </div>
+
     <div class="col-md-4 pl-md-1">
       <div class="form-group">
-        <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount"">      
+        <input type="text" name="recipient" class="form-control" placeholder="Recipient username or mobile number" step="10" required id="id_recipient">      
+      </div>
+    </div>
+
+    <div class="col-md-4 pl-md-1">
+      <div class="form-group">
+        <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount">      
       </div>
     </div>
 
@@ -33,7 +45,7 @@
       <div class="card ">
         <div class="card-header">
 
-      <a href="{% url 'account:mpesa_withrawal' %}" >
+      <a href="{% url 'account:cash_trans' %}" >
         <button class="btn btn-secondary">
           <i class="tim-icons icon-refresh-01"></i>                    
           Refresh 
@@ -43,7 +55,7 @@
 
 
 
-          <h4 class="card-title"> Recent Withrawals</h4>
+          <h4 class="card-title"> Recent Transfers</h4>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -56,9 +68,9 @@
                   <th>
                     Amount
                   </th>
-                  <!-- <th>
-                    Approved
-                  </th> -->
+                  <th>
+                    Transfer_to
+                  </th>
                   <th class="text-center">
                     Status
                   </th>
@@ -74,11 +86,11 @@
                   <td>
                     {{trans.amount}}
                   </td>
-                  <!-- <td>
-                    {{trans.approved}}
-                  </td> -->
+                  <td>
+                    {{trans.recipient}}
+                  </td>
                   <td class="text-center">
-                    {{trans.withraw_status}}
+                    {{trans.status}}
                   </td>
                 </tr>
   
