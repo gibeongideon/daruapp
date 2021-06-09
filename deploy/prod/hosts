@@ -1,4 +1,0 @@
-# hosts_example
-
-[djserver]
-161.35.136.21 ansible_user=root
