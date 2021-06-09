@@ -631,3 +631,45 @@ def update_account_cum_withraw_of(user_id,new_bal): #F3
     except Exception as e:
         return e
         
+
+class TransferCash(TimeStamp):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='senderss',blank =True,null=True)
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='recipientss',blank =True,null=True)
+    amount  = models.DecimalField(max_digits=20, decimal_places=2)
+    approved = models.BooleanField(default=False, blank=True,null=True)
+    success = models.BooleanField(blank=True,null=True)
+
+
+    def tranfer_cash_to_other_user(self):
+        sender_bal=current_account_bal_of(self.sender)
+        if sender_bal>=self.amount and self.sender!=self.recipient:###
+            recipient_bal=current_account_bal_of(self.recipient)
+
+            new_bal_from=sender_bal-float(self.amount)
+            update_account_bal_of(self.sender,new_bal_from)
+
+            new_bal_to=recipient_bal+float(self.amount)
+            update_account_bal_of(self.recipient,new_bal_to) 
+            self.success = True
+        else:
+            self.success=False    
+
+    def status(self):
+        if self.success is True:
+            return 'succided'
+        if self.approved is False:
+            return 'pending'
+
+
+
+
+    def save(self, *args, **kwargs):
+        try:
+            if self.approved and not self.success:
+                self.tranfer_cash_to_other_user()
+            
+        except Exception as tx:
+            print(f'TransferCash:{tx}')
+            pass
+            # return
+        super().save(*args, **kwargs)        

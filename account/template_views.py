@@ -4,10 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.forms.utils import ErrorList
 from django.http import HttpResponse
 
-from .models import (TransactionLog, RefCredit, CashWithrawal ,Account ,AccountSetting,CashDeposit,C2BTransaction)
-from .forms import CashWithrawalForm,ReferTranferForm,C2BTransactionForm
+from .models import (
+    TransactionLog, RefCredit, CashWithrawal ,Account ,AccountSetting,
+    CashDeposit,C2BTransaction, TransferCash)
+from .forms import CashWithrawalForm,ReferTranferForm,C2BTransactionForm,TransferCashForm
 
 from dashboard.models import WebPa
+from users.models import User
 
 
 @login_required(login_url='/users/login')
@@ -96,3 +99,34 @@ def mpesa_withrawal(request):
     return render(
         request,
          'account/mpesa_withrawal.html',{'form': form,'trans_logz': trans_logz})
+
+
+@login_required(login_url='/users/login')
+def cash_trans(request):
+    form = TransferCashForm()
+    if request.method == 'POST':
+        data = {}
+        data['sender'] = request.user
+        recipient=request.POST.get('recipient')
+
+        try:
+            recipient=User.objects.get(username=recipient.strip())
+        except Exception:
+            pass
+
+        print('USSER_T',recipient)
+
+        data['recipient'] = recipient
+        data['amount'] = request.POST.get('amount')
+        form = TransferCashForm(data=data)
+        if form.is_valid():
+            form.save()
+            print('YES DONE_TRANSFER!')
+        if form.errors:
+            print(form.errors)   
+
+    trans_logz = TransferCash.objects.filter(sender =request.user).order_by('-id')[:10]        
+
+    return render(
+        request,
+         'account/cash_trans.html',{'form': form,'trans_logz': trans_logz})
