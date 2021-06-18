@@ -632,7 +632,7 @@ def update_account_cum_withraw_of(user_id,new_bal): #F3
         return e
         
 
-class TransferCash(TimeStamp):
+class CashTransfer(TimeStamp):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='senderss',blank =True,null=True)
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='recipientss',blank =True,null=True)
     amount  = models.DecimalField(max_digits=20, decimal_places=2)

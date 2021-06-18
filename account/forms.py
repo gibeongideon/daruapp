@@ -1,6 +1,6 @@
 
 from django import forms
-from .models import CashWithrawal,RefCreditTransfer,C2BTransaction,TransferCash
+from .models import CashWithrawal,RefCreditTransfer,C2BTransaction,CashTransfer
 
 class CashWithrawalForm(forms.ModelForm):
     class Meta:
@@ -12,14 +12,15 @@ class ReferTranferForm(forms.ModelForm):
     class Meta:
         model = RefCreditTransfer
         fields = ('user', 'amount',)     
-        
+       
 
 class C2BTransactionForm(forms.ModelForm):
     class Meta:
         model = C2BTransaction
         fields = ('phone_number', 'amount',)
         
-class TransferCashForm(forms.ModelForm):
+class CashTransferForm(forms.ModelForm):
     class Meta:
-        model = TransferCash
+        model = CashTransfer
         fields = ('sender','recipient', 'amount',)
+        

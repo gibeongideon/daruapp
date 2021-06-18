@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     Account, Currency, RefCredit, RefCreditTransfer,
     TransactionLog, CashDeposit, CashWithrawal, Curr_Variable,
-    AccountSetting,TransferCash
+    AccountSetting,CashTransfer
     )
 
 from .models import C2BTransaction
@@ -105,9 +105,9 @@ admin.site.register(CashWithrawal, CashWithrawalAdmin)
 
 
 
-class TransferCashAdmin(admin.ModelAdmin):
+class CashTransferAdmin(admin.ModelAdmin):
     list_display = ('id','sender','recipient','amount','approved','success','created_at','updated_at')
     list_display_links = ('id',)
     list_editable = ('amount','approved')
 
-admin.site.register(TransferCash, TransferCashAdmin) 
+admin.site.register(CashTransfer, CashTransferAdmin) 
