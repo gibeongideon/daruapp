@@ -1,6 +1,6 @@
 from django.test import TestCase  #,Client
 from django.urls import reverse
-from account.models import CashDeposit, CashWithrawal, Account, RefCredit,RefCreditTransfer
+from account.models import CashDeposit, CashWithrawal, Account, RefCredit,RefCreditTransfer,TransferCash
 from users.models import User
 from daru_wheel.models import  Stake
 import random
@@ -112,7 +112,36 @@ class CashDepositWithrawalTestCase(TestCase):
 
         self.assertEqual(Account.objects.get(user=self.usera).cum_deposit,11000)
 
- 
+    def test_correct_cas_transfer(self):
+        CashDeposit.objects.create(amount=1000,user=self.usera,confirmed=True)
+        bal1a = Account.objects.get(user=self.usera).balance
+        bal1b = Account.objects.get(user=self.userb).balance
+        trans_obj=TransferCash.objects.create(sender=self.usera,recipient=self.userb,amount=500)
+        
+        self.assertEqual(1000, bal1a)
+        self.assertEqual(0, bal1b)
+        trans_obj.approved=True
+        trans_obj.approved=True
+        trans_obj.save()
+
+        self.assertEqual(500, Account.objects.get(user=self.usera).balance)
+        self.assertEqual(500, Account.objects.get(user=self.userb).balance)
+        TransferCash.objects.create(sender=self.usera,recipient=self.userb,amount=200,approved=True)
+
+        self.assertEqual(300, Account.objects.get(user=self.usera).balance)
+        self.assertEqual(700, Account.objects.get(user=self.userb).balance)
+        TransferCash.objects.create(sender=self.usera,recipient=self.userb,amount=301,approved=True)
+        self.assertEqual(300, Account.objects.get(user=self.usera).balance)
+        self.assertEqual(700, Account.objects.get(user=self.userb).balance)
+
+        TransferCash.objects.create(sender=self.usera,recipient=self.usera,amount=100,approved=True)
+        self.assertEqual(300, Account.objects.get(user=self.usera).balance)
+        self.assertEqual(700, Account.objects.get(user=self.userb).balance)
+
+        TransferCash.objects.create(sender=self.userb,recipient=self.usera,amount=-200,approved=True)
+        self.assertEqual(300, Account.objects.get(user=self.usera).balance)
+        self.assertEqual(700, Account.objects.get(user=self.userb).balance)
+
 class RefCreditTestCase(TestCase):
     def setUp(self):
        self.usera=User.objects.create(username="0710001000", email="testa@gmail.com",referer_code="ADMIN")

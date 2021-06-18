@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Sum
-from datetime import timedelta, datetime
+from datetime import timedelta#, datetime
 from random import randint
 from django.utils import timezone
 try:
@@ -311,17 +311,17 @@ class OutCome(TimeStamp):
             set_up=wheel_setting()
 
             if float(self.current_update_give_away) >= set_up.big_win_multiplier*(stak*odd):
-                print('quolify_4_B-WIN')
+                # print('quolify_4_B-WIN')
                 resu=randint(1,5)#properbility_of_winnin_bi
                 if resu==1:
-                    print('and_Luck_Strikes!')
+                    # print('and_Luck_Strikes!')
                     return 5
                 else:#RRR
-                    print('..but_no_luck!')
+                    # print('..but_no_luck!')
                     pass                  
                 
             if float(self.current_update_give_away) >= (stak*odd):#*self.stake.marketselection.odds):  ##TO IMPLEMENT
-                print('N-Win')
+                # print('N-Win')
                 set_up=wheel_setting()
                 # return 1
                 if set_up.win_algo ==1:
@@ -380,11 +380,11 @@ class OutCome(TimeStamp):
 
         '''
         try:
-            all_players_B=20
-            all_playesa_W=10
-            total_amount_B=100
-            total_amount_W=80
-            current_give_away=300           
+            # all_players_B=20
+            # all_playesa_W=10
+            # total_amount_B=100
+            # total_amount_W=80
+            # current_give_away=300           
 
 
             B = self.market.selection_bet_amount[0]
@@ -398,11 +398,11 @@ class OutCome(TimeStamp):
 
             if bank+min_resu>(max_resu):
                 
-                print('top_Players_win')
+                # print('top_Players_win')
                 return 1                
 
             elif bank+max_resu>(min_resu):
-                print('low_Players_win')
+                # print('low_Players_win')
                 return 2
 
             # else:
@@ -420,7 +420,7 @@ class OutCome(TimeStamp):
                 return self.real_account_result_algo() 
 
         elif self.market:
-            print('YESSSSSS!!!')
+            # print('YESSSSSS!!!')
             # self.back_store_daruspin_result_algo()#TODO
             # return self.auto_spin_result_algo()
             resu=self.back_store_daruspin_result_algo()
@@ -553,8 +553,8 @@ class OutCome(TimeStamp):
 
     def run_update_winner_losser(self,this_user_stak_obj):
         user_id = this_user_stak_obj.user.id
-        user_current_account_bal =current_account_bal_of(user_id)
-        user_current_account_trialbal =current_account_trialbal_of(user_id)
+        # user_current_account_bal =current_account_bal_of(user_id)
+        # user_current_account_trialbal =current_account_trialbal_of(user_id)
 
         if this_user_stak_obj.bet_on_real_account==True:#REAL
             if this_user_stak_obj.market is not None:#daru

@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["0.0.0.0","64.227.25.110","161.35.136.21","localhost","127.0.0.
 # Application definition
 
 INSTALLED_APPS = [
-    # 'channels',
+    'channels',
     'functional_tests',
     #...
     'admin_interface',
@@ -105,7 +105,7 @@ else:
         'NAME': config("DB_NAME", default='darius_db'),
         'USER': config("DB_USER",default='darius'),
         'PASSWORD': config("DB_PASSWORD",default='darius!passcode'),
-        # 'HOST': 'localhost',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
