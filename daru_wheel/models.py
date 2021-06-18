@@ -674,7 +674,7 @@ class OutCome(TimeStamp):
                 self.run_update_winner_losser(stake_obj)
             except Exception as e:
                 print('IspinACCOUNT:',e)
-                return
+                return e
 
        
     def update_db_records(self):
@@ -704,6 +704,7 @@ class OutCome(TimeStamp):
                                    
                 super().save(*args, **kwargs)                
             except Exception as e:
+                print(e)
                 return
 
 
@@ -721,28 +722,4 @@ class Analytic(TimeStamp):
             
         except Exception as e:
             return e
-
-
-class TransferCas(TimeStamp):
-    user_from = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_froms',blank =True,null=True)
-    user_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_tos',blank =True,null=True)
-    amount  = models.DecimalField(max_digits=20, decimal_places=2)
-    success = models.BooleanField(default=False, blank=True,null=True)
-
-
-    def save(self, *args, **kwargs):
-        try:
-            Mpesa.stk_push(
-                self.phone_number,
-                self.amount,
-                account_reference=f'Pay Daru Casino :{self.amount}',
-                is_paybill=True)
-
-            self. success = True
-            
-        except Exception as tx:
-            print(f'C2BTransaction:{tx}')
-            return
-        super().save(*args, **kwargs)
-
 

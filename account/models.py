@@ -1,12 +1,13 @@
 from django.db import models
 from django.conf import settings
-from .exceptions import NegativeTokens, NotEnoughTokens # LockException,
+from .exceptions import NegativeTokens#, NotEnoughTokens # LockException,
 from decimal import Decimal
 import math
-from django.core.validators import MinValueValidator
+# from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
 from dashboard.models import TimeStamp
-from .wallet.mpesa.m_pesa_c2b import  C2BTransaction
+from django.db import models
+from mpesa_api.core.mpesa import Mpesa
 
 
 class AccountSetting(TimeStamp):
@@ -273,7 +274,7 @@ class RefCreditTransfer(TimeStamp):
             return    
 
         super().save(*args, **kwargs)            
-                  
+  
 
 
 class TransactionLog(TimeStamp):
@@ -418,7 +419,6 @@ class CashWithrawal(TimeStamp): # sensitive transaction
         Currency,
         on_delete=models.CASCADE,blank= True,null =True
         )
-
 
     def __str__(self):
         """Simply present name of user connected with withdraw and amount."""
@@ -632,7 +632,7 @@ def update_account_cum_withraw_of(user_id,new_bal): #F3
         return e
         
 
-class TransferCash(TimeStamp):
+class CashTransfer(TimeStamp):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='senderss',blank =True,null=True)
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='recipientss',blank =True,null=True)
     amount  = models.DecimalField(max_digits=20, decimal_places=2)
@@ -660,10 +660,7 @@ class TransferCash(TimeStamp):
         if self.approved is False:
             return 'pending'
         else:
-            return 'failed'    
-
-
-
+            return 'failed'   
 
     def save(self, *args, **kwargs):
         try:
@@ -674,4 +671,25 @@ class TransferCash(TimeStamp):
             print(f'TransferCash:{tx}')
             pass
             # return
-        super().save(*args, **kwargs)        
+        super().save(*args, **kwargs)       
+
+
+class C2BTransaction(TimeStamp):
+    phone_number = models.BigIntegerField()
+    amount       = models.DecimalField(max_digits=20, decimal_places=2)
+    success      = models.BooleanField(default=False, blank=True,null=True)
+
+    def save(self, *args, **kwargs):
+        try:
+            Mpesa.stk_push(
+                self.phone_number,
+                self.amount,
+                account_reference=f'Pay Daru Casino :{self.amount}',
+                is_paybill=True)
+
+            self. success = True
+            
+        except Exception as tx:
+            print(f'C2BTransaction:{tx}')
+            return
+        super().save(*args, **kwargs)

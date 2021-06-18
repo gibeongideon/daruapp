@@ -1,13 +1,13 @@
 
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
-from django.forms.utils import ErrorList
-from django.http import HttpResponse
+# from django.forms.utils import ErrorList
+# from django.http import HttpResponse
 
 from .models import (
     TransactionLog, RefCredit, CashWithrawal ,Account ,AccountSetting,
-    CashDeposit,C2BTransaction, TransferCash)
-from .forms import CashWithrawalForm,ReferTranferForm,C2BTransactionForm,TransferCashForm
+    CashDeposit,CashTransfer)
+from .forms import CashWithrawalForm,ReferTranferForm,C2BTransactionForm,CashTransferForm
 
 from dashboard.models import WebPa
 from users.models import User
@@ -103,7 +103,7 @@ def mpesa_withrawal(request):
 
 @login_required(login_url='/users/login')
 def cash_trans(request):
-    form = TransferCashForm()
+    form = CashTransferForm()
     if request.method == 'POST':
         data = {}
         data['sender'] = request.user
@@ -118,14 +118,14 @@ def cash_trans(request):
 
         data['recipient'] = recipient
         data['amount'] = request.POST.get('amount')
-        form = TransferCashForm(data=data)
+        form = CashTransferForm(data=data)
         if form.is_valid():
             form.save()
             print('YES DONE_TRANSFER!')
         if form.errors:
             print(form.errors)   
 
-    trans_logz = TransferCash.objects.filter(sender =request.user).order_by('-id')[:10]        
+    trans_logz = CashTransfer.objects.filter(sender =request.user).order_by('-id')[:10]        
 
     return render(
         request,

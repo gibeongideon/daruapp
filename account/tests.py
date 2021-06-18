@@ -1,6 +1,6 @@
 from django.test import TestCase  #,Client
 from django.urls import reverse
-from account.models import CashDeposit, CashWithrawal, Account, RefCredit,RefCreditTransfer,TransferCash
+from account.models import CashDeposit, CashWithrawal, Account, RefCredit,RefCreditTransfer,CashTransfer
 from users.models import User
 from daru_wheel.models import  Stake
 import random
@@ -116,7 +116,7 @@ class CashDepositWithrawalTestCase(TestCase):
         CashDeposit.objects.create(amount=1000,user=self.usera,confirmed=True)
         bal1a = Account.objects.get(user=self.usera).balance
         bal1b = Account.objects.get(user=self.userb).balance
-        trans_obj=TransferCash.objects.create(sender=self.usera,recipient=self.userb,amount=500)
+        trans_obj=CashTransfer.objects.create(sender=self.usera,recipient=self.userb,amount=500)
         
         self.assertEqual(1000, bal1a)
         self.assertEqual(0, bal1b)
@@ -126,19 +126,19 @@ class CashDepositWithrawalTestCase(TestCase):
 
         self.assertEqual(500, Account.objects.get(user=self.usera).balance)
         self.assertEqual(500, Account.objects.get(user=self.userb).balance)
-        TransferCash.objects.create(sender=self.usera,recipient=self.userb,amount=200,approved=True)
+        CashTransfer.objects.create(sender=self.usera,recipient=self.userb,amount=200,approved=True)
 
         self.assertEqual(300, Account.objects.get(user=self.usera).balance)
         self.assertEqual(700, Account.objects.get(user=self.userb).balance)
-        TransferCash.objects.create(sender=self.usera,recipient=self.userb,amount=301,approved=True)
+        CashTransfer.objects.create(sender=self.usera,recipient=self.userb,amount=301,approved=True)
         self.assertEqual(300, Account.objects.get(user=self.usera).balance)
         self.assertEqual(700, Account.objects.get(user=self.userb).balance)
 
-        TransferCash.objects.create(sender=self.usera,recipient=self.usera,amount=100,approved=True)
+        CashTransfer.objects.create(sender=self.usera,recipient=self.usera,amount=100,approved=True)
         self.assertEqual(300, Account.objects.get(user=self.usera).balance)
         self.assertEqual(700, Account.objects.get(user=self.userb).balance)
 
-        TransferCash.objects.create(sender=self.userb,recipient=self.usera,amount=-200,approved=True)
+        CashTransfer.objects.create(sender=self.userb,recipient=self.usera,amount=-200,approved=True)
         self.assertEqual(300, Account.objects.get(user=self.usera).balance)
         self.assertEqual(700, Account.objects.get(user=self.userb).balance)
 
