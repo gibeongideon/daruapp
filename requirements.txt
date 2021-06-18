@@ -17,8 +17,8 @@ channels==3.0.2
 channels-redis==3.2.0
 chardet==3.0.4
 click==7.1.2
-click-didyoumean==0.0.3
-click-plugins==1.1.1
+click-didyoumean==1.0.3
+click-plugins==2.1.1
 click-repl==0.1.6
 configparser==5.0.1
 constantly==15.1.0
