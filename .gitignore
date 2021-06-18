@@ -260,4 +260,5 @@ venv.bak/
 */*/*/migrations/*.pyc
 
 logfile
-darulogfile
+
+.vscode

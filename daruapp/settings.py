@@ -105,7 +105,7 @@ else:
         'NAME': config("DB_NAME", default='darius_db'),
         'USER': config("DB_USER",default='darius'),
         'PASSWORD': config("DB_PASSWORD",default='darius!passcode'),
-        'HOST': 'localhost',
+        # 'HOST': 'localhost',
         'PORT': '',
     }
 }
