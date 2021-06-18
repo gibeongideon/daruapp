@@ -104,6 +104,7 @@ def process_b2c_result_response_task(response):
         # save
         B2CResponse.objects.create(**update_data)
     except Exception as ex:
+        print(ex)
         pass
 
 
@@ -229,6 +230,7 @@ def process_c2b_confirmation_task(response):
         else:
             C2BRequest.objects.create(**data)
     except Exception as ex:
+        print(ex)
         pass
 
 
