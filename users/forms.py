@@ -64,13 +64,14 @@ class SignUpForm(UserCreationForm):
 
     referer_code = forms.CharField(
         max_length=150,
-        required=True,
+        # required=True,
         label='',
-        help_text='Dont have ? Enter ADMIN',
+        # help_text='Dont have ? Enter ADMIN',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Enter your Refere code here'
+            'placeholder': 'Referer Code'
         }))
+
 
     password1 = forms.CharField(
         required=True,
