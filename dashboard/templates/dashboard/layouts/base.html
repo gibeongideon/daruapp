@@ -38,36 +38,33 @@
 <body class="">
   <div class="wrapper">
 
-    {% if user.is_authenticated %}
+    {% comment %} {% if user.is_authenticated %} {% endcomment %}
 
         {% include 'dashboard/includes/sidebar.html' %}
 
-    {% endif %}
+    {% comment %} {% endif %} {% endcomment %}
 
     
 
     <div class="main-panel">
-      {% if user.is_authenticated %}
+      {% comment %} {% if user.is_authenticated %} {% endcomment %}
     
         {% include 'dashboard/includes/navigation.html' %}
 
-      {% endif %}
+      {% comment %} {% endif %} {% endcomment %}
 
-      {% if not user.is_authenticated %}
-    
-      {% include 'dashboard/includes/header.html' %}
 
-      {% endif %}
 
 
 
       <div class="content">
-
+      
         {% block content %}{% endblock content %}
-
+        
+        {% include 'dashboard/includes/footer.html' %}
       </div>
 
-      {% include 'dashboard/includes/footer.html' %}
+     
 
     </div>
     

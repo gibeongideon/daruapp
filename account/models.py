@@ -642,7 +642,7 @@ class TransferCash(TimeStamp):
 
     def tranfer_cash_to_other_user(self):
         sender_bal=current_account_bal_of(self.sender)
-        if sender_bal>=self.amount and self.sender!=self.recipient:###
+        if self.amount>0 and sender_bal>=self.amount and self.sender!=self.recipient:###
             recipient_bal=current_account_bal_of(self.recipient)
 
             new_bal_from=sender_bal-float(self.amount)
@@ -659,6 +659,8 @@ class TransferCash(TimeStamp):
             return 'succided'
         if self.approved is False:
             return 'pending'
+        else:
+            return 'failed'    
 
 
 

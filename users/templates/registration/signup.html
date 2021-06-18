@@ -6,7 +6,7 @@
 
 
         <div class="row">
-          <div class="col-md-8">
+          {% comment %} <div class="col-md-8"> {% endcomment %}
             <div class="card">
 
               <form role="form" method="post" action="">
@@ -36,7 +36,7 @@
                 <div class="card-body">
 
                   {% for field in form %}
-                  <p>
+                  {% comment %} <p> {% endcomment %}
         
 
                     {% if field.help_text %}
@@ -44,20 +44,20 @@
                       <small>{{ field.help_text }}</small>
                     </span>
                     {% endif %}
-                  <div class="row">
+                  {% comment %} <div class="row"> {% endcomment %}
                     <div class="col-md-3 px-md-1">
                       <div class="form-group">
                         <label>{{field.label}}</label>
                         {{ field }}
                       </div>
                     </div>
-                  </div>
+                  {% comment %} </div> {% endcomment %}
                   {% if field.errors %}
                   <span class="text-danger">{{ field.errors|join:'<br />' }}</span>
                   {% endif %}
 
-  
-                  </p>
+{% comment %}   
+                  </p> {% endcomment %}
           
                 {% endfor %}
 
@@ -73,7 +73,7 @@
               </form>
 
             </div>
-          </div>
+          {% comment %} </div> {% endcomment %}
       </div>
 
 
