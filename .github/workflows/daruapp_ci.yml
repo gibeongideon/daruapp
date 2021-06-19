@@ -56,7 +56,8 @@ jobs:
     #     pytest
     
 
-    # - name: Run Tests
-    #   run: |
-    #     python manage.py test'       
+    - name: Run Tests
+      run: |       
+        python manage.py test account
+
         
