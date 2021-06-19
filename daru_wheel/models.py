@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Sum
-from datetime import timedelta#, datetime
+from datetime import timedelta
 from random import randint
 from django.utils import timezone
 try:
