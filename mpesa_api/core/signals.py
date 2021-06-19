@@ -25,9 +25,7 @@ def handle_b2c_request_post_save(sender, instance, **kwargs):
     queue = "b2c_request"
     chain = send_b2c_request_task.s(
         int(instance.amount), instance.phone, instance.id
-    ).set(queue=queue) | process_b2c_call_response_task.s(instance.id).set(
-        queue=queue
-    )
+    ).set(queue=queue) | process_b2c_call_response_task.s(instance.id).set(queue=queue)
     chain()
 
 

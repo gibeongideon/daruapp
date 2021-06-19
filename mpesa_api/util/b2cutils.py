@@ -12,9 +12,7 @@ def send_b2c_request(amount, phone_number, transaction_id, occassion=""):
     :return:
     """
     url = f"{settings.MPESA_URL}/mpesa/b2c/v1/paymentrequest"
-    headers = {
-        "Authorization": "Bearer {}".format(AuthToken.objects.get_token("b2c"))
-    }
+    headers = {"Authorization": "Bearer {}".format(AuthToken.objects.get_token("b2c"))}
     request = dict(
         InitiatorName=settings.B2C_INITIATOR_NAME,
         SecurityCredential=settings.B2C_SECURITY_TOKEN,

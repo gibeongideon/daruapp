@@ -16,13 +16,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-admin.site.site_header = 'DaruApp Admin'
+
+admin.site.site_header = "DaruApp Admin"
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('dashboard.urls', namespace='dashboard')),
-    path('user/', include('users.urls', namespace='users')),
-    path('daru_wheel/', include('daru_wheel.urls', namespace='daru_wheel')),
-    path('account/', include('account.urls', namespace='account')),
-    path('mpesa/', include('mpesa_api.core.urls', 'mpesa')),
+    path("admin/", admin.site.urls),
+    path("", include("dashboard.urls", namespace="dashboard")),
+    path("user/", include("users.urls", namespace="users")),
+    path("daru_wheel/", include("daru_wheel.urls", namespace="daru_wheel")),
+    path("account/", include("account.urls", namespace="account")),
+    path("mpesa/", include("mpesa_api.core.urls", "mpesa")),
 ]
