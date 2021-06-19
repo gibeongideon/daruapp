@@ -6,6 +6,9 @@ on:
     branches: [ prod ]
   # pull_request:
   #   branches: [ prod ]
+    paths-ignore:
+    - "migrations/**"
+
 
 jobs:
   build:

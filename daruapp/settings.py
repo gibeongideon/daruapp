@@ -22,94 +22,94 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY =config('SECRET_KEY', default='2x4o=3b1n-n*_ls9bg@*$pcx3^pz')
+SECRET_KEY = config("SECRET_KEY", default="2x4o=3b1n-n*_ls9bg@*$pcx3^pz")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ["143.198.174.147","localhost","127.0.0.1"]
+ALLOWED_HOSTS = ["143.198.174.147", "localhost", "127.0.0.1"]
 
 # Application definition
 
 INSTALLED_APPS = [
     # 'channels',
-    'functional_tests',
-    #...
-    'admin_interface',
-    'colorfield',
-    #...
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'users',
-    'account',
-    'dashboard',
-    'daru_wheel',
-    'mpesa_api.core',
-    'mpesa_api.util',
-    'rest_framework',
+    "functional_tests",
+    # ...
+    "admin_interface",
+    "colorfield",
+    # ...
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "users",
+    "account",
+    "dashboard",
+    "daru_wheel",
+    "mpesa_api.core",
+    "mpesa_api.util",
+    "rest_framework",
     # 'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    "django.middleware.security.SecurityMiddleware",
     # 'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'daruapp.urls'
+ROOT_URLCONF = "daruapp.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
 
-WSGI_APPLICATION = 'daruapp.wsgi.application'
-ASGI_APPLICATION = 'daruapp.routing.application'
+WSGI_APPLICATION = "daruapp.wsgi.application"
+ASGI_APPLICATION = "daruapp.routing.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 if DEBUG is True:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / './db.sqlite3' # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR
+            / "./db.sqlite3",  # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
         }
     }
 
 
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config("DB_NAME", default='darius_db'),
-        'USER': config("DB_USER",default='darius'),
-        'PASSWORD': config("DB_PASSWORD",default='darius!passcode'),
-        'HOST': 'localhost',
-        'PORT': '',
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": config("DB_NAME", default="darius_db"),
+            "USER": config("DB_USER", default="darius"),
+            "PASSWORD": config("DB_PASSWORD", default="darius!passcode"),
+            "HOST": "localhost",
+            "PORT": "",
+        }
     }
-}
-
 
 
 # Password validation
@@ -117,26 +117,20 @@ else:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Africa/Nairobi'
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 
@@ -148,23 +142,25 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / './static'#a os.path.abspath(os.path.join(BASE_DIR, '../static'))
+STATIC_URL = "/static/"
+STATIC_ROOT = (
+    BASE_DIR / "./static"
+)  # a os.path.abspath(os.path.join(BASE_DIR, '../static'))
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = "users.User"
 
 # email backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('EMAIL_HOST_USER',default='kipngeno.gibeon@gmail.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',default='27837185gg')
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="kipngeno.gibeon@gmail.com")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="27837185gg")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Darius Team <noreply@dariuswinnings.com>'
+DEFAULT_FROM_EMAIL = "Darius Team <noreply@dariuswinnings.com>"
 
 # login/logout redirect
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/user/login'
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/user/login"
 
 ##### Channels-specific settings
 
@@ -174,60 +170,48 @@ LOGOUT_REDIRECT_URL = '/user/login'
 # http://channels.readthedocs.io/en/latest/topics/channel_layers.html
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('localhost', 6379)],
-        },
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [("localhost", 6379)],},
     }
 }
 
 
-
 ###### CELERY-specific settings
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-#CELERY_BROKER_URL = 'amqp://localhost:5672'
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
+# CELERY_BROKER_URL = 'amqp://localhost:5672'
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 
 CELERY_BEAT_SCHEDULE = {
-
-    'create_spin_wheel_market': {
-         'task': 'daru_wheel.tasks.create_spinwheel',
-         'schedule': crontab(minute=[
-             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-        },
-    'run_count_down_timer': {
-         'task': 'daru_wheel.tasks.start_count_down',
-         'schedule': crontab(minute=[
-             0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
-        }
+    "create_spin_wheel_market": {
+        "task": "daru_wheel.tasks.create_spinwheel",
+        "schedule": crontab(minute=[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+    },
+    "run_count_down_timer": {
+        "task": "daru_wheel.tasks.start_count_down",
+        "schedule": crontab(minute=[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]),
+    },
 }
 
 
 # log stuff to console
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-        'logfile': {
-            'level':'DEBUG',
-            'class':'logging.FileHandler',
-            'filename': BASE_DIR / "./logfile",
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"level": "DEBUG", "class": "logging.StreamHandler",},
+        "logfile": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "./logfile",
         },
     },
-    'root': {
-        'level': 'INFO',
-        'handlers': ['console', 'logfile']
-    },
+    "root": {"level": "INFO", "handlers": ["console", "logfile"]},
 }
 
 
@@ -252,31 +236,33 @@ JET_SIDE_MENU_COMPACT = True
 # see https://developer.safaricom.co.ke/test_credentials
 # https://developer.safaricom.co.ke/b2c/apis/post/paymentrequest
 
-MPESA_B2C_ACCESS_KEY = config('MPESA_B2C_ACCESS_KEY', default='')
-MPESA_B2C_CONSUMER_SECRET = config('MPESA_B2C_CONSUMER_SECRET', default='')
+MPESA_B2C_ACCESS_KEY = config("MPESA_B2C_ACCESS_KEY", default="")
+MPESA_B2C_CONSUMER_SECRET = config("MPESA_B2C_CONSUMER_SECRET", default="")
 
-B2C_SECURITY_TOKEN =  config('B2C_SECURITY_TOKEN', default='')
-B2C_INITIATOR_NAME = config('B2C_INITIATOR_NAME', default='')
-B2C_COMMAND_ID = config('B2C_COMMAND_ID', default='')
-B2C_SHORTCODE = config('B2C_SHORTCODE', default='')
-B2C_QUEUE_TIMEOUT_URL = config('B2C_QUEUE_TIMEOUT_URL', default='')
-B2C_RESULT_URL = config('B2C_RESULT_URL', default='')
-MPESA_URL = config('MPESA_URL', default='')
+B2C_SECURITY_TOKEN = config("B2C_SECURITY_TOKEN", default="")
+B2C_INITIATOR_NAME = config("B2C_INITIATOR_NAME", default="")
+B2C_COMMAND_ID = config("B2C_COMMAND_ID", default="")
+B2C_SHORTCODE = config("B2C_SHORTCODE", default="")
+B2C_QUEUE_TIMEOUT_URL = config("B2C_QUEUE_TIMEOUT_URL", default="")
+B2C_RESULT_URL = config("B2C_RESULT_URL", default="")
+MPESA_URL = config("MPESA_URL", default="")
 
 # C2B (Paybill) Configs
 # See https://developer.safaricom.co.ke/c2b/apis/post/registerurl
 
-MPESA_C2B_ACCESS_KEY = config('MPESA_C2B_ACCESS_KEY', default='')
-MPESA_C2B_CONSUMER_SECRET = config('MPESA_C2B_CONSUMER_SECRET', default='')
+MPESA_C2B_ACCESS_KEY = config("MPESA_C2B_ACCESS_KEY", default="")
+MPESA_C2B_CONSUMER_SECRET = config("MPESA_C2B_CONSUMER_SECRET", default="")
 
-C2B_REGISTER_URL = config('C2B_REGISTER_URL', default='')
-C2B_VALIDATE_URL = config('C2B_VALIDATE_URL', default='')
-C2B_CONFIRMATION_URL = config('C2B_CONFIRMATION_URL', default='')
-C2B_SHORT_CODE = config('C2B_SHORT_CODE', default='')
-C2B_RESPONSE_TYPE = config('C2B_RESPONSE_TYPE', default='Completed')
-C2B_ONLINE_CHECKOUT_CALLBACK_URL = config('C2B_ONLINE_CHECKOUT_CALLBACK_URL', default='')
-C2B_ONLINE_PASSKEY = config('C2B_ONLINE_PASSKEY', default='')
-C2B_ONLINE_SHORT_CODE = config('C2B_ONLINE_SHORT_CODE', default='')
-C2B_ONLINE_PARTY_B = config('C2B_ONLINE_PARTY_B', default='')
+C2B_REGISTER_URL = config("C2B_REGISTER_URL", default="")
+C2B_VALIDATE_URL = config("C2B_VALIDATE_URL", default="")
+C2B_CONFIRMATION_URL = config("C2B_CONFIRMATION_URL", default="")
+C2B_SHORT_CODE = config("C2B_SHORT_CODE", default="")
+C2B_RESPONSE_TYPE = config("C2B_RESPONSE_TYPE", default="Completed")
+C2B_ONLINE_CHECKOUT_CALLBACK_URL = config(
+    "C2B_ONLINE_CHECKOUT_CALLBACK_URL", default=""
+)
+C2B_ONLINE_PASSKEY = config("C2B_ONLINE_PASSKEY", default="")
+C2B_ONLINE_SHORT_CODE = config("C2B_ONLINE_SHORT_CODE", default="")
+C2B_ONLINE_PARTY_B = config("C2B_ONLINE_PARTY_B", default="")
 
-TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600)#, cast=int)
+TOKEN_THRESHOLD = config("TOKEN_THRESHOLD", default=600)  # , cast=int)

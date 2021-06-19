@@ -41,9 +41,7 @@ class B2cResult(APIView):
         :return:
         """
         data = request.data
-        process_b2c_result_response_task.apply_async(
-            args=(data,), queue="b2c_result"
-        )
+        process_b2c_result_response_task.apply_async(args=(data,), queue="b2c_result")
         return Response(dict(value="ok", key="status", detail="success"))
 
 
@@ -61,9 +59,7 @@ class C2bValidation(APIView):
         :return:
         """
         data = request.data
-        process_c2b_validation_task.apply_async(
-            args=(data,), queue="c2b_validation"
-        )
+        process_c2b_validation_task.apply_async(args=(data,), queue="c2b_validation")
         return Response(dict(value="ok", key="status", detail="success"))
 
 

@@ -144,9 +144,7 @@ def process_c2b_validation_task(response):
     data = dict(
         transaction_type=response.get("TransactionType", ""),
         transaction_id=response.get("TransID", ""),
-        transaction_date="{}-{}-{} {}:{}:{}".format(
-            year, month, day, hour, min, sec
-        ),
+        transaction_date="{}-{}-{} {}:{}:{}".format(year, month, day, hour, min, sec),
         amount=Decimal(response.get("TransAmount", "0")),
         business_short_code=response.get("BusinessShortCode", ""),
         bill_ref_number=response.get("BillRefNumber", ""),
@@ -201,9 +199,7 @@ def process_c2b_confirmation_task(response):
     data = dict(
         transaction_type=response.get("TransactionType", ""),
         transaction_id=response.get("TransID", ""),
-        transaction_date="{}-{}-{} {}:{}:{}".format(
-            year, month, day, hour, min, sec
-        ),
+        transaction_date="{}-{}-{} {}:{}:{}".format(year, month, day, hour, min, sec),
         amount=Decimal(response.get("TransAmount", "0")),
         business_short_code=response.get("BusinessShortCode", ""),
         bill_ref_number=response.get("BillRefNumber", ""),
@@ -218,9 +214,7 @@ def process_c2b_confirmation_task(response):
     )
 
     try:
-        req = C2BRequest.objects.filter(
-            transaction_id=response.get("TransID", "")
-        )
+        req = C2BRequest.objects.filter(transaction_id=response.get("TransID", ""))
 
         if req:
             C2BRequest.objects.filter(
@@ -351,9 +345,7 @@ def handle_online_checkout_callback_task(response):
                             date[10:-2],
                             date[12:],
                         )
-                        update_data[
-                            "transaction_date"
-                        ] = "{}-{}-{} {}:{}:{}".format(
+                        update_data["transaction_date"] = "{}-{}-{} {}:{}:{}".format(
                             year, month, day, hour, min, sec
                         )
 

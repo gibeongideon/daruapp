@@ -1,5 +1,6 @@
 from django.contrib import admin
-#from rangefilter.filter import DateRangeFilter
+
+# from rangefilter.filter import DateRangeFilter
 from mpesa_api.core.models import (
     AuthToken,
     B2CRequest,
@@ -28,7 +29,9 @@ class B2CRequestAdmin(admin.ModelAdmin):
         "date_added",
     )
     search_fields = ("phone",)
-  #  list_filter = (("date_added", DateRangeFilter),)
+
+
+#  list_filter = (("date_added", DateRangeFilter),)
 
 
 @admin.register(B2CResponse)
@@ -58,7 +61,7 @@ class B2CResponseAdmin(admin.ModelAdmin):
         "is_registered_customer",
     )
     search_fields = ("phone", "transaction_receipt", "mpesa_user_name")
-    #list_filter = (("transaction_date", DateRangeFilter),)
+    # list_filter = (("transaction_date", DateRangeFilter),)
 
 
 @admin.register(C2BRequest)
@@ -86,10 +89,12 @@ class C2BRequestAdmin(admin.ModelAdmin):
         "date_added",
     )
     search_fields = ("phone", "transaction_id", "name")
-    #list_filter = (
-     #   ("transaction_date", DateRangeFilter),
-     #   ("date_added", DateRangeFilter),
-   # )
+    # list_filter = (
+    #   ("transaction_date", DateRangeFilter),
+    #   ("date_added", DateRangeFilter),
+
+
+# )
 
 
 @admin.register(OnlineCheckout)
@@ -108,7 +113,9 @@ class OnlineCheckoutAdmin(admin.ModelAdmin):
         "date_added",
     )
     search_fields = ("phone", "amount", "date_added")
-   # list_filter = (("date_added", DateRangeFilter),)
+
+
+# list_filter = (("date_added", DateRangeFilter),)
 
 
 @admin.register(OnlineCheckoutResponse)
@@ -119,7 +126,7 @@ class OnlineCheckoutResponseAdmin(admin.ModelAdmin):
         "mpesa_receipt_number",
         "transaction_date",
     )
-    #comment_Out_4_tests
+    # comment_Out_4_tests
     # readonly_fields = (
     #     "phone",
     #     "amount",
@@ -132,7 +139,9 @@ class OnlineCheckoutResponseAdmin(admin.ModelAdmin):
     #     "date_added",
     # )
     search_fields = ("phone", "amount", "date_added", "mpesa_receipt_number")
-   # list_filter = (
-   #     ("transaction_date", DateRangeFilter),
-    #    ("date_added", DateRangeFilter),
-    #)
+
+
+# list_filter = (
+#     ("transaction_date", DateRangeFilter),
+#    ("date_added", DateRangeFilter),
+# )
