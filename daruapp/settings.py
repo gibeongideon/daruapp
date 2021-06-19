@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["0.0.0.0","64.227.25.110","161.35.136.21","localhost","127.0.0.
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
+    # 'channels',
     'functional_tests',
     #...
     'admin_interface',
