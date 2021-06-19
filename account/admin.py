@@ -15,7 +15,7 @@ from .models import (
 
 from .models import C2BTransaction
 
-# Register your models here.
+
 class C2BTransactionAdmin(admin.ModelAdmin):
     list_display = (
         "id",

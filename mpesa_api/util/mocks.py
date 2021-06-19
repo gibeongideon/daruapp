@@ -33,10 +33,7 @@ B2C_SUCCESSFUL_RESULT = {
                     "Key": "TransactionCompletedDateTime",
                     "Value": "17.07.2017 10:54:57",
                 },
-                {
-                    "Key": "ReceiverPartyPublicName",
-                    "Value": "254708374149 - John Doe",
-                },
+                {"Key": "ReceiverPartyPublicName", "Value": "254708374149 - John Doe",},
                 {"Key": "B2CChargesPaidAccountAvailableFunds", "Value": 0},
                 {"Key": "B2CRecipientIsRegisteredCustomer", "Value": "Y"},
             ]

@@ -30,6 +30,4 @@ def encode_str_to_base_64(str_to_encode):
     :param str_to_encode: str to encode
     :return: base64 encoded str
     """
-    return base64.urlsafe_b64encode(str_to_encode.encode("UTF-8")).decode(
-        "ascii"
-    )
+    return base64.urlsafe_b64encode(str_to_encode.encode("UTF-8")).decode("ascii")

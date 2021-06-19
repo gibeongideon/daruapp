@@ -19,9 +19,7 @@ class AuthTokenManager(models.Manager):
             access_token = token["access_token"]
             expires = int(time.time()) + int(token["expires_in"])
             self.create(
-                access_token=access_token,
-                expires_in=expires,
-                type=type.lower(),
+                access_token=access_token, expires_in=expires, type=type.lower(),
             )
             return access_token
         else:
@@ -32,9 +30,7 @@ class AuthTokenManager(models.Manager):
                 access_token = token["access_token"]
                 expires = int(time.time()) + int(token["expires_in"])
                 self.filter(type=type.lower()).update(
-                    access_token=access_token,
-                    expires_in=expires,
-                    type=type.lower(),
+                    access_token=access_token, expires_in=expires, type=type.lower(),
                 )
                 return access_token
             else:
