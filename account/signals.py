@@ -10,7 +10,7 @@ from .models import (
     CashDeposit,
     update_account_bal_of,
     current_account_bal_of,
-    log_record,
+    # log_record,
 )
 from django.contrib.auth import get_user_model
 from daru_wheel.models import Stake  # DD

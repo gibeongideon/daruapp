@@ -1,6 +1,6 @@
-from account.serializers import AccountSerializer, TransactionLogSerializer
+from account.serializers import AccountSerializer
 from rest_framework import viewsets
-from account.models import Account, TransactionLog
+from account.models import Account
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,11 +12,11 @@ class AccountViewSet(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
 
 
-class TransactionLogViewSet(viewsets.ModelViewSet):
-    queryset = TransactionLog.objects.all()
-    serializer_class = TransactionLogSerializer
+# class TransactionLogViewSet(viewsets.ModelViewSet):
+#     queryset = TransactionLog.objects.all()
+#     serializer_class = TransactionLogSerializer
 
-    search_fields = ("user",)
+#     search_fields = ("user",)
 
 
 class TransactionView(APIView):
