@@ -303,12 +303,12 @@ class Stake(TimeStamp):
                 self.stake_placed = True
             else:
                 return  # no db table record to create!
-            try:
-                if not self.has_record:
-                    log_record(self.user_id, self.amount, "Stake")
-                    self.has_record = True
-            except:
-                pass
+            # try:
+            #     if not self.has_record:
+            #         log_record(self.user_id, self.amount, "Stake")
+            #         self.has_record = True
+            # except:
+            #     pass
             if self.market is not None:
                 self.has_market = True
             super().save(*args, **kwargs)  # create a db record
@@ -579,7 +579,7 @@ class OutCome(TimeStamp):
     def update_acc_n_bal_record(user_id, new_bal, rem_credit, trans_type):
         try:
             update_account_bal_of(user_id, new_bal)  # F3
-            log_record(user_id, rem_credit, trans_type)  # F1
+            # log_record(user_id, rem_credit, trans_type)  # F1
         except Exception as e:
             print("update_acc_n_bal_record ERROR", e)
 
@@ -666,7 +666,7 @@ class OutCome(TimeStamp):
                         new_bal = current_bal - win_amount - ref_credit
                         self.update_give_away(new_bal)
 
-                        log_record(user_id, win_amount, trans_type)  # F1
+                        # log_record(user_id, win_amount, trans_type)  # F1
                         if ref_credit > 0:
                             trans_type = "refer-win"
                             self.update_reference_account(
@@ -695,7 +695,7 @@ class OutCome(TimeStamp):
                     new_bal = current_bal - win_amount - ref_credit
                     self.update_give_away(new_bal)
 
-                    log_record(user_id, win_amount, trans_type)  # F1
+                    # log_record(user_id, win_amount, trans_type)  # F1
                     if ref_credit > 0:
                         trans_type = "credit on R Win"
                         self.update_reference_account(user_id, ref_credit, trans_type)
@@ -736,7 +736,7 @@ class OutCome(TimeStamp):
                     new_bal = current_bal - sub_amount
                     self.update_give_away(new_bal)
 
-                    log_record(user_id, all_amount, trans_type)  # F1
+                    # log_record(user_id, all_amount, trans_type)  # F1
 
         else:  # TRIAL
             if this_user_stak_obj.market is not None:  # daru
@@ -748,7 +748,7 @@ class OutCome(TimeStamp):
                     trans_type = "trial-win"
                     #######
                     self.update_user_trial_account(user_id, rem_credit)
-                    log_record(user_id, win_amount, trans_type)  # F1
+                    # log_record(user_id, win_amount, trans_type)  # F1
                     # if ref_credit > 0:
                     #     trans_type = 'trial-refer-win'
                     #     self.update_reference_account(user_id,ref_credit,trans_type)
