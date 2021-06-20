@@ -251,9 +251,9 @@ class RefCredit(TimeStamp):
             if not self.closed:
                 self.update_refer_balance()
 
-            if not self.has_record:
-                log_record(self.user_id, self.amount, "RC")
-                self.has_record = True
+            # if not self.has_record:
+            #     log_record(self.user_id, self.amount, "RC")
+            #     self.has_record = True
 
         except Exception as e:
             print("RefCredit:", e)
@@ -313,43 +313,43 @@ class RefCreditTransfer(TimeStamp):
         super().save(*args, **kwargs)
 
 
-class TransactionLog(TimeStamp):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="user_transactions_logs",
-        blank=True,
-        null=True,
-    )  # NOT CASCADE #CK
-    amount = models.DecimalField(("amount"), max_digits=12, decimal_places=2, default=0)
-    now_bal = models.DecimalField(
-        ("now_bal"), max_digits=12, decimal_places=2, default=0
-    )
-    trans_type = models.CharField(max_length=100, blank=True, null=True)
+# class TransactionLog(TimeStamp):
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE,
+#         related_name="user_transactions_logs",
+#         blank=True,
+#         null=True,
+#     )  # NOT CASCADE #CK
+#     amount = models.DecimalField(("amount"), max_digits=12, decimal_places=2, default=0)
+#     now_bal = models.DecimalField(
+#         ("now_bal"), max_digits=12, decimal_places=2, default=0
+#     )
+#     trans_type = models.CharField(max_length=100, blank=True, null=True)
 
-    class Meta:
-        db_table = "d_trans_logs"
-        ordering = ("-created_at",)
+#     class Meta:
+#         db_table = "d_trans_logs"
+#         ordering = ("-created_at",)
 
-    def __str__(self):
-        return "User {0}:{1}".format(self.user, self.amount)
+#     def __str__(self):
+#         return "User {0}:{1}".format(self.user, self.amount)
 
-    @property
-    def account_bal(self):
-        return current_account_bal_of(
-            self.user_id
-        )  # F  Account.objects.get(user_id =self.user_id).balance
+#     @property
+#     def account_bal(self):
+#         return current_account_bal_of(
+#             self.user_id
+#         )  # F  Account.objects.get(user_id =self.user_id).balance
 
-    def save(self, *args, **kwargs):
-        """ Overrride internal model save method to update balance on deposit  """
-        if not self.pk:
-            try:
-                self.now_bal = self.account_bal
-            except Exception as e:
-                print("TransactionLog ERROR:", e)
-                pass
+#     def save(self, *args, **kwargs):
+#         """ Overrride internal model save method to update balance on deposit  """
+#         if not self.pk:
+#             try:
+#                 self.now_bal = self.account_bal
+#             except Exception as e:
+#                 print("TransactionLog ERROR:", e)
+#                 pass
 
-        super().save(*args, **kwargs)
+#         super().save(*args, **kwargs)
 
 
 class CashDeposit(TimeStamp):
@@ -424,13 +424,13 @@ class CashDeposit(TimeStamp):
                     print(f"Daru:CashDeposit-Deposited Error:{e}")  # Debug
                     pass
 
-                try:
-                    if not self.has_record:
-                        log_record(self.user_id, self.amount, str(self.deposit_type))
-                        self.has_record = True
-                except Exception as e:
-                    print(f"Daru:CashDeposit-Log Error:{e}")  # Debug
-                    pass
+                # try:
+                #     if not self.has_record:
+                #         log_record(self.user_id, self.amount, str(self.deposit_type))
+                #         self.has_record = True
+                # except Exception as e:
+                #     print(f"Daru:CashDeposit-Log Error:{e}")  # Debug
+                #     pass
 
                 super().save(*args, **kwargs)  # disllow amount edit/nice feature
 
@@ -580,16 +580,16 @@ class CashWithrawal(TimeStamp):  # sensitive transaction
                                 self.withrawned = True  # transaction done
                                 self.update_user_withrawable_balance()
 
-                                try:
-                                    if not self.has_record:
-                                        log_record(
-                                            self.user_id, self.amount, "Withrawal"
-                                        )
-                                        self.has_record = True
-                                        self.active = False
-                                except Exception as e:
-                                    print("TRANSWITH:", e)
-                                    pass
+                                # try:
+                                #     if not self.has_record:
+                                #         log_record(
+                                #             self.user_id, self.amount, "Withrawal"
+                                #         )
+                                #         self.has_record = True
+                                self.active = False
+                                # except Exception as e:
+                                #     print("TRANSWITH:", e)
+                                #     pass
 
                             except Exception as e:
                                 print("ACCC", e)
@@ -609,8 +609,8 @@ class CashWithrawal(TimeStamp):  # sensitive transaction
 # Helper functions
 
 
-def log_record(user_id, amount, trans_type):  # F1
-    TransactionLog.objects.create(user_id=user_id, amount=amount, trans_type=trans_type)
+# def log_record(user_id, amount, trans_type):  # F1
+#     TransactionLog.objects.create(user_id=user_id, amount=amount, trans_type=trans_type)
 
 
 def current_account_bal_of(user_id):  # F2
@@ -648,8 +648,8 @@ def update_account_trialbal_of(user_id, new_bal):  # F3
     try:
         if new_bal >= 0:
             Account.objects.filter(user_id=user_id).update(trial_balance=new_bal)
-        else:
-            log_record(user_id, 0, "Account Error")  # REMOVE
+        # else:
+        #     log_record(user_id, 0, "Account Error")  # REMOVE
     except Exception as e:
         return e
 

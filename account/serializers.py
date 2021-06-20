@@ -10,12 +10,12 @@ class AccountSerializer(serializers.ModelSerializer):
         read_only_fields = ("active", "is_staff")
 
 
-class TransactionLogSerializer(serializers.ModelSerializer):
-    """
-    A TransactionLog serializer to return TransactionLog details
-    """
+# class TransactionLogSerializer(serializers.ModelSerializer):
+#     """
+#     A TransactionLog serializer to return TransactionLog details
+#     """
 
-    class Meta:
-        model = TransactionLog
-        # fields = ('__all__')
-        fields = ("id", "amount", "now_bal", "trans_type")
+#     class Meta:
+#         model = TransactionLog
+#         # fields = ('__all__')
+#         fields = ("id", "amount", "now_bal", "trans_type")

@@ -5,7 +5,7 @@ from .models import (
     Currency,
     RefCredit,
     RefCreditTransfer,
-    TransactionLog,
+    # TransactionLog,
     CashDeposit,
     CashWithrawal,
     Curr_Variable,
@@ -143,22 +143,22 @@ class RefCreditTransferAdmin(admin.ModelAdmin):
 admin.site.register(RefCreditTransfer, RefCreditTransferAdmin)
 
 
-class TransactionLogAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "user",
-        "amount",
-        "now_bal",
-        "trans_type",
-        "created_at",
-        "updated_at",
-    )
-    list_display_links = ("user",)
-    search_fields = ("user",)
-    list_filter = ("user", "trans_type")
+# class TransactionLogAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "id",
+#         "user",
+#         "amount",
+#         "now_bal",
+#         "trans_type",
+#         "created_at",
+#         "updated_at",
+#     )
+#     list_display_links = ("user",)
+#     search_fields = ("user",)
+#     list_filter = ("user", "trans_type")
 
 
-admin.site.register(TransactionLog, TransactionLogAdmin)
+# admin.site.register(TransactionLog, TransactionLogAdmin)
 
 
 class CashDepositAdmin(admin.ModelAdmin):
