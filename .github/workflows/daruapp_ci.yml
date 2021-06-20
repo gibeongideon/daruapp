@@ -77,7 +77,7 @@ jobs:
         host: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSHKEY }}
+        KEY: ${{ secrets.PASSWORD }}
         script: |
              cd ~/darius && git pull https://github.com/gibeongideon/daruapp.git
         
