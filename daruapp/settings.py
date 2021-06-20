@@ -84,7 +84,7 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = "daruapp.wsgi.application"
-ASGI_APPLICATION = "daruapp.routing.application"
+ASGI_APPLICATION = "daruapp.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
