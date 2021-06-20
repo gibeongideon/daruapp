@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["143.198.174.147", "localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    # 'channels',
+    'channels',
     "functional_tests",
     # ...
     "admin_interface",
@@ -103,7 +103,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": config("DB_NAME", default="darius_dbb"),
+            "NAME": config("DB_NAME", default="darius_db"),
             "USER": config("DB_USER", default="darius"),
             "PASSWORD": config("DB_PASSWORD", default="darius!passcode"),
             "HOST": "localhost",
