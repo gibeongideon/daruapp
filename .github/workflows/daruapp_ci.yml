@@ -6,8 +6,8 @@ on:
     branches: [ prod ]
   # pull_request:
   #   branches: [ prod ]
-    paths-ignore:
-    - "migrations/**"
+    # paths-ignore:
+    # - "migrations/**"
 
 
 jobs:
@@ -60,7 +60,7 @@ jobs:
   deploy:
     runs-on: self-hosted
     needs: build
-    name: Deploy to Cloud
+    name: deploy to Cloud with actions runner
 
 
     steps:
@@ -81,32 +81,52 @@ jobs:
     - name: Apply migrations
       run: python manage.py migrate
 
+    - name: Install dependencies
+      run: |
+        # python -m pip install --upgrade pip
+        pwd
+        
+        # pip install -r requirements.txt
+
     # - name: Run Tests
     #   run: |
     #     python manage.py test account
 
-        
-# name: Deploy
-
-# on: [push]
-
-# jobs:
-#   build:
-
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - uses: actions/checkout@v1
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   name: deploy to Cloud through ssh
 
 
-#     - name: Executing remote  command
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.HOST }}
-#         USERNAME: ${{ secrets.USERNAME }}
-#         PORT: ${{ secrets.PORT }}
-#         KEY: ${{ secrets.SSHKEY }}
-#         script: |
-#              cd ~/darius && git pull https://github.com/gibeongideon/daruapp.git
-        
-        
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Set up Python 3.8
+  #     uses: actions/setup-python@v2
+  #     with:
+  #       python-version: 3.8
+
+
+  #   - name: Executing remote  command
+  #     uses: appleboy/ssh-action@master
+  #     with:
+  #       host: ${{ secrets.HOST }}
+  #        USERNAME: ${{ secrets.USERNAME }}
+  #        PORT: ${{ secrets.PORT }}
+  #        KEY: ${{ secrets.SSHPKEY }}
+  #        script: |
+  #             cd ~/darius/daruapp && git pull https://github.com/gibeongideon/daruapp.git
+  #             #cd ~/darius/daruapp && git fetch origin prod  && git reset --hard origin/prod
+  #             cd ~/darius/
+  #             sourcess venv/bin/activate
+  #             python -m pip install --upgrade pip
+  #             cd ~/darius/daruapp
+  #             pip install -r requirements.txt
+  #             python manage.py collectstatic
+  #             python manage.py makemigrations
+  #             python manage.py migrate
+              
+
+    # - name: Run Tests
+    #   run: |
+    #     python manage.py test account
+   
