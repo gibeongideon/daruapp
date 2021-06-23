@@ -13,9 +13,7 @@ def register_c2b_url():
     :return:
     """
     url = f"{settings.MPESA_URL}/mpesa/c2b/v1/registerurl"
-    headers = {
-        "Authorization": "Bearer {}".format(AuthToken.objects.get_token("c2b"))
-    }
+    headers = {"Authorization": "Bearer {}".format(AuthToken.objects.get_token("c2b"))}
     body = dict(
         ShortCode=settings.C2B_SHORT_CODE,
         ResponseType=settings.C2B_RESPONSE_TYPE,
@@ -47,21 +45,14 @@ def process_online_checkout(
         transaction_type = "CustomerBuyGoodsOnline"
 
     url = f"{settings.MPESA_URL}/mpesa/stkpush/v1/processrequest"
-    headers = {
-        "Authorization": "Bearer {}".format(AuthToken.objects.get_token("c2b"))
-    }
+    headers = {"Authorization": "Bearer {}".format(AuthToken.objects.get_token("c2b"))}
     timestamp = (
-        str(datetime.now())[:-7]
-        .replace("-", "")
-        .replace(" ", "")
-        .replace(":", "")
+        str(datetime.now())[:-7].replace("-", "").replace(" ", "").replace(":", "")
     )
     password = base64.b64encode(
         bytes(
             "{}{}{}".format(
-                settings.C2B_ONLINE_SHORT_CODE,
-                settings.C2B_ONLINE_PASSKEY,
-                timestamp,
+                settings.C2B_ONLINE_SHORT_CODE, settings.C2B_ONLINE_PASSKEY, timestamp,
             ),
             "utf-8",
         )

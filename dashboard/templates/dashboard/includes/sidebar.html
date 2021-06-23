@@ -5,11 +5,11 @@
         
         <div class="logo">
           <a target="_blank" 
-             href="https://www.daruandwheel.com" class="simple-text logo-mini">
+             href="https://www.daruwheel.com" class="simple-text logo-mini">
             
           </a>
           <a target="_blank" 
-             href="https://www.daruandwheel.com" class="simple-text logo-normal">
+             href="https://www.daruwheel.com" class="simple-text logo-normal">
             Daru Menu
           </a>
         </div>
@@ -18,17 +18,17 @@
         <ul class="nav">
           <li class="active ">
             <a href="{% url 'daru_wheel:spin' %}">
-              <i class="tim-icons icon-align-center"></i>
+              <i class="tim-icons icon-support-17"></i>
               <p>iSpin</p>
             </a>
           </li>
 
-          <li>
+          {% comment %} <li>
             <a href="{% url 'daru_wheel:daru_spin' %}">
               <i class="tim-icons icon-support-17"></i>
               <p>Daru Wheel</p>
             </a>
-          </li>
+          </li> {% endcomment %}
 
           <!-- <li>
             <a href="{% url 'daru_wheel:daru_spin' %}">
@@ -51,10 +51,10 @@
           </li>
           <li>
 
-            <a href="{% url 'account:trans_log' %}">
+            {% comment %} <a href="{% url 'account:trans_log' %}">
               <i class="tim-icons icon-bullet-list-67"></i>
               <p>Transactions Log</p>
-            </a>
+            </a> {% endcomment %}
           </li>
           <li>
             <a href="{% url 'dashboard:deposit_withraw' %}">

@@ -75,4 +75,3 @@
 #             # log_record(user_id,0,'Account Error') # REMOVE
 #     except Exception as e:
 #         return e
-        

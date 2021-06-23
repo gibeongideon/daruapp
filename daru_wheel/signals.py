@@ -1,9 +1,8 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from .models import (
-    OutCome, Analytic, WheelSpin,
-    Stake)
+from .models import OutCome, Analytic, WheelSpin, Stake
 from channels.layers import get_channel_layer
+
 # from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
 from time import sleep
@@ -11,32 +10,22 @@ from time import sleep
 
 @receiver(post_save, sender=OutCome)
 def on_results_save(sender, instance, **kwargs):
-    if instance.market is not None:      
+    if instance.market is not None:
         pointer_val = instance.pointer  # fix id
         market_id = instance.market_id
-    
+
         try:
             channel_layer = get_channel_layer()
 
             async_to_sync(channel_layer.group_send)(
-                "daru_spin",
-                {
-                    "type": "spin_pointer",
-                    "pointer": pointer_val,
-              
-                }
+                "daru_spin", {"type": "spin_pointer", "pointer": pointer_val,}
             )
 
             async_to_sync(channel_layer.group_send)(
-                "daru_spin",
-                {
-                    "type": "market_info",
-                    "market": market_id,
-              
-                }
+                "daru_spin", {"type": "market_info", "market": market_id,}
             )
         except Exception as ce:
-            print(f'Channel error:{ce}')  # debug
+            print(f"Channel error:{ce}")  # debug
             pass  # issues with channel shouldn't inter normal business from being done
 
         try:
@@ -45,20 +34,20 @@ def on_results_save(sender, instance, **kwargs):
                 if created:
                     pass
             except Exception as ce:
-                print('CUMsinal',ce)
+                print("CUMsinal", ce)
                 pass
 
-
         except Exception as re:
-            print(f'REESignal error:{re}')  # debug
-            pass  # results later/manual by admin incase 
+            print(f"REESignal error:{re}")  # debug
+            pass  # results later/manual by admin incase
     else:
         pass
     #
 
+
 # @receiver(post_save, sender=WheelSpin)
 # def create_outcome_on_market_save(sender, instance, **kwargs):
-    
+
 #     print(f'Creatin Outcome for Outcome id {instance.id}')
 #     try:
 #         OutCome.objects.create(market_id=instance.id-1)
@@ -69,24 +58,24 @@ def on_results_save(sender, instance, **kwargs):
 
 # @receiver(post_save, sender=Stake)
 # def create_ioutcome_on_istake_save(sender, instance, **kwargs):
-    
-    
+
+
 #     try:
 #         if instance.market is None:
 #             print(f'Creatin Outcome for Outcome id {instance.id} of market{instance.market} ')
 #             OutCome.objects.create(stake_id=instance.id)
 #         else:
 #             print('No Out come created.ISPIN')
-#             pass    
+#             pass
 #     except Exception as e:
 #         print('NEWWWWSinal', e)
-#         pass    
+#         pass
 
 # @receiver(post_save, sender=IoutCome)
 # def on_oucome_save(sender, instance, **kwargs):
 
 #     ipointer_val = instance.pointer  # fix id
- 
+
 #     try:
 #         channel_layer = get_channel_layer()
 
@@ -95,10 +84,10 @@ def on_results_save(sender, instance, **kwargs):
 #             {
 #                 "type": "ispin_pointer",
 #                 "ipointer": ipointer_val,
-              
+
 #             }
 #         )
 
 #     except Exception as ce:
 #         print(f'IChannel error:{ce}')  # debug
-#         pass  # issues with channel shouldn't inter normal business from being done    
+#         pass  # issues with channel shouldn't inter normal business from being done
