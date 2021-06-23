@@ -27,8 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY =config('SECRET_KEY', default='2x4o=3b1n-n*_ls9bg@*$pcx3^pz')
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
+<<<<<<< HEAD
 # DEBUG = config('DEBUG', default=False, cast=bool)
 DEBUG = os.getenv("DEBUG", "False") == "True"
+=======
+DEBUG = config("DEBUG", default=True, cast=bool)
+>>>>>>> prod
 
 # ALLOWED_HOSTS = ["64.227.25.110","161.35.136.21","localhost","127.0.0.1"]
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
@@ -90,7 +94,7 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = "daruapp.wsgi.application"
-ASGI_APPLICATION = "daruapp.routing.application"
+ASGI_APPLICATION = "daruapp.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -106,7 +110,18 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
     if os.getenv("DATABASE_URL", None) is None:
         raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
+<<<<<<< HEAD
         "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+=======
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": config("DB_NAME", default="darius_dev"),
+            "USER": config("DB_USER", default="darius"),
+            "PASSWORD": config("DB_PASSWORD", default="darius!passcode"),
+            "HOST": "localhost",
+            "PORT": "",
+        }
+>>>>>>> prod
     }
 
 
