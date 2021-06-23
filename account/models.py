@@ -774,7 +774,7 @@ class CashTransfer(TimeStamp):
 
 
 class C2BTransaction(TimeStamp):
-    phone_number = models.BigIntegerField()
+    phone_number = models.BigIntegerField(blank=True, null=True)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     success = models.BooleanField(default=False, blank=True, null=True)
 

@@ -116,15 +116,12 @@ jobs:
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/users/migrations ~/daruapp/daruapp/migrations/users
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
 
-        cd ~/daruapp/daruapp/migrations
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp/account/migrations
         tree
-      
 
-   
-
-
-        
-        
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel/migrations
+        tree
+       
 
     # - name: Run Tests
     #   run: |
