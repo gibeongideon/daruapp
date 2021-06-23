@@ -16,7 +16,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Daruappn</h3>
+  <h3 align="center">Daruapp</h3>
 
   <p align="center">
     project_description
@@ -95,9 +95,9 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/gibeongideon/daruapp.git
    ```
-2. Install NPM packages
+2. Install pypi packages
    ```sh
-   npm install
+   sudo -H pip3 install --upgrade pip
    ```
 
 
