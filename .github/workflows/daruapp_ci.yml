@@ -108,7 +108,12 @@ jobs:
         cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
         pip install -r requirements.txt
         python manage.py collectstatic
+        python manage.py makemigrations users
+        python manage.py makemigrations account
+        python manage.py makemigrations daru_wheel
+        python manage.py makemigrations dashboard
         python manage.py makemigrations
+
         python manage.py migrate
 
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/account/migrations ~/daruapp/daruapp/migrations/account
