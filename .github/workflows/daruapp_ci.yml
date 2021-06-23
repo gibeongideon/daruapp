@@ -112,6 +112,7 @@ jobs:
         python manage.py makemigrations account
         python manage.py makemigrations daru_wheel
         python manage.py makemigrations dashboard
+        python manage.py makemigrations core
         python manage.py makemigrations
 
         python manage.py migrate
