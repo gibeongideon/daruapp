@@ -96,8 +96,8 @@ jobs:
         mkdir -p ~/daruapp/daruapp/migrations/users/migrations
         mkdir -p ~/daruapp/daruapp/migrations/mpesa_api/core/migrations
 
-        # cd ~/daruapp/daruapp/migrations
-        # tree
+        cd ~/daruapp/daruapp/migrations
+        tree
 
         rsync -a --delete ~/daruapp/daruapp/migrations/account/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/account
         rsync -a --delete ~/daruapp/daruapp/migrations/daru_wheel/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel
@@ -116,12 +116,8 @@ jobs:
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/users/migrations ~/daruapp/daruapp/migrations/users
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
 
-        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp/account/migrations
-        tree
-
-        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel/migrations
-        tree
-       
+        # cd ~/daruapp/daruapp/migrations
+        # tree
 
     # - name: Run Tests
     #   run: |
