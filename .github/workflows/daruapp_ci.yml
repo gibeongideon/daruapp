@@ -107,6 +107,7 @@ jobs:
 
         cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
         pip install -r requirements.txt
+        python manage.py collectstatic
         python manage.py makemigrations
         python manage.py migrate
 
@@ -160,5 +161,4 @@ jobs:
     # - name: Run Tests
     #   run: |
     #     python manage.py test account
- 
  
