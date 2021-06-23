@@ -81,10 +81,11 @@ jobs:
     # - name: Apply migrations
     #   run: python manage.py migrate
 
-    - name: Install dependencies
+    - name: Fix migrations Issues
       run: |
         # python -m pip install --upgrade pip
         pwd 
+        python -m pip install tree
         mkdir -p ~/daruapp/daruapp/migrations 
         # cd ~/daruapp/daruapp/migrations
         # tree 
@@ -105,7 +106,6 @@ jobs:
         rsync -a --delete ~/daruapp/daruapp/migrations/mpesa_api/core/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core
 
         cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
-        pwd
         pip install -r requirements.txt
         python manage.py makemigrations
         python manage.py migrate
@@ -115,6 +115,10 @@ jobs:
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/dashboard/migrations ~/daruapp/daruapp/migrations/dashboard
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/users/migrations ~/daruapp/daruapp/migrations/users
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
+
+        cd ~/daruapp/daruapp/migrations
+        tree
+      
 
    
 
