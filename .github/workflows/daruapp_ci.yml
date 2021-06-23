@@ -85,17 +85,42 @@ jobs:
       run: |
         # python -m pip install --upgrade pip
         pwd 
-        cd ~/daruapp
+        mkdir -p ~/daruapp/daruapp/migrations 
+        # cd ~/daruapp/daruapp/migrations
+        # tree 
+
+        mkdir -p ~/daruapp/daruapp/migrations/account/migrations
+        mkdir -p ~/daruapp/daruapp/migrations/daru_wheel/migrations
+        mkdir -p ~/daruapp/daruapp/migrations/dashboard/migrations
+        mkdir -p ~/daruapp/daruapp/migrations/users/migrations
+        mkdir -p ~/daruapp/daruapp/migrations/mpesa_api/core/migrations
+
+        # cd ~/daruapp/daruapp/migrations
+        # tree
+
+        rsync -a --delete ~/daruapp/daruapp/migrations/account/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/account
+        rsync -a --delete ~/daruapp/daruapp/migrations/daru_wheel/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel
+        rsync -a --delete ~/daruapp/daruapp/migrations/dashboard/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/dashboard
+        rsync -a --delete ~/daruapp/daruapp/migrations/users/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/users
+        rsync -a --delete ~/daruapp/daruapp/migrations/mpesa_api/core/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core
+
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
         pwd
-        mkdir migrations
-        ls
+        pip install -r requirements.txt
+        python manage.py makemigrations
+        python manage.py migrate
+
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/account/migrations ~/daruapp/daruapp/migrations/account
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel/migrations ~/daruapp/daruapp/migrations/daru_wheel
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/dashboard/migrations ~/daruapp/daruapp/migrations/dashboard
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/users/migrations ~/daruapp/daruapp/migrations/users
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
+
+   
 
 
         
-
-
         
-        # pip install -r requirements.txt
 
     # - name: Run Tests
     #   run: |
