@@ -70,12 +70,17 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: Create migrations Backup Directories
+    - name: Install dependencies
       run: |
-        # python -m pip install --upgrade pip
-        pwd 
+        pwd
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
+        
+        python -m pip install --upgrade pip    
         python -m pip install tree
-  
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Create migrations Backup Directories
+      run: |  
         mkdir -p ~/daruapp/daruapp/migrations/account/migrations
         mkdir -p ~/daruapp/daruapp/migrations/daru_wheel/migrations
         mkdir -p ~/daruapp/daruapp/migrations/dashboard/migrations
@@ -99,8 +104,7 @@ jobs:
     - name: Install requirements ,collectstatic makemigrations & migrate
       run: |
 
-        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
-        pip install -r requirements.txt
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
         python manage.py collectstatic
         python manage.py makemigrations users
         python manage.py makemigrations account
