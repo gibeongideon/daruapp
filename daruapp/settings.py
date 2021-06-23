@@ -103,7 +103,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": config("DB_NAME", default="darius_dbc"),
+            "NAME": config("DB_NAME", default="darius_dev"),
             "USER": config("DB_USER", default="darius"),
             "PASSWORD": config("DB_PASSWORD", default="darius!passcode"),
             "HOST": "localhost",
