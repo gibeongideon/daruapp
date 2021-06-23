@@ -70,7 +70,7 @@ jobs:
       with:
         python-version: 3.8
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
         pwd
         cd ~/daruapp/actions-runner/deploy/daruapp/daruapp
@@ -79,7 +79,7 @@ jobs:
         python -m pip install tree
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Create migrations Backup Directories
+    - name: Create Migrations Backup Directories
       run: |  
         mkdir -p ~/daruapp/daruapp/migrations/account/migrations
         mkdir -p ~/daruapp/daruapp/migrations/daru_wheel/migrations
@@ -91,7 +91,7 @@ jobs:
         tree
 
 
-    - name: rsync Backup migrations to Workin directory
+    - name: RSYNC Backup Migrations To Workin Directory
       run: |
 
         rsync -a --delete ~/daruapp/daruapp/migrations/account/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/account
@@ -101,7 +101,7 @@ jobs:
         rsync -a --delete ~/daruapp/daruapp/migrations/mpesa_api/core/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core
 
         
-    - name: Install requirements ,collectstatic makemigrations & migrate
+    - name: COLLECTSTATIC, MAKEMIGRATIONS & MIGRATE
       run: |
 
         cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
@@ -116,7 +116,7 @@ jobs:
         python manage.py migrate
 
 
-    - name: rsync Workin directory to Backup migrations
+    - name: Rsync Workin Directory to Backup Migrations
       run: |
 
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/account/migrations ~/daruapp/daruapp/migrations/account
