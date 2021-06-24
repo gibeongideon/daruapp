@@ -820,17 +820,3 @@ class Analytic(TimeStamp):
     gain = models.FloatField(default=0, blank=True, null=True)
     all_bets = models.IntegerField(blank=True, null=True)
     user_no = models.IntegerField(blank=True, null=True)
-
-    @property
-    def gainovertime(self):
-
-        try:
-            total_amount = Result.objects.filter(cumgain_id=self.id).aggregate(
-                cum_amount=Sum("gain")
-            )
-            if total_amount.get("cum_amount"):
-                return total_amount.get("cum_amount")
-            return total_amount
-
-        except Exception as e:
-            return e
