@@ -137,3 +137,7 @@ jobs:
       run: |
         python manage.py test
 
+
+    - name: Reload
+      run: |
+        sudo service nginx reload
