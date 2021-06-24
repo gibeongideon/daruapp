@@ -79,6 +79,12 @@ jobs:
         python -m pip install tree
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+    - name: Create ENV VAR
+      run: |  
+        touch ~/daruapp/.env
+        cp ~/daruapp/.env  ~/daruapp/actions-runner/deploy/daruapp/daruapp
+
+
     - name: Create Migrations Backup Directories
       run: |  
         mkdir -p ~/daruapp/daruapp/migrations/account/migrations
@@ -86,7 +92,6 @@ jobs:
         mkdir -p ~/daruapp/daruapp/migrations/dashboard/migrations
         mkdir -p ~/daruapp/daruapp/migrations/users/migrations
         mkdir -p ~/daruapp/daruapp/migrations/mpesa_api/core/migrations
-
         cd ~/daruapp/daruapp/migrations
         tree
 
