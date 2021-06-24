@@ -128,6 +128,10 @@ jobs:
         cd ~/daruapp/daruapp/migrations
         tree
 
+    - name: Test Redis
+      run: |
+        redis-cli ping
+
 
     - name: Run Tests
       run: |
