@@ -819,4 +819,9 @@ class OutCome(TimeStamp):
 class Analytic(TimeStamp):
     gain = models.FloatField(default=0, blank=True, null=True)
     all_bets = models.IntegerField(blank=True, null=True)
-    user_no = models.IntegerField(blank=True, null=True)
+    user_nos = models.IntegerField(blank=True, null=True)
+
+    @property
+    def gainovertime(self):
+        return None
+
