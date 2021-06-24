@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY", default="2x4o=3b1n-n*_ls9bg@*$pcx3^pz")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=True, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = ["143.198.174.147", "localhost", "127.0.0.1"]
 
@@ -153,7 +153,7 @@ AUTH_USER_MODEL = "users.User"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="kipngeno.gibeon@gmail.com")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="27837185gg")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="tetyty9iodjw!")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "Darius Team <noreply@dariuswinnings.com>"
@@ -222,12 +222,6 @@ LOGGING = {
 
 JET_SIDE_MENU_COMPACT = True
 
-# CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#        'LOCATION': '127.0.0.1:11211',
-#    }
-# }
 
 
 ##### Safaricom-specific settings Configs
