@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 def validate_refercode(refercode):
+
     from .models import User  # fix circular import
 
     usecode = User.objects.get(id=1).code
