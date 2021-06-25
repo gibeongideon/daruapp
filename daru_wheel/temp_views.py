@@ -14,8 +14,6 @@ def spin(request):
     ).order_by("-created_at")[:12]
 
     if request.method == "POST":
-        print("SELL")
-        print(request.POST.get("marketselection"))
         stake_form = IstakeForm(request.POST)
         if stake_form.is_valid():
             stake = stake_form.save(commit=False)
@@ -125,23 +123,23 @@ def spine(req):
 def spin_it(request):
     if request.method == "POST":
         market_id = request.POST.get("marketselection")
-        print(f"ARKETTT_ID:{market_id}")
+        #print(f"ARKETTT_ID:{market_id}")
         marketselection = Selection.objects.get(id=1)  # market_id)
         # request.POST.get('marketselection')
         amount = request.POST.get("amount")
-        print("AOOOO")
-        print(amount)
+        #print("AOOOO")
+        #print(amount)
 
         bet_on_real_account = request.POST.get("bet_on_real_account")
-        print("REL_FAK")
-        print(bet_on_real_account)
+        #print("REL_FAK")
+        #print(bet_on_real_account)
         if bet_on_real_account == "on" or True:
             bet_on_real_account = True
         else:
             bet_on_real_account = False
 
-        print("REL_FAK2")
-        print(bet_on_real_account)
+        #print("REL_FAK2")
+        #print(bet_on_real_account)
         response_data = {}
 
         stake = Stake(
