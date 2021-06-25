@@ -3,7 +3,7 @@ from django.contrib.auth import (
     BACKEND_SESSION_KEY,
     SESSION_KEY,
     HASH_SESSION_KEY,
-    get_user_model
+    get_user_model,
 )
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
@@ -12,18 +12,17 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
         parser.add_argument(
-            '--username',
-            dest='username',
-            help='Username for creating pre-authenticated session',
+            "--username",
+            dest="username",
+            help="Username for creating pre-authenticated session",
             required=True,
         )
 
     def handle(self, *args, **options):
-        session_key = create_pre_authenticated_session(options['username'],)
-        self.stdout.write(session_key, ending='')
+        session_key = create_pre_authenticated_session(options["username"],)
+        self.stdout.write(session_key, ending="")
 
 
 def create_pre_authenticated_session(username):

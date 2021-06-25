@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["143.198.174.147", "localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
+    "channels",
     "functional_tests",
     # ...
     "admin_interface",
@@ -221,7 +221,6 @@ LOGGING = {
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 JET_SIDE_MENU_COMPACT = True
-
 
 
 ##### Safaricom-specific settings Configs
