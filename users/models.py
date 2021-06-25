@@ -11,8 +11,8 @@ class User(AbstractUser):
 
     code = models.CharField(max_length=150, unique=True, null=True)
     referer_code = models.CharField(
-        validators=[validate_refercode],
-        max_length=150, blank=True, null=True)
+        validators=[validate_refercode], max_length=150, blank=True, null=True
+    )
     phone_number = models.CharField(max_length=150, blank=True, null=True)
     active = models.BooleanField(default=True, blank=True, null=True)
 
