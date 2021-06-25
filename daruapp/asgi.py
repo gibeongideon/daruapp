@@ -16,25 +16,25 @@ import daru_wheel.routing
 
 asgi_app = get_asgi_application()
 
-application = ProtocolTypeRouter(
-    {
-        "http": asgi_app,
-        "websocket": AuthMiddlewareStack(
-            URLRouter(daru_wheel.routing.websocket_urlpatterns)
-        ),
-    }
-)
-
-
 # application = ProtocolTypeRouter(
 #     {
 #         "http": asgi_app,
-#         "websocket": AllowedHostsOriginValidator(
-#             AuthMiddlewareStack(
-#                 URLRouter(
-#                     daru_wheel.routing.websocket_urlpatterns
-#                 )
-#             )
+#         "websocket": AuthMiddlewareStack(
+#             URLRouter(daru_wheel.routing.websocket_urlpatterns)
 #         ),
 #     }
 # )
+
+
+application = ProtocolTypeRouter(
+    {
+        "http": asgi_app,
+        "websocket": AllowedHostsOriginValidator(
+            AuthMiddlewareStack(
+                URLRouter(
+                    daru_wheel.routing.websocket_urlpatterns
+                )
+            )
+        ),
+    }
+)
