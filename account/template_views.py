@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render  # redirect, reverse
 from django.contrib.auth.decorators import login_required
 
 # from django.forms.utils import ErrorList

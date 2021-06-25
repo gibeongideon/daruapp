@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 # from  users.models import User
-from .models import Account
+# from .models import Account
 from mpesa_api.core.models import OnlineCheckoutResponse
 
 
