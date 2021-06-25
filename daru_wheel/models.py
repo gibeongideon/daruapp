@@ -1,3 +1,10 @@
+# -*- encoding: utf-8 -*-
+"""
+License: MIT
+Copyright (c) 2021 - present DaruWheel.com
+"""
+
+
 from django.db import models
 from django.conf import settings
 from django.db.models import Sum

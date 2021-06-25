@@ -95,25 +95,6 @@ class Account(TimeStamp):
         else:
             raise NegativeTokens()
 
-    # def transfer_refer_credit_to_balance(user=None,amount=None):
-    #     if user and amount is not None:
-    #         print('Yes')
-    #         set_up=account_setting()
-    #         if amount>set_up.min_redeem_refer_credit:
-
-    #     pass
-
-    # @staticmethod
-    # def inter_account_transfer(sending_user,receiving_user,amount):
-    #     if receiving_user.user_exist:
-    #         user_bal=current_account_bal_of(sending_user.id)
-    #         new_bal = user_bal - amount
-    #         update_account_bal_of(sending_user.id,new_bal)
-
-    #         user_bal=current_account_bal_of(receiving_user.id)
-    #         new_bal = user_bal + amount
-    #         update_account_bal_of(receiving_user.id,new_bal)
-
 
 class Curr_Variable(TimeStamp):
     """Store currencies with specified name and rate to token amount."""

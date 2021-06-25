@@ -9,7 +9,7 @@ class User(AbstractUser):
       : referer_code  , code n 4ne-nuber for reference
     """
 
-    code = models.CharField(max_length=150, unique=True, null=True)
+    code = models.CharField(max_length=150, unique=True, null=True)# auto generated on save
     referer_code = models.CharField(
         validators=[validate_refercode], max_length=150, blank=True, null=True
     )
@@ -35,7 +35,7 @@ class User(AbstractUser):
         if not self.pk:
             self.code = (
                 str(uuid.uuid4()).upper()[:3] + "D" + str(self.username[-3:]).upper()
-            )
+            )#Auto generate code
             # if self.phone_number is None:
             self.phone_number = self.format_mobile_no(self.username)
 

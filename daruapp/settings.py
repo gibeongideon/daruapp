@@ -86,7 +86,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "daruapp.wsgi.application"
 ASGI_APPLICATION = "daruapp.asgi.application"
 
-# Database
+
+# Databasd
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 if DEBUG is True:
