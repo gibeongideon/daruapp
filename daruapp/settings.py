@@ -26,7 +26,7 @@ SECRET_KEY = config("SECRET_ADMIN_URL", default="dadmin")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["143.198.174.147", "127.0.0.1"]
+lLLOWED_HOSTS = ["143.198.174.147", "127.0.0.1","localhost"]
 
 # Application definition
 
