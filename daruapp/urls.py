@@ -16,11 +16,13 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-
+from decouple import config
 admin.site.site_header = "DaruApp Admin"
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path(
+        config("SECRET_ADMIN_URL", default="dadmin")+"/admin/",
+        admin.site.urls),
     path("", include("dashboard.urls", namespace="dashboard")),
     path("user/", include("users.urls", namespace="users")),
     path("daru_wheel/", include("daru_wheel.urls", namespace="daru_wheel")),

@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-import os
+# import os
 from pathlib import Path
 from celery.schedules import crontab
-import dj_database_url
+# import dj_database_url
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,11 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY", default="2x4o=3b1n-n*_ls9bg@*$pcx3^pz")
+SECRET_KEY = config("SECRET_ADMIN_URL", default="dadmin")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["143.198.174.147", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["143.198.174.147", "127.0.0.1"]
 
 # Application definition
 
