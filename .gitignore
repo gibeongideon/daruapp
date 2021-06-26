@@ -228,6 +228,7 @@ celerybeat-schedule
 scenv
 .env
 .venv
+.env_dev
 env/
 venv/
 ENV/
@@ -262,4 +263,4 @@ venv.bak/
 logfile
 
 vscode
-.vscode
+.vscode/
