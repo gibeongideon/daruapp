@@ -8,9 +8,9 @@ from .models import (
     # TransactionLog,
     CashDeposit,
     CashWithrawal,
-    Curr_Variable,
     AccountSetting,
     CashTransfer,
+    RegisterUrl
 )
 
 from .models import C2BTransaction
@@ -79,33 +79,17 @@ class AccountAdmin(admin.ModelAdmin):
 admin.site.register(Account, AccountAdmin)
 
 
-class Curr_VariableAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name",
-        "curr_unit",
-    )
-    list_display_links = ("id",)
-    search_fields = ("id",)
-
-
-admin.site.register(Curr_Variable, Curr_VariableAdmin)
-
-
 class CurrencyAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "common_var",
         "name",
         "rate",
-        "amount_equip_to_one_ksh",
-        "to_token_rate",
         "created_at",
         "updated_at",
     )
     # list_display_links = ('',)
     search_fields = ("name",)
-    list_editable = ("name", "rate", "amount_equip_to_one_ksh")
+    list_editable = ("name", "rate")
     # readonly_fields =()
 
 
@@ -236,3 +220,4 @@ class CashTransferAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CashTransfer, CashTransferAdmin)
+admin.site.register(RegisterUrl)

@@ -225,8 +225,10 @@ celerybeat-schedule
 
 # Environment
 
-scenv
+scenvs
 .env
+.env_dev
+.env_test
 .venv
 .env_dev
 env/
