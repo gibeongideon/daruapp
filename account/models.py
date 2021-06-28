@@ -34,24 +34,24 @@ class Account(TimeStamp):
         blank=True,
         null=True,
     )
-    token_count = models.IntegerField(default=0)
+    token_count = models.IntegerField(default=0, blank=True, null=True)
 
-    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0, blank=True, null=True)
     actual_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0)
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True)
     withraw_power = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0)
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True)
 
     refer_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0)
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True)
     trial_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=50000)
+        max_digits=12, decimal_places=2, default=50000, blank=True, null=True)
 
     cum_deposit = models.DecimalField(
         max_digits=12, decimal_places=2, default=0.0, blank=True, null=True)
     cum_withraw = models.DecimalField(
         max_digits=12, decimal_places=2, default=0.0, blank=True, null=True)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=True, blank=True, null=True)
 
     def __str__(self):
         return "Account No: {0} Balance: {1}".format(self.user, self.balance)
@@ -96,40 +96,14 @@ class Account(TimeStamp):
             raise NegativeTokens()
 
 
-class Curr_Variable(TimeStamp):
-    """Store currencies with specified name and rate to token amount."""
-
-    name = models.CharField(max_length=30, blank=True, null=True)
-    curr_unit = models.DecimalField(max_digits=12, decimal_places=5, default=1)
-
-    def __str__(self):
-        """Simply present currency name and it's curr_unit."""
-        return str(self.curr_unit)
-
-    # @classmethod
-    # def update_curr_unit(cls,value):
-    #     try:
-    #         cls.objects.get(id=1).update(curr_unit= value)
-    #     except Exception as e :
-    #         print(f'update_curr_unit{e}')
-
-
 class Currency(TimeStamp):
     """Store currencies with specified name and rate to token amount."""
-
-    common_var = models.ForeignKey(
-        Curr_Variable,
-        on_delete=models.CASCADE,
-        related_name="curr_vars",
-        blank=True,
-        null=True,
-    )
-
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, blank=True, null=True)
     rate = models.DecimalField(
         max_digits=6, decimal_places=5, blank=True, null=True)
-    amount_equip_to_one_ksh = models.FloatField(blank=True, null=True)
-    # curr_unit = models.DecimalField(help_text= 'set up variable', max_digits=6, decimal_places=2,default=0,blank=True,null= True)
+
+    class Meta:
+        db_table = "d_currency"
 
     def __str__(self):
         """Simply present currency name and it's rate."""
@@ -171,25 +145,6 @@ class Currency(TimeStamp):
 
         value = Decimal(round(tokens / float(curr.rate), 2))
         return value
-
-    # @classmethod
-    # def update_curr_unit(cls,value):
-    #     try:
-    #         cls.objects.update(curr_unit= value)
-    #     except Exception as e :
-    #         print(f'update_curr_unit{e}')
-
-    @property
-    def to_token_rate(self):
-        try:
-            return 1 / (
-                float(self.amount_equip_to_one_ksh) * float(self.common_var.curr_unit)
-            )
-        except Exception as e:
-            return e
-
-    class Meta:
-        db_table = "d_currency"
 
 
 class RefCredit(TimeStamp):
@@ -387,6 +342,21 @@ class CashDeposit(TimeStamp):
             return "Succided"
         return "Failed"
 
+    # def update_tokens(self):#TODO
+    #     try:
+    #         current_tokens = Account.objects.get(user=self.user).token_count
+    #         try:
+    #             name = Currency.objects.get(id=self.currency_id).name
+    #         except Currency.DoesNotExist:
+    #             name = Currency.objects.create(name='KS',rate=1)    
+    #         tokens_to_add = Currency.get_tokens_amount(name, self.amount)
+    #         updated_token = current_tokens+tokens_to_add
+    #         Account.objects.filter(user_id=self.user).update(
+    #             token_count=updated_token)
+
+    #     except Account.DoesNotExist:
+    #         pass   
+
     def update_cum_depo(self):
         try:
             if not self.deposited:
@@ -409,6 +379,7 @@ class CashDeposit(TimeStamp):
                         new_bal = ctotal_balanc + int(self.amount)
                         update_account_bal_of(self.user_id, new_bal)  # F
                         self.update_cum_depo()  #####
+                        # self.update_tokens()###
                         self.deposited = True
                 except Exception as e:
                     print(f"Daru:CashDeposit-Deposited Error:{e}")  # Debug
@@ -775,7 +746,7 @@ class C2BTransaction(TimeStamp):
             Mpesa.stk_push(
                 self.phone_number,
                 self.amount,
-                account_reference=f"Pay Daru Casino :{self.amount}",
+                account_reference=f"Pay Daru Spin :{self.amount} for account {self.phone_number}",
                 is_paybill=True,
             )
 
@@ -787,7 +758,7 @@ class C2BTransaction(TimeStamp):
         super().save(*args, **kwargs)
 
 
-class ReisterUrl(TimeStamp):
+class RegisterUrl(TimeStamp):
     success = models.BooleanField(default=False, blank=True, null=True)
 
     def save(self, *args, **kwargs):
