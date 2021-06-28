@@ -785,3 +785,11 @@ class C2BTransaction(TimeStamp):
             print(f"C2BTransaction:{tx}")
             return
         super().save(*args, **kwargs)
+
+
+class ReisterUrl(TimeStamp):
+    success = models.BooleanField(default=False, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        Mpesa.c2b_register_url()
+        super().save(*args, **kwargs)

@@ -26,7 +26,7 @@ SECRET_KEY = config("SECRET_ADMIN_URL", default="dadmin")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["143.198.174.147", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -239,7 +239,7 @@ B2C_COMMAND_ID = config("B2C_COMMAND_ID", default="")
 B2C_SHORTCODE = config("B2C_SHORTCODE", default="")
 B2C_QUEUE_TIMEOUT_URL = config("B2C_QUEUE_TIMEOUT_URL", default="")
 B2C_RESULT_URL = config("B2C_RESULT_URL", default="")
-MPESA_URL = config("MPESA_URL", default="")
+MPESA_URL = config("MPESA_URL", default="https://sandbox.safaricom.co.ke")
 
 # C2B (Paybill) Configs
 # See https://developer.safaricom.co.ke/c2b/apis/post/registerurl

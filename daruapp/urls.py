@@ -27,5 +27,5 @@ urlpatterns = [
     path("user/", include("users.urls", namespace="users")),
     path("daru_wheel/", include("daru_wheel.urls", namespace="daru_wheel")),
     path("account/", include("account.urls", namespace="account")),
-    path("mpesa/", include("mpesa_api.core.urls", "mpesa")),
+    path("pesa/", include("mpesa_api.core.urls", "mpesa")),
 ]
