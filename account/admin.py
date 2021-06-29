@@ -10,7 +10,7 @@ from .models import (
     CashWithrawal,
     AccountSetting,
     CashTransfer,
-    RegisterUrl
+    RegisterUrl,
 )
 
 from .models import C2BTransaction
