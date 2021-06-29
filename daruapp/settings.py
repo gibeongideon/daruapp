@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 # import os
 from pathlib import Path
 from celery.schedules import crontab
+
 # import dj_database_url
 from decouple import config
 
@@ -94,8 +95,7 @@ if DEBUG is True:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR
-            / "./db.sqlite3",  # os.path.join(BASE_DIR, '../daruapp_db/db.sqlite3'),
+            "NAME": BASE_DIR / "./db.sqlite3",
         }
     }
 
@@ -117,7 +117,9 @@ else:
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
@@ -149,7 +151,7 @@ STATIC_ROOT = (
 # ManifestStaticFilesStorage is recommended in production, to prevent outdated
 # JavaScript / CSS assets being served from cache .
 # See https://docs.djangoproject.com/en/3.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AUTH_USER_MODEL = "users.User"
 
@@ -225,7 +227,7 @@ LOGGING = {
 JET_SIDE_MENU_COMPACT = True
 
 
-##### Safaricom-specific settings Configs
+# Safaricom-specific settings Configs
 
 # B2C (Bulk Payment) Configs
 # see https://developer.safaricom.co.ke/test_credentials

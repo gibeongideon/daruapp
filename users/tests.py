@@ -59,23 +59,23 @@ class UserTestCase(TestCase):
 # VIEW TEST
 
 
-class LoginPageTest(TestCase):
+# class LoginPageTest(TestCase):
 
-    TEST_USERNAME = "0721399876"
-    TEST_EMAIL = "john@casino.test"
-    TEST_PASSWORD = "Tw0jaStaraZ4pierdala"
+#     TEST_USERNAME = "0721399876"
+#     TEST_EMAIL = "john@casino.test"
+#     TEST_PASSWORD = "Tw0jaStaraZ4pierdala"
 
-    def test_user_can_login_with_valid_data(self):
-        User.objects.create_user(
-            username=self.TEST_USERNAME,
-            email=self.TEST_EMAIL,
-            password=self.TEST_PASSWORD,
-        )
-        response = self.client.post(
-            "/user/login",
-            {"username": self.TEST_USERNAME, "password": self.TEST_PASSWORD},
-        )
-        self.assertRedirects(response, "/")
+#     def test_user_can_login_with_valid_data(self):
+#         User.objects.create_user(
+#             username=self.TEST_USERNAME,
+#             email=self.TEST_EMAIL,
+#             password=self.TEST_PASSWORD,
+#         )
+#         response = self.client.post(
+#             "/user/login",
+#             {"username": self.TEST_USERNAME, "password": self.TEST_PASSWORD},
+#         )
+#         self.assertRedirects(response, "/")
 
     # def test_user_cannot_login_with_invalid_password(self):
     #     User.objects.create_user(username=self.TEST_USERNAME,

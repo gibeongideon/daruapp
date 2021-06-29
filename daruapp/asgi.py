@@ -7,6 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 """
 import os
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "daruapp.settings")
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -30,11 +31,7 @@ application = ProtocolTypeRouter(
     {
         "http": asgi_app,
         "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(
-                URLRouter(
-                    daru_wheel.routing.websocket_urlpatterns
-                )
-            )
+            AuthMiddlewareStack(URLRouter(daru_wheel.routing.websocket_urlpatterns))
         ),
     }
 )
