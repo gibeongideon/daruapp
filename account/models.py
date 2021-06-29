@@ -12,8 +12,7 @@ from mpesa_api.core.mpesa import Mpesa
 
 class AccountSetting(TimeStamp):
     curr_unit = models.FloatField(default=0, blank=True, null=True)
-    min_redeem_refer_credit = models.FloatField(
-        default=1000, blank=True, null=True)
+    min_redeem_refer_credit = models.FloatField(default=1000, blank=True, null=True)
     auto_approve = models.BooleanField(default=False, blank=True, null=True)
     withraw_factor = models.FloatField(default=1, blank=True, null=True)
 
@@ -36,21 +35,29 @@ class Account(TimeStamp):
     )
     token_count = models.IntegerField(default=0, blank=True, null=True)
 
-    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0, blank=True, null=True)
+    balance = models.DecimalField(
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True
+    )
     actual_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0, blank=True, null=True)
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True
+    )
     withraw_power = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0, blank=True, null=True)
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True
+    )
 
     refer_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0, blank=True, null=True)
+        max_digits=12, decimal_places=2, default=0, blank=True, null=True
+    )
     trial_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=50000, blank=True, null=True)
+        max_digits=12, decimal_places=2, default=50000, blank=True, null=True
+    )
 
     cum_deposit = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0.0, blank=True, null=True)
+        max_digits=12, decimal_places=2, default=0.0, blank=True, null=True
+    )
     cum_withraw = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0.0, blank=True, null=True)
+        max_digits=12, decimal_places=2, default=0.0, blank=True, null=True
+    )
     active = models.BooleanField(default=True, blank=True, null=True)
 
     def __str__(self):
@@ -98,9 +105,9 @@ class Account(TimeStamp):
 
 class Currency(TimeStamp):
     """Store currencies with specified name and rate to token amount."""
+
     name = models.CharField(max_length=30, blank=True, null=True)
-    rate = models.DecimalField(
-        max_digits=6, decimal_places=5, blank=True, null=True)
+    rate = models.DecimalField(max_digits=6, decimal_places=5, blank=True, null=True)
 
     class Meta:
         db_table = "d_currency"
@@ -170,8 +177,7 @@ class RefCredit(TimeStamp):
     @property
     def refer_balance(self):
         try:
-            return float(Account.objects.get(
-                user_id=self.user_id).refer_balance)
+            return float(Account.objects.get(user_id=self.user_id).refer_balance)
         except Exception as e:
             print(e)
             return e
@@ -180,8 +186,7 @@ class RefCredit(TimeStamp):
         try:
             new_bal = self.refer_balance + float(self.amount)
             self.current_bal = new_bal
-            Account.objects.filter(
-                user_id=self.user_id).update(refer_balance=new_bal)
+            Account.objects.filter(user_id=self.user_id).update(refer_balance=new_bal)
             self.closed = True
 
         except Exception as e:
@@ -348,14 +353,14 @@ class CashDeposit(TimeStamp):
     #         try:
     #             name = Currency.objects.get(id=self.currency_id).name
     #         except Currency.DoesNotExist:
-    #             name = Currency.objects.create(name='KS',rate=1)    
+    #             name = Currency.objects.create(name='KS',rate=1)
     #         tokens_to_add = Currency.get_tokens_amount(name, self.amount)
     #         updated_token = current_tokens+tokens_to_add
     #         Account.objects.filter(user_id=self.user).update(
     #             token_count=updated_token)
 
     #     except Account.DoesNotExist:
-    #         pass   
+    #         pass
 
     def update_cum_depo(self):
         try:
@@ -504,8 +509,7 @@ class CashWithrawal(TimeStamp):  # sensitive transaction
         # wit_able_bal=current_account_withrawable_bal_of(self.user_id)
         ctotal_balanc = current_account_bal_of(self.user_id)
         #  = self.user.user_account.withrawable_balance
-        withrawable_bal = float(Account.objects.get(
-            user_id=self.user_id).withraw_power)
+        withrawable_bal = float(Account.objects.get(user_id=self.user_id).withraw_power)
 
         # if wit_able_bal<self.amount:
         #     return
@@ -609,8 +613,7 @@ def current_account_trialbal_of(user_id):  # F2
 def update_account_trialbal_of(user_id, new_bal):  # F3
     try:
         if new_bal >= 0:
-            Account.objects.filter(
-                user_id=user_id).update(trial_balance=new_bal)
+            Account.objects.filter(user_id=user_id).update(trial_balance=new_bal)
         # else:
         #     log_record(user_id, 0, "Account Error")  # REMOVE
     except Exception as e:
