@@ -104,9 +104,9 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": config("DB_NAME", default="darius_dev"),
-            "USER": config("DB_USER", default="darius"),
-            "PASSWORD": config("DB_PASSWORD", default="darius!passcode"),
+            "NAME": config("DB_NAME", default="darius_db"),
+            "USER": config("DB_USER", default="daru"),
+            "PASSWORD": config("DB_PASSWORD", default="password"),
             "HOST": "localhost",
             "PORT": "",
         }
@@ -117,9 +117,7 @@ else:
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
@@ -148,16 +146,21 @@ STATIC_ROOT = (
     BASE_DIR / "./static"
 )  # a os.path.abspath(os.path.join(BASE_DIR, '../static'))
 
+# ManifestStaticFilesStorage is recommended in production, to prevent outdated
+# JavaScript / CSS assets being served from cache .
+# See https://docs.djangoproject.com/en/3.2/ref/contrib/staticfiles/#manifeststaticfilesstorage
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AUTH_USER_MODEL = "users.User"
 
 # email backend
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"#D
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="kipngeno.gibeon@gmail.com")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="tetyty9iodjw!")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "Darius Team <noreply@dariuswinnings.com>"
+DEFAULT_FROM_EMAIL = "Darius Team <noreply@darispin.com>"
 
 # login/logout redirect
 LOGIN_REDIRECT_URL = "/"
@@ -218,8 +221,6 @@ LOGGING = {
 
 # db_from_env = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(db_from_env)
-
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 JET_SIDE_MENU_COMPACT = True
 
