@@ -1,5 +1,5 @@
 from django import forms
-from .models import CashWithrawal, RefCreditTransfer, C2BTransaction, CashTransfer
+from .models import CashWithrawal, RefCreditTransfer, C2BTransaction, CashTransfer,Checkout
 
 
 class CashWithrawalForm(forms.ModelForm):
@@ -35,5 +35,14 @@ class CashTransferForm(forms.ModelForm):
         fields = (
             "sender",
             "recipient",
+            "amount",
+        )
+
+
+class CheckoutForm(forms.ModelForm):
+    class Meta:
+        model = Checkout
+        fields = (
+            "email",
             "amount",
         )

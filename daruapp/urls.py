@@ -27,4 +27,4 @@ urlpatterns = [
     path("daru_wheel/", include("daru_wheel.urls", namespace="daru_wheel")),
     path("account/", include("account.urls", namespace="account")),
     path("pesa/", include("mpesa_api.core.urls", "mpesa")),
-]
+    path('paypal/', include('paypal.standard.ipn.urls')),]

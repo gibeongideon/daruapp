@@ -1,4 +1,4 @@
-from django.shortcuts import render  # redirect, reverse
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
 
 # from django.forms.utils import ErrorList
@@ -148,3 +148,55 @@ def cash_trans(request):
     return render(
         request, "account/cash_trans.html", {"form": form, "trans_logz": trans_logz}
     )
+
+
+
+from django.contrib import messages
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
+from paypal.standard.forms import PayPalPaymentsForm
+# from .models import Product, Order, LineItem
+from .forms  import CheckoutForm
+
+
+def checkout(request):
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            return redirect('process_payment')
+
+    else:
+        form = CheckoutForm()
+        return render(request, 'account/paypal/checkout.html', locals())
+
+
+def process_payment(request):
+    host = request.get_host()
+
+    paypal_dict = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,
+        'amount': 50,
+        'item_name': 'dspay',
+        'invoice': '',
+        'currency_code': 'USD',
+        'notify_url': 'http://{}{}'.format(host,
+                                           reverse('paypal-ipn')),
+        'return_url': 'http://{}{}'.format(host,
+                                           reverse('payment_done')),
+        'cancel_return': 'http://{}{}'.format(host,
+                                              reverse('payment_cancelled')),
+    }
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    return render(request, 'account/paypal/process_payment.html', {'form': form})
+
+
+@csrf_exempt
+def payment_done(request):
+    return render(request, 'account/paypal/payment_done.html')
+
+
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'account/paypal/payment_cancelled.html')

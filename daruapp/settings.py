@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "mpesa_api.util",
     "rest_framework",
     # 'rest_framework.authtoken',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -256,3 +257,15 @@ C2B_ONLINE_SHORT_CODE = config("C2B_ONLINE_SHORT_CODE", default="")
 C2B_ONLINE_PARTY_B = config("C2B_ONLINE_PARTY_B", default="")
 
 TOKEN_THRESHOLD = config("TOKEN_THRESHOLD", default=600)  # , cast=int)
+
+#Paypal
+
+MEDIA_ROOT = (
+    BASE_DIR / "./media"
+)
+
+MEDIA_URL = '/media/'
+
+PAYPAL_RECEIVER_EMAIL = 'darius.wheel@gmail.com'#replacewitsandbox
+
+PAYPAL_TEST = True
