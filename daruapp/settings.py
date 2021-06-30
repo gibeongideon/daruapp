@@ -27,7 +27,8 @@ SECRET_KEY = config("SECRET_ADMIN_URL", default="dadmin")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["143.198.174.147", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["www.darispin.ga", "darispin.ga", "www.darispin.co.vu", "darispin.co.vu", "143.198.174.147", "127.0.0.1", "localhost"]
+
 
 # Application definition
 
