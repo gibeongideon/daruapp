@@ -19,12 +19,12 @@
   <h3 align="center">Daruapp</h3>
 
   <p align="center"> 
-    project_description
+    Fortune Wheel Spinners.Just View Demo below
     <br />
     <a href="https://github.com/gibeongideon/daruapp"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/gibeongideon/daruapp">View Demo</a>
+    <a href="https://darispin.ga">View Demo</a>
     ·
     <a href="https://github.com/gibeongideon/daruapp/issues">Report Bug</a>
     ·
