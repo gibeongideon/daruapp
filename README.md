@@ -13,12 +13,12 @@
 <br />
 <p align="center">
   <a href="https://github.com/gibeongideon/daruapp">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo1.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Daruapp</h3>
 
-  <p align="center">
+  <p align="center"> 
     project_description
     <br />
     <a href="https://github.com/gibeongideon/daruapp"><strong>Explore the docs »</strong></a>
