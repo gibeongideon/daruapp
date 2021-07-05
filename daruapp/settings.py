@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     "mpesa_api.util",
     "rest_framework",
     # 'rest_framework.authtoken',
-    'paypal.standard.ipn',
+    'paypal.standard',
+    'paypal.pro',
+    # 'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -269,3 +271,7 @@ MEDIA_URL = '/media/'
 PAYPAL_RECEIVER_EMAIL = 'darius.wheel@gmail.com'#replacewitsandbox
 
 PAYPAL_TEST = True
+
+PAYPAL_WPP_USER = config("PAYPAL_WPP_USER", default="")
+PAYPAL_WPP_PASSWORD = config("PAYPAL_WPP_PASSWORD", default="")
+PAYPAL_WPP_SIGNATURE = config("PAYPAL_WPP_SIGNATURE", default="")
