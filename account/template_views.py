@@ -1,6 +1,14 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
 
+# from django.contrib import messages
+# from django.conf import settings
+# from django.views.decorators.csrf import csrf_exempt
+# from decimal import Decimal
+# from paypal.standard.forms import PayPalPaymentsForm
+# from .forms  import CheckoutForm
+
+from paypal.pro.views import PayPalPro
 # from django.forms.utils import ErrorList
 # from django.http import HttpResponse
 
@@ -24,7 +32,7 @@ from dashboard.models import WebPa
 from users.models import User
 
 
-@login_required(login_url="/users/login")
+@login_required(login_url="/user/login")
 def mpesa_deposit(request):
     print("mpesa_deposit_TO:", request.user)
     form = C2BTransactionForm()
@@ -60,7 +68,7 @@ def mpesa_deposit(request):
 #     return render(request, "account/trans_log.html", {"trans_logz": trans_logz})
 
 
-@login_required(login_url="/users/login")
+@login_required(login_url="/user/login")
 def refer_credit(request):
     form = ReferTranferForm()
     if request.method == "POST":
@@ -98,7 +106,7 @@ def refer_credit(request):
     )
 
 
-@login_required(login_url="/users/login")
+@login_required(login_url="/user/login")
 def mpesa_withrawal(request):
     form = CashWithrawalForm()
     if request.method == "POST":
@@ -119,7 +127,7 @@ def mpesa_withrawal(request):
     )
 
 
-@login_required(login_url="/users/login")
+@login_required(login_url="/user/login")
 def cash_trans(request):
     form = CashTransferForm()
     if request.method == "POST":
@@ -151,52 +159,68 @@ def cash_trans(request):
 
 
 
-from django.contrib import messages
-from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from decimal import Decimal
-from paypal.standard.forms import PayPalPaymentsForm
-# from .models import Product, Order, LineItem
-from .forms  import CheckoutForm
+
+# def checkout(request):
+#     if request.method == 'POST':
+#         form = CheckoutForm(request.POST)
+#         if form.is_valid():
+#             return redirect('process_payment')
+
+#     else:
+#         form = CheckoutForm()
+#         return render(request, 'account/paypal/checkout.html', locals())
 
 
-def checkout(request):
-    if request.method == 'POST':
-        form = CheckoutForm(request.POST)
-        if form.is_valid():
-            return redirect('process_payment')
+# def process_payment(request):
+#     host = request.get_host()
 
-    else:
-        form = CheckoutForm()
-        return render(request, 'account/paypal/checkout.html', locals())
+#     paypal_dict = {
+#         'business': settings.PAYPAL_RECEIVER_EMAIL,
+#         'amount': 50,
+#         'item_name': 'dspay',
+#         'invoice': '',
+#         'currency_code': 'USD',
+#         'notify_url': 'http://{}{}'.format(host,
+#                                            reverse('paypal-ipn')),
+#         'return_url': 'http://{}{}'.format(host,
+#                                            reverse('payment_done')),
+#         'cancel_return': 'http://{}{}'.format(host,
+#                                               reverse('payment_cancelled')),
+#     }
 
-
-def process_payment(request):
-    host = request.get_host()
-
-    paypal_dict = {
-        'business': settings.PAYPAL_RECEIVER_EMAIL,
-        'amount': 50,
-        'item_name': 'dspay',
-        'invoice': '',
-        'currency_code': 'USD',
-        'notify_url': 'http://{}{}'.format(host,
-                                           reverse('paypal-ipn')),
-        'return_url': 'http://{}{}'.format(host,
-                                           reverse('payment_done')),
-        'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('payment_cancelled')),
-    }
-
-    form = PayPalPaymentsForm(initial=paypal_dict)
-    return render(request, 'account/paypal/process_payment.html', {'form': form})
+#     form = PayPalPaymentsForm(initial=paypal_dict)
+#     return render(request, 'account/paypal/process_payment.html', {'form': form})
 
 
-@csrf_exempt
-def payment_done(request):
-    return render(request, 'account/paypal/payment_done.html')
+# @csrf_exempt
+# def payment_done(request):
+#     return render(request, 'account/paypal/payment_done.html')
 
 
-@csrf_exempt
-def payment_canceled(request):
-    return render(request, 'account/paypal/payment_cancelled.html')
+# @csrf_exempt
+# def payment(request):
+#     return render(request, 'account/paypal/payment_cancelled.html')
+
+
+def nvp_handler(nvp):
+    # This is passed a PayPalNVP object when payment succeeds.
+    # This should do something useful!
+    print(nvp)
+    pass
+
+
+@login_required(login_url="/user/login")
+def account_topup(request):
+    item = {"paymentrequest_0_amt": "10.00",  # amount to charge for item
+            "inv": "inventory",         # unique tracking variable paypal
+            "custom": "tracking",       # custom tracking variable for you
+            "cancelurl": "http://...",  # Express checkout cancel url
+            "returnurl": "http://..."}  # Express checkout return url
+
+    ppp = PayPalPro(
+              item=item,                            # what you're selling
+              payment_template="payment.html",      # template name for payment
+              confirm_template="confirmation.html", # template name for confirmation
+              success_url="/success/",              # redirect location after success
+              nvp_handler=nvp_handler)
+    return ppp(request)

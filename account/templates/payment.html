@@ -1,0 +1,97 @@
+{% extends "dashboard/layouts/base.html" %}
+
+{% block content %}
+
+
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title">Account TopUp</h4>
+        </div>
+        <div class="card-body">
+        
+        <form method="post" action="">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Pay Up">
+        </form>
+        
+        </div>
+      </div>
+    </div>
+
+
+  <!-- <div class="col-sm-4"> </div> -->
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+
+      <a href="{% url 'account:cash_trans' %}" >
+        <button class="btn btn-secondary">
+          <i class="tim-icons icon-refresh-01"></i>                    
+          Refresh 
+        </button>
+  
+      </a>
+
+
+
+          <h4 class="card-title"> Recent Transactions</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table tablesorter " id="">
+              <thead class=" text-primary">
+                <tr>
+                  <th>
+                    Date
+                  </th>
+                  <th>
+                    Amount
+                  </th>
+                  <th>
+                    Transfer_to
+                  </th>
+                  <th class="text-center">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for trans in trans_logz%}
+  
+                <tr>
+                  <td>
+                    {{trans.created_at}}
+                  </td>
+                  <td>
+                    {{trans.amount}}
+                  </td>
+                  <td>
+                    {{trans.recipient}}
+                  </td>
+                  <td class="text-center">
+                    {{trans.status}}
+                  </td>
+                </tr>
+  
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <a href="{% url 'account:mpesa_withrawal' %}" >
+      <button class="btn btn-secondary">
+        <i class="tim-icons icon-refresh-01"></i>                    
+        Refresh 
+      </button>
+
+    </a> -->
+  </div>
+
+
+{% endblock content %} 

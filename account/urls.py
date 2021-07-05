@@ -32,8 +32,10 @@ urlpatterns = [
     path("mpesa_deposit/", views.mpesa_deposit, name="mpesa_deposit"),
     path("cash_trans/", views.cash_trans, name="cash_trans"),
     
-    path('checkout/', views.checkout, name='checkout'),
-    path('process-payment/', views.process_payment, name='process_payment'),
-    path('payment-done/', views.payment_done, name='payment_done'),
-    path('payment-cancelled/', views.payment_canceled, name='payment_cancelled'),
+    # path('checkout/', views.checkout, name='checkout'),
+    # path('process-payment/', views.process_payment, name='process_payment'),
+    # path('payment-done/', views.payment_done, name='payment_done'),
+    # path('payment-cancelled/', views.payment_canceled, name='payment_cancelled'),
+    path('payment-url/', views.account_topup),
+    path('paypal/', include('paypal.standard.ipn.urls')),
 ]
