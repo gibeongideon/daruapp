@@ -1,5 +1,6 @@
 from django import forms
 from .models import CashWithrawal, RefCreditTransfer, C2BTransaction, CashTransfer,Checkout
+from paypal.pro.forms import PaymentForm
 
 
 class CashWithrawalForm(forms.ModelForm):
@@ -46,3 +47,12 @@ class CheckoutForm(forms.ModelForm):
             "email",
             "amount",
         )
+
+
+# class PayPalmentForm(PaymentForm):
+#     class Meta:
+#         # model = Checkout
+#         fields = (
+#             "acct",
+#             "cvv2",
+#         )

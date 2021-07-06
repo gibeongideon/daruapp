@@ -270,7 +270,7 @@ MEDIA_URL = '/media/'
 
 PAYPAL_RECEIVER_EMAIL = 'darius.wheel@gmail.com'#replacewitsandbox
 
-PAYPAL_TEST = True
+PAYPAL_TEST = config("PAYPAL_TEST", default=True)
 
 PAYPAL_WPP_USER = config("PAYPAL_WPP_USER", default="")
 PAYPAL_WPP_PASSWORD = config("PAYPAL_WPP_PASSWORD", default="")

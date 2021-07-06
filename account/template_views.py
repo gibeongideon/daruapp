@@ -29,6 +29,7 @@ from .forms import (
     ReferTranferForm,
     C2BTransactionForm,
     CashTransferForm,
+    # PayPalmentForm
 )
 
 from dashboard.models import WebPa
@@ -218,7 +219,7 @@ def paypal_topup(request):
 
     ppp = PayPalPro(
               item=item,
-            #   payment_form_cls=PaymentForm,                      # what you're selling
+            #   payment_form_cls=PayPalmentForm,                      # what you're selling
               payment_template="payment.html",      # template name for payment
               confirm_template="confirmation.html", # template name for confirmation
               success_url="/",              # redirect location after success
