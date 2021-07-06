@@ -11,6 +11,7 @@ from .models import (
     AccountSetting,
     CashTransfer,
     RegisterUrl,
+    Checkout
 )
 
 from .models import C2BTransaction
@@ -221,3 +222,4 @@ class CashTransferAdmin(admin.ModelAdmin):
 
 admin.site.register(CashTransfer, CashTransferAdmin)
 admin.site.register(RegisterUrl)
+admin.site.register(Checkout)

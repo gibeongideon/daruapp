@@ -1,16 +1,9 @@
 # om django.contrib.auth.views import LogoutView
-from rest_framework.routers import DefaultRouter
-
+# from rest_framework.routers import DefaultRouter
 # from rest_framework.urlpatterns import format_suffix_patterns
-from . import views
 from django.urls import path, include
-from .template_views import (
-    # trans_log,
-    refer_credit,
-    mpesa_withrawal,
-    mpesa_deposit,
-    cash_trans,
-)
+from . import template_views as views
+
 
 
 # router = DefaultRouter()
@@ -34,8 +27,19 @@ urlpatterns = [
     # path('rest-auth/', include('rest_auth.urls')),
     # templates
     # path("trans_log/", trans_log, name="trans_log"),
-    path("refer_credit/", refer_credit, name="refer_credit"),
-    path("mpesa_withrawal/", mpesa_withrawal, name="mpesa_withrawal"),
-    path("mpesa_deposit/", mpesa_deposit, name="mpesa_deposit"),
-    path("cash_trans/", cash_trans, name="cash_trans"),
+    path("refer_credit/", views.refer_credit, name="refer_credit"),
+    path("mpesa_withrawal/", views.mpesa_withrawal, name="mpesa_withrawal"),
+    path("mpesa_deposit/", views.mpesa_deposit, name="mpesa_deposit"),
+    path("cash_trans/", views.cash_trans, name="cash_trans"),
+    
+    # path('checkout/', views.checkout, name='checkout'),
+    # path('checkout/paypal/process_payment', views.process_payment, name='process_payment'),
+    # path('checkout/paypal/process_payment/payment-done', views.payment_done, name='payment_done'),
+    # path('checkout/paypal/process_payment/payment-cancelled/', views.payment_canceled, name='payment_cancelled'),
+    path('paypal-checkout/', views.PaypalFormView.as_view(), name='paypal-checkout'),
+    path('paypal-return/', views.PaypalReturnView.as_view(), name='paypal-return'),
+    path('paypal-cancel/', views.PaypalCancelView.as_view(), name='paypal-cancel'),
+
+    path("paypal_topup/", views.paypal_topup, name="paypal_topup"),
+    path("paypal/", include('paypal.standard.ipn.urls')),
 ]

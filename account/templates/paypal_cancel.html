@@ -1,0 +1,31 @@
+{% extends "dashboard/layouts/base.html" %}
+
+{% block content %}
+
+
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title">Paypal</h4>
+        </div>
+        <div class="card-body">
+
+<form action="{% url 'account:process_payment' %}" method="post">
+    {% csrf_token %}
+
+    <div>
+      {% if form.errors %}
+      <span class="text-danger">{{ form.errors }}</span>
+      {% endif %}
+    </div>
+    {{ form.render }}
+
+    <input type="submit" value="process_payment">
+  
+  </form>
+        </div>
+      </div>
+    </div>
+
+
+{% endblock content %} 
