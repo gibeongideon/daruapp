@@ -767,3 +767,10 @@ class RegisterUrl(TimeStamp):
     def save(self, *args, **kwargs):
         Mpesa.c2b_register_url()
         super().save(*args, **kwargs)
+
+
+class Checkout(TimeStamp):
+    email = models.EmailField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    paid = models.BooleanField(default=False, blank=True, null=True)
+    success = models.BooleanField(default=False, blank=True, null=True)

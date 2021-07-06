@@ -63,6 +63,7 @@ packaging==20.7
 paramiko==2.7.2
 parsedatetime==2.6
 pathlib==1.0.1
+django-paypal==1.1.1
 prompt-toolkit==3.0.8
 psycopg2-binary==2.8.5
 pyasn1==0.4.8
