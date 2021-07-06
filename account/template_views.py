@@ -4,17 +4,15 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
 
 # from django.contrib import messages
-# from django.conf import settings
+from django.conf import settings
 # from django.views.decorators.csrf import csrf_exempt
 # from decimal import Decimal
-# from paypal.standard.forms import PayPalPaymentsForm
-# from .forms  import CheckoutForm
-
+from paypal.standard.forms import PayPalPaymentsForm
+from .forms import CheckoutForm
 from paypal.pro.views import PayPalPro
 # from paypal.pro.forms import PaymentForm
 # from django.forms.utils import ErrorList
 # from django.http import HttpResponse
-
 from .models import (
     # TransactionLog,
     RefCredit,
@@ -144,14 +142,11 @@ def cash_trans(request):
         except Exception:
             pass
 
-        print("USSER_T", recipient)
-
         data["recipient"] = recipient
         data["amount"] = request.POST.get("amount")
         form = CashTransferForm(data=data)
         if form.is_valid():
             form.save()
-            print("YES DONE_TRANSFER!")
         if form.errors:
             print(form.errors)
 
@@ -161,46 +156,44 @@ def cash_trans(request):
         request, "account/cash_trans.html", {"form": form, "trans_logz": trans_logz}
     )
 
-# def checkout(request):
-#     if request.method == 'POST':
-#         form = CheckoutForm(request.POST)
-#         if form.is_valid():
-#             return redirect('process_payment')
-
-#     else:
-#         form = CheckoutForm()
-#         return render(request, 'account/paypal/checkout.html', locals())
 
 
-# def process_payment(request):
-#     host = request.get_host()
-
-#     paypal_dict = {
-#         'business': settings.PAYPAL_RECEIVER_EMAIL,
-#         'amount': 50,
-#         'item_name': 'dspay',
-#         'invoice': '',
-#         'currency_code': 'USD',
-#         'notify_url': 'http://{}{}'.format(host,
-#                                            reverse('paypal-ipn')),
-#         'return_url': 'http://{}{}'.format(host,
-#                                            reverse('payment_done')),
-#         'cancel_return': 'http://{}{}'.format(host,
-#                                               reverse('payment_cancelled')),
-#     }
-
-#     form = PayPalPaymentsForm(initial=paypal_dict)
-#     return render(request, 'account/paypal/process_payment.html', {'form': form})
+from django.views.generic import FormView
+from django.views.generic import TemplateView
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm
 
 
-# @csrf_exempt
-# def payment_done(request):
-#     return render(request, 'account/paypal/payment_done.html')
+class PaypalFormView(FormView):
+    template_name = 'paypal_form.html'
+    form_class = PayPalPaymentsForm
+
+    def get_initial(self):
+        return {
+            "cmd": "_xclick-subscriptions",
+            "business": settings.PAYPAL_RECEIVER_EMAIL,
+            "amount": 20,
+            "currency_code": "USD",
+            "item_name": 'Example item',
+            "invoice": 1234,
+            "notify_url": self.request.build_absolute_uri(reverse('paypal-ipn')),
+            # "return_url": self.request.build_absolute_uri(reverse('paypal-return')),
+            # "cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
+            "lc": 'EN',
+            "no_shipping": '1',
+            
+        }
+        
 
 
-# @csrf_exempt
-# def payment(request):
-#     return render(request, 'account/paypal/payment_cancelled.html')
+class PaypalReturnView(TemplateView):
+    template_name = 'paypal_success.html'
+
+
+class PaypalCancelView(TemplateView):
+    template_name = 'paypal_cancel.html'
+
+
 def nvp_handler(nvp):
     # This is passed a PayPalNVP object when payment succeeds.
     # This should do something useful!
