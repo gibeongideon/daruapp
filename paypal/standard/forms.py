@@ -158,7 +158,7 @@ class PayPalPaymentsForm(forms.Form):
     def render(self):
         return format_html(u"""<form action="{0}" method="post">
     {1}
-    <input type="image" src="{2}" name="submit" alt="Buy it Now" />
+    <input type="image" src="{2}" name="submit" alt="Top up Now" />
 </form>""", self.get_login_url(), self.as_p(), self.get_image())
 
     def get_image(self):
