@@ -222,4 +222,20 @@ class CashTransferAdmin(admin.ModelAdmin):
 
 admin.site.register(CashTransfer, CashTransferAdmin)
 admin.site.register(RegisterUrl)
-admin.site.register(Checkout)
+
+
+class CheckoutAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "amount",
+        "paid",
+        "success",
+        "created_at",
+        "updated_at",
+    )
+    list_display_links = ("id", "user", "amount", "paid")
+    # list_editable = ("amount", "paid")
+
+
+admin.site.register(Checkout, CheckoutAdmin)

@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_ADMIN_URL", default="dadmin")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["www.darispin.ga", "darispin.ga", "www.darispin.co.vu", "darispin.co.vu", "143.198.174.147", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
@@ -269,7 +269,7 @@ MEDIA_URL = '/media/'
 
 PAYPAL_RECEIVER_EMAIL = config(
     "PAYPAL_RECEIVER_EMAIL",
-    default="testdarius.wheel@gmail.com")####
+    default="darius@daruspin.com")
 
 PAYPAL_TEST = config("PAYPAL_TEST", default=True)
 

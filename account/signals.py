@@ -18,6 +18,7 @@ from django.conf import settings
 
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
+from django.shortcuts import get_object_or_404
 import logging
 
 logger = logging.getLogger(__name__)
@@ -114,7 +115,7 @@ def paypal_payment_received(sender, **kwargs):
         # received, `custom` etc. are all what you expect or what
         # is allowed.
         try:
-            my_pk = ipn_obj.invoice
+            my_pk = int(ipn_obj.invoice)
             mytransaction = Checkout.objects.get(pk=my_pk)
             assert ipn_obj.mc_gross == mytransaction.amount and ipn_obj.mc_currency == 'USD'
         except Exception:
@@ -124,3 +125,17 @@ def paypal_payment_received(sender, **kwargs):
             mytransaction.save()
     else:
         logger.debug('Paypal payment status not completed: %s' % ipn_obj.payment_status)
+
+
+
+# @receiver(valid_ipn_received)
+# def payment_notification(sender, **kwargs):
+#     ipn = sender
+#     if ipn.payment_status == 'Completed':
+#         # payment was successful
+#         order = get_object_or_404(Checkout, id=ipn.invoice)
+
+#         if order.amount == ipn.mc_gross:
+#             # mark the order as paid
+#             order.paid = True
+#             order.save()
