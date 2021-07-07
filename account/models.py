@@ -777,7 +777,6 @@ class Checkout(TimeStamp):
         blank=True,
         null=True,
     )
-
     email = models.EmailField(blank=True, null=True)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     paid = models.BooleanField(default=False, blank=True, null=True)
