@@ -92,46 +92,129 @@ jobs:
         mkdir -p ~/daruapp/daruapp/migrations/dashboard/migrations
         mkdir -p ~/daruapp/daruapp/migrations/users/migrations
         mkdir -p ~/daruapp/daruapp/migrations/mpesa_api/core/migrations
+        mkdir -p ~/daruapp/daruapp/migrations/paypal/standard/ipn/migrations
+        mkdir -p ~/daruapp/daruapp/migrations/paypal/pro/migrations
+
         cd ~/daruapp/daruapp/migrations
         tree
 
 
     - name: RSYNC Backup Migrations To Workin Directory
       run: |
-
         rsync -a --delete ~/daruapp/daruapp/migrations/account/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/account
         rsync -a --delete ~/daruapp/daruapp/migrations/daru_wheel/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel
         rsync -a --delete ~/daruapp/daruapp/migrations/dashboard/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/dashboard
         rsync -a --delete ~/daruapp/daruapp/migrations/users/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/users
         rsync -a --delete ~/daruapp/daruapp/migrations/mpesa_api/core/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core
+        rsync -a --delete ~/daruapp/daruapp/migrations/paypal/standard/ipn/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/paypal/standard/ipn
+        rsync -a --delete ~/daruapp/daruapp/migrations/paypal/pro/migrations ~/daruapp/actions-runner/deploy/daruapp/daruapp/paypal/pro
 
         
-    - name: COLLECTSTATIC, MAKEMIGRATIONS & MIGRATE
+    - name: COLLECTSTATIC
       run: |
-
-        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp                
         python manage.py collectstatic
+
+    - name: MAKEMIGRATIONS
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp  
+
         python manage.py makemigrations users
         python manage.py makemigrations account
         python manage.py makemigrations daru_wheel
         python manage.py makemigrations dashboard
         python manage.py makemigrations core
-        python manage.py makemigrations
+        python manage.py makemigrations ipn
+        python manage.py makemigrations pro
 
-        python manage.py migrate
-
-
-    - name: Rsync Workin Directory to Backup Migrations
+    ## account
+    - name: MIGRATE-account
       run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate account
 
+    - name: Rsync Workin Directory to Backup Migrations-account
+      run: |
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/account/migrations ~/daruapp/daruapp/migrations/account
-        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel/migrations ~/daruapp/daruapp/migrations/daru_wheel
-        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/dashboard/migrations ~/daruapp/daruapp/migrations/dashboard
-        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/users/migrations ~/daruapp/daruapp/migrations/users
-        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
+        cd ~/daruapp/daruapp/migrations/account
+        tree
 
+    ## daru_wheel
+    - name: MIGRATE-daru_wheel
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate daru_wheel
+
+    - name: Rsync Workin Directory to Backup Migrations-daru_wheel
+      run: |
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/daru_wheel/migrations ~/daruapp/daruapp/migrations/daru_wheel
+        cd ~/daruapp/daruapp/migrations/daru_wheel
+        tree
+    ## dashboard    
+    - name: MIGRATE-dashboard
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate dashboard
+
+    - name: Rsync Workin Directory to Backup Migrations-dashboard
+      run: |
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/dashboard/migrations ~/daruapp/daruapp/migrations/dashboard
+        cd ~/daruapp/daruapp/migrations/dashboard
+        tree
+
+    ## users
+    - name: MIGRATE-users
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate users
+
+    - name: Rsync Workin Directory to Backup Migrations-users
+      run: |
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/users/migrations ~/daruapp/daruapp/migrations/users
+        cd ~/daruapp/daruapp/migrations/users
+        tree    
+
+    ## core
+    - name: MIGRATE-core
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate core
+
+    - name: Rsync Workin Directory to Backup Migrations-core
+      run: |
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
+        cd ~/daruapp/daruapp/migrations/core
+        tree   
+
+    ## ipn
+    - name: MIGRATE-ipn
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate ipn
+
+    - name: Rsync Workin Directory to Backup Migrations-ipn
+      run: |
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/paypal/standard/ipn/migrations ~/daruapp/daruapp/migrations/paypal/standard/ipn 
+        cd ~/daruapp/daruapp/migrations/ipn
+        tree 
+
+    ## pro
+    - name: MIGRATE-pro
+      run: |
+        cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
+        python manage.py migrate pro
+
+    - name: Rsync Workin Directory to Backup Migrations-pro
+      run: |
+        rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/paypal/pro/migrations ~/daruapp/daruapp/migrations/paypal/pro 
+        cd ~/daruapp/daruapp/migrations/pro
+        tree 
+
+    - name: Backup Migrations_Updated
+      run: |
         cd ~/daruapp/daruapp/migrations
         tree
+
 
     - name: Test Redis
       run: |

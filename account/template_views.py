@@ -174,8 +174,8 @@ def process_payment(request):
         'currency_code': 'USD',
         'notify_url': 'http://{}{}'.format(host,
                                            reverse('paypal-ipn')),
-        'return_url': 'http://{}/account/payment_done'.format(host),
-        'cancel_return': 'http://{}/payment_cancelled'.format(host),
+        'return_url': 'http://{}'.format(host),
+        'cancel_return': 'http://{}/checkout'.format(host),
 
         # 'return_url': 'http://{}{}'.format(host,
         #                                    reverse('payment_done')),
