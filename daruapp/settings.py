@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # 'rest_framework.authtoken',
     'paypal.pro',
-    'paypal.standard.ipn',
+    'paypal.standard',
 ]
 
 MIDDLEWARE = [
