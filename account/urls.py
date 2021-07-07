@@ -36,6 +36,14 @@ urlpatterns = [
     # path('checkout/paypal/process_payment', views.process_payment, name='process_payment'),
     # path('checkout/paypal/process_payment/payment-done', views.payment_done, name='payment_done'),
     # path('checkout/paypal/process_payment/payment-cancelled/', views.payment_canceled, name='payment_cancelled'),
+
+
+
+    path('checkout/', views.checkout, name='checkout'),
+    path('process-payment/', views.process_payment, name='process_payment'),
+    path('payment-done/', views.payment_done, name='payment_done'),
+    path('payment-cancelled/', views.payment_canceled, name='payment_cancelled'),
+    
     path('paypal-checkout/', views.PaypalFormView.as_view(), name='paypal-checkout'),
     path('paypal-return/', views.PaypalReturnView.as_view(), name='paypal-return'),
     path('paypal-cancel/', views.PaypalCancelView.as_view(), name='paypal-cancel'),

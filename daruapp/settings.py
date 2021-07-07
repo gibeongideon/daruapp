@@ -51,9 +51,8 @@ INSTALLED_APPS = [
     "mpesa_api.util",
     "rest_framework",
     # 'rest_framework.authtoken',
-    'paypal.standard',
     'paypal.pro',
-    # 'paypal.standard.ipn',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -268,10 +267,23 @@ MEDIA_ROOT = (
 
 MEDIA_URL = '/media/'
 
-PAYPAL_RECEIVER_EMAIL = 'darius.wheel@gmail.com'#replacewitsandbox
+PAYPAL_RECEIVER_EMAIL = config(
+    "PAYPAL_RECEIVER_EMAIL",
+    default="testdarius.wheel@gmail.com")####
 
 PAYPAL_TEST = config("PAYPAL_TEST", default=True)
 
-PAYPAL_WPP_USER = config("PAYPAL_WPP_USER", default="")
-PAYPAL_WPP_PASSWORD = config("PAYPAL_WPP_PASSWORD", default="")
-PAYPAL_WPP_SIGNATURE = config("PAYPAL_WPP_SIGNATURE", default="")
+
+###USA/CANADA&UKssss
+
+PAYPAL_WPP_USER = config(
+    "PAYPAL_WPP_USER",
+    default="sb-h2ded6675419_api1.business.example.com")
+
+PAYPAL_WPP_PASSWORD = config(
+    "PAYPAL_WPP_PASSWORD",
+    default="DFXXXTJPDKBFA5KG")
+
+PAYPAL_WPP_SIGNATURE = config(
+    "PAYPAL_WPP_SIGNATURE",
+    default="AM1aGgn2bz5QbLwfJWgM8rQPCVdfAjz3hKc8w9Pa8XdIFnHt-9r143O2")

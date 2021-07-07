@@ -158,10 +158,105 @@ def cash_trans(request):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 from django.views.generic import FormView
 from django.views.generic import TemplateView
 from django.urls import reverse
 from paypal.standard.forms import PayPalPaymentsForm
+
+from django.contrib import messages
+from django.conf import settings
+from decimal import Decimal
+from paypal.standard.forms import PayPalPaymentsForm
+from .models import Checkout
+from .forms import CheckoutForm
+from django.views.decorators.csrf import csrf_exempt
+
+
+def checkout(request):
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # cleaned_data = form.cleaned_data
+            # cart.clear(request)
+
+            # request.session['order_id'] = o.id
+            return redirect('process_payment')
+    else:
+        form = CheckoutForm()
+        return render(request, 'account/paypal/checkout.html', locals())
+
+
+def process_payment(request):
+    latest_id = max((obj.id for obj in Checkout.objects.filter(
+        user=request.user)))
+
+    amount = Checkout.objects.get(id=latest_id).amount
+    print('proceSSPAY')
+    print(amount)
+    host = request.get_host()
+    print(host)
+
+    paypal_dict = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,
+        'amount': f'{amount}',
+        'item_name': f'Topup-{latest_id}',
+        'invoice': f'{latest_id}',
+        'currency_code': 'USD',
+        'notify_url': 'http://{}{}'.format(host,
+                                           reverse('paypal-ipn')),
+        'return_url': 'http://{}{}'.format(host,
+                                           reverse('payment_done')),
+        'cancel_return': 'http://{}{}'.format(host,
+                                              reverse('payment_cancelled')),
+    }
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    return render(
+        request,
+        'account/paypal/process_payment.html',
+        {'amount': amount, 'form': form})
+
+
+@csrf_exempt
+def payment_done(request):
+    return render(request, 'account/paypal/payment_done.html')
+
+
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'account/paypal/payment_cancelled.html')
+
+
+
+
+
+
+
+
+
+
+
 
 
 class PaypalFormView(FormView):
