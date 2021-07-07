@@ -124,7 +124,7 @@ jobs:
         python manage.py makemigrations daru_wheel
         python manage.py makemigrations dashboard
         python manage.py makemigrations core
-        python manage.py makemigrations ipn
+        # python manage.py makemigrations ipn
         python manage.py makemigrations pro
 
     ## account
@@ -190,7 +190,7 @@ jobs:
     - name: MIGRATE-ipn
       run: |
         cd ~/daruapp/actions-runner/deploy/daruapp/daruapp        
-        python manage.py migrate ipn
+        # python manage.py migrate ipn
 
     - name: Rsync Workin Directory to Backup Migrations-ipn
       run: |
