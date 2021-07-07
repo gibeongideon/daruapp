@@ -44,6 +44,7 @@ class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Checkout
         fields = (
+            "user",
             "email",
             "amount",
         )
