@@ -207,7 +207,7 @@ jobs:
     - name: Rsync Workin Directory to Backup Migrations-pro
       run: |
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/paypal/pro/migrations ~/daruapp/daruapp/migrations/paypal/pro 
-        cd ~/daruapp/daruapp/migrations/pro
+        cd ~/daruapp/daruapp/migrations/paypal/pro
         tree 
 
     - name: Backup Migrations_Updated
