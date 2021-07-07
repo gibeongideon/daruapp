@@ -770,6 +770,14 @@ class RegisterUrl(TimeStamp):
 
 
 class Checkout(TimeStamp):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="checkouts",
+        blank=True,
+        null=True,
+    )
+
     email = models.EmailField(blank=True, null=True)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     paid = models.BooleanField(default=False, blank=True, null=True)
