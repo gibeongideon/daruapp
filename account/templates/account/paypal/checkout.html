@@ -11,11 +11,11 @@
         <div class="card-body">
         <form method="post" action="{% url 'account:checkout' %}">
 
-        email{% csrf_token %}
-        {{ form.email }}
-
-        amount{{ form.amount }}
-        <input type="submit" value="Top Up">
+        {% csrf_token %}
+        <h5 class="card-title">Amount to TopUp:{{ form.amount }}</h5>
+        
+        {% comment %} <input type="submit" value="Proceed to Paypal"> {% endcomment %}
+        <button class="btn btn-info type="submit">Proceed to Paypal</button>
 
         </form>
 

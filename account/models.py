@@ -781,3 +781,10 @@ class Checkout(TimeStamp):
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     paid = models.BooleanField(default=False, blank=True, null=True)
     success = models.BooleanField(default=False, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if abs(self.amount) == 0:
+            self.amount = 1
+        else:
+            self.amount = abs(self.amount)
+        super().save(*args, **kwargs)
