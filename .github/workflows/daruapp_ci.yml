@@ -183,7 +183,7 @@ jobs:
     - name: Rsync Workin Directory to Backup Migrations-core
       run: |
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/mpesa_api/core/migrations ~/daruapp/daruapp/migrations/mpesa_api/core
-        cd ~/daruapp/daruapp/migrations/core
+        cd ~/daruapp/daruapp/migrations/mpesa_api/core
         tree   
 
     ## ipn
@@ -195,7 +195,7 @@ jobs:
     - name: Rsync Workin Directory to Backup Migrations-ipn
       run: |
         rsync -a --delete ~/daruapp/actions-runner/deploy/daruapp/daruapp/paypal/standard/ipn/migrations ~/daruapp/daruapp/migrations/paypal/standard/ipn 
-        cd ~/daruapp/daruapp/migrations/ipn
+        cd ~/daruapp/daruapp/migrations/paypal/standard/ipn
         tree 
 
     ## pro
