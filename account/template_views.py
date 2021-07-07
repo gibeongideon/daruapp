@@ -157,17 +157,15 @@ def cash_trans(request):
         request, "account/cash_trans.html", {"form": form, "trans_logz": trans_logz}
     )
 
-def process_payment(request):
 
+# paypal
+
+def process_payment(request):
     latest_id = max((obj.id for obj in Checkout.objects.filter(
         user=request.user)))
 
     amount = Checkout.objects.get(id=latest_id).amount
-    print('proceSSPAY')
-    print(amount)
     host = request.get_host()
-    print(host)
-
     paypal_dict = {
         'business': settings.PAYPAL_RECEIVER_EMAIL,
         'amount': f'{amount}',
@@ -198,6 +196,7 @@ def checkout(request):
         if form.is_valid():
             form = form.save(commit=False)
             form.user = request.user
+            form.email = request.user.email
             form.save()
             # cleaned_data = form.cleaned_data
             return redirect('/account/process-payment')
@@ -216,58 +215,57 @@ def payment_canceled(request):
     return render(request, 'account/paypal/payment_cancelled.html')
 
 
+# class PaypalFormView(FormView):
+#     template_name = 'paypal_form.html'
+#     form_class = PayPalPaymentsForm
 
-class PaypalFormView(FormView):
-    template_name = 'paypal_form.html'
-    form_class = PayPalPaymentsForm
-
-    def get_initial(self):
-        return {
-            "cmd": "_xclick-subscriptions",
-            "business": settings.PAYPAL_RECEIVER_EMAIL,
-            "amount": 20,
-            "currency_code": "USD",
-            "item_name": 'Example item',
-            "invoice": 1234,
-            "notify_url": self.request.build_absolute_uri(reverse('paypal-ipn')),
-            # "return_url": self.request.build_absolute_uri(reverse('paypal-return')),
-            # "cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
-            "lc": 'EN',
-            "no_shipping": '1',
+#     def get_initial(self):
+#         return {
+#             "cmd": "_xclick-subscriptions",
+#             "business": settings.PAYPAL_RECEIVER_EMAIL,
+#             "amount": 20,
+#             "currency_code": "USD",
+#             "item_name": 'Example item',
+#             "invoice": 1234,
+#             "notify_url": self.request.build_absolute_uri(reverse('paypal-ipn')),
+#             # "return_url": self.request.build_absolute_uri(reverse('paypal-return')),
+#             # "cancel_return": self.request.build_absolute_uri(reverse('paypal-cancel')),
+#             "lc": 'EN',
+#             "no_shipping": '1',
             
-        }
+#         }
         
 
 
-class PaypalReturnView(TemplateView):
-    template_name = 'paypal_success.html'
+# class PaypalReturnView(TemplateView):
+#     template_name = 'paypal_success.html'
 
 
-class PaypalCancelView(TemplateView):
-    template_name = 'paypal_cancel.html'
+# class PaypalCancelView(TemplateView):
+#     template_name = 'paypal_cancel.html'
 
 
-def nvp_handler(nvp):
-    # This is passed a PayPalNVP object when payment succeeds.
-    # This should do something useful!
-    print('nvp-NVP')
-    print(nvp)    
-    pass
+# def nvp_handler(nvp):
+#     # This is passed a PayPalNVP object when payment succeeds.
+#     # This should do something useful!
+#     print('nvp-NVP')
+#     print(nvp)    
+#     pass
 
 
-@login_required(login_url="/user/login")
-def paypal_topup(request):
-    item = {"amt": "5.00",  # amount to charge for item
-            "inv": f"darispin-{request.user.id} ",      # unique tracking variable paypal
-            "custom": f"{request.user.id}",       # custom tracking variable for you
-            "cancelurl": "http://darispin.ga/deposit_withraw",  # Express checkout cancel url
-            "returnurl": "http://darispin.ga/"}  # Express checkout return url
+# @login_required(login_url="/user/login")
+# def paypal_topup(request):
+#     item = {"amt": "5.00",  # amount to charge for item
+#             "inv": f"darispin-{request.user.id} ",      # unique tracking variable paypal
+#             "custom": f"{request.user.id}",       # custom tracking variable for you
+#             "cancelurl": "http://darispin.ga/deposit_withraw",  # Express checkout cancel url
+#             "returnurl": "http://darispin.ga/"}  # Express checkout return url
 
-    ppp = PayPalPro(
-              item=item,
-            #   payment_form_cls=PayPalmentForm,                      # what you're selling
-              payment_template="payment.html",      # template name for payment
-              confirm_template="confirmation.html", # template name for confirmation
-              success_url="/",              # redirect location after success
-              nvp_handler=nvp_handler)
-    return ppp(request)
+#     ppp = PayPalPro(
+#               item=item,
+#             #   payment_form_cls=PayPalmentForm,                      # what you're selling
+#               payment_template="payment.html",      # template name for payment
+#               confirm_template="confirmation.html", # template name for confirmation
+#               success_url="/",              # redirect location after success
+#               nvp_handler=nvp_handler)
+#     return ppp(request)
