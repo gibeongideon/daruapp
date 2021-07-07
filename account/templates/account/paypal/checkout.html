@@ -12,7 +12,7 @@
         <form method="post" action="{% url 'account:checkout' %}">
 
         {% csrf_token %}
-        <h5 class="card-title">Amount to TopUp:{{ form.amount }}</h5>
+        <h5 class="card-title">Amount to TopUp (USD) :{{ form.amount }}</h5>
         
         {% comment %} <input type="submit" value="Proceed to Paypal"> {% endcomment %}
         <button class="btn btn-info type="submit">Proceed to Paypal</button>
