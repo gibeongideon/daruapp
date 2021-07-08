@@ -11,7 +11,7 @@ import json
 def spin(request):
     trans_logz = Stake.objects.filter(
         user=request.user, market=None, has_market=False
-    ).order_by("-created_at")[:12]
+    ).order_by("-created_at")[:2]
 
     if request.method == "POST":
         stake_form = IstakeForm(request.POST)
@@ -33,7 +33,7 @@ def spin(request):
         "spins": spins,
     }
 
-    return render(request, "daru_wheel/ispin.html", context)
+    return render(request, "daru_wheel/ispind.html", context)
 
 
 # @login_required(login_url='/user/login')

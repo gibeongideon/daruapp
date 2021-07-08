@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django import template
 
 
-@login_required(login_url="/user/login")
+# @login_required(login_url="/user/login")
 def index(request):
     print(request.user)
     return render(request, "dashboard/index.html")
