@@ -13,18 +13,18 @@
 <br />
 <p align="center">
   <a href="https://github.com/gibeongideon/daruapp">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo1.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Daruapp</h3>
 
-  <p align="center">
-    project_description
+  <p align="center"> 
+    Fortune Wheel Spinners.Just View Demo below
     <br />
     <a href="https://github.com/gibeongideon/daruapp"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/gibeongideon/daruapp">View Demo</a>
+    <a href="https://darispin.ga">View Demo</a>
     ·
     <a href="https://github.com/gibeongideon/daruapp/issues">Report Bug</a>
     ·

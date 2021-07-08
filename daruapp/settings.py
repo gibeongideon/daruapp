@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_ADMIN_URL", default="dadmin")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["www.darispin.ga", "darispin.ga", "www.darispin.co.vu", "darispin.co.vu", "143.198.174.147", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "mpesa_api.util",
     "rest_framework",
     # 'rest_framework.authtoken',
+    'paypal.pro',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -256,3 +258,32 @@ C2B_ONLINE_SHORT_CODE = config("C2B_ONLINE_SHORT_CODE", default="")
 C2B_ONLINE_PARTY_B = config("C2B_ONLINE_PARTY_B", default="")
 
 TOKEN_THRESHOLD = config("TOKEN_THRESHOLD", default=600)  # , cast=int)
+
+#Paypal
+
+MEDIA_ROOT = (
+    BASE_DIR / "./media"
+)
+
+MEDIA_URL = '/media/'
+
+PAYPAL_RECEIVER_EMAIL = config(
+    "PAYPAL_RECEIVER_EMAIL",
+    default="darius@daruspin.com")
+
+PAYPAL_TEST = config("PAYPAL_TEST", default=True)
+
+
+###USA/CANADA&UKssss
+
+PAYPAL_WPP_USER = config(
+    "PAYPAL_WPP_USER",
+    default="sb-h2ded6675419_api1.business.example.com")
+
+PAYPAL_WPP_PASSWORD = config(
+    "PAYPAL_WPP_PASSWORD",
+    default="DFXXXTJPDKBFA5KG")
+
+PAYPAL_WPP_SIGNATURE = config(
+    "PAYPAL_WPP_SIGNATURE",
+    default="AM1aGgn2bz5QbLwfJWgM8rQPCVdfAjz3hKc8w9Pa8XdIFnHt-9r143O2")

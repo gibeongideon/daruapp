@@ -767,3 +767,24 @@ class RegisterUrl(TimeStamp):
     def save(self, *args, **kwargs):
         Mpesa.c2b_register_url()
         super().save(*args, **kwargs)
+
+
+class Checkout(TimeStamp):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="checkouts",
+        blank=True,
+        null=True,
+    )
+    email = models.EmailField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    paid = models.BooleanField(default=False, blank=True, null=True)
+    success = models.BooleanField(default=False, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if abs(self.amount) == 0:
+            self.amount = 1
+        else:
+            self.amount = abs(self.amount)
+        super().save(*args, **kwargs)

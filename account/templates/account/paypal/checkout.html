@@ -1,0 +1,30 @@
+{% extends "dashboard/layouts/base.html" %}
+
+{% block content %}
+
+
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title">Checkout</h4>
+        </div>
+        <div class="card-body">
+        <form method="post" action="{% url 'account:checkout' %}">
+
+        {% csrf_token %}
+        <h5 class="card-title">Amount to TopUp (USD) :{{ form.amount }}</h5>
+        
+        {% comment %} <input type="submit" value="Proceed to Paypal"> {% endcomment %}
+        <button class="btn btn-info type="submit">Proceed to Paypal</button>
+
+        </form>
+
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+{% endblock content %} 

@@ -1,0 +1,193 @@
+{% extends "dashboard/layouts/base.html" %}
+
+{% block content %}
+
+
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title">Paypal Checkout</h4>
+        </div>
+        <div class="card-body">
+        
+        
+        
+        <a href="{% url 'account:checkout' %}" >
+          <button class="btn btn-secondary">
+          <i class="tim-icons icon-refresh-01"></i>   
+          Checkout 
+          </button>
+        </a>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+          <h4 class="card-title">Credit Card Top-Up</h4>
+        </div>
+        <div class="card-body">
+        
+        <form method="post" action="">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Top Up">
+        </form>
+
+{% comment %} <form method="post" action="">
+{% csrf_token %}
+    <div>
+      {% if form.errors %}
+      <span class="text-danger">{{ form.errors }}</span>
+      {% endif %}
+    </div> 
+
+<label for="id_firstname">First Name:</label><input type="text" name="firstname" maxlength="255" required="" id="id_firstname">
+<label for="id_lastname">Last Name:</label><input type="text" name="lastname" maxlength="255" required="" id="id_lastname">
+<label for="id_street">Street Address:</label><input type="text" name="street" maxlength="255" required="" id="id_street">
+<label for="id_city">City:</label><input type="text" name="city" maxlength="255" required="" id="id_city">
+<label for="id_state">State:</label><input type="text" name="state" maxlength="255" required="" id="id_state">
+<label for="id_countrycode">Country:</label>{{form.countrycode}}
+
+<label for="id_zip">Postal / Zip Code:</label><input type="text" name="zip" maxlength="32" required="" id="id_zip">
+    
+
+    <div class="col-md-4 pl-md-1">
+      <div class="form-group">
+        <input type="text" name="acct" maxlength="20" class="form-control"  placeholder="Credit Card Number" required="" id="id_acct">
+      </div>
+    </div> 
+
+<label for="id_expdate_0">Expiration Date:</label><select name="expdate_0" required="" id="id_expdate_0"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select><select name="expdate_1" required="" id="id_expdate_1"><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option></select>
+<input type="text" name="cvv2" maxlength="4"placeholder="Card Security Code"  required="" id="id_cvv2"><input type="hidden" name="currencycode" value="USD" id="id_currencycode">
+
+<input type="submit" class="btn btn-secondary value="Top Up">
+
+</form>
+         {% endcomment %}
+
+         
+{% comment %} <form action="{% url 'account:paypal_topup' %}" method="post">
+    {% csrf_token %} {% endcomment %}
+
+    {% comment %} <div>
+      {% if form.errors %}
+      <span class="text-danger">{{ form.errors }}</span>
+      {% endif %}
+    </div> {% endcomment %}
+
+    {% comment %} <div class="col-md-4 pl-md-1">
+      <div class="form-group">
+        <input type="text" name="recipient" class="form-control" placeholder="Recipient username or mobile number" step="10" required id="id_recipient">      
+      </div>
+    </div>
+
+    <div class="col-md-4 pl-md-1">
+      <div class="form-group">
+        <input type="number" name="amount" class="form-control" placeholder="amount here" step="10" required id="id_amount">      
+      </div>
+    </div>  {% endcomment %}
+
+    {% comment %} <button class="btn btn-secondary type="submit">Send</button> {% endcomment %}
+    {% comment %} <input type="submit" value="Pay Up">
+  </form> {% endcomment %}
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        </div>
+      </div>
+    </div>
+
+
+  <!-- <div class="col-sm-4"> </div> -->
+{% comment %}   
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header">
+
+      <a href="{% url 'account:cash_trans' %}" >
+        <button class="btn btn-secondary">
+          <i class="tim-icons icon-refresh-01"></i>                    
+          Refresh 
+        </button>
+  
+      </a>
+
+
+
+          <h4 class="card-title"> Recent Transactions</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table tablesorter " id="">
+              <thead class=" text-primary">
+                <tr>
+                  <th>
+                    Date
+                  </th>
+                  <th>
+                    Amount
+                  </th>
+                  <th>
+                    Transfer_to
+                  </th>
+                  <th class="text-center">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for trans in trans_logz%}
+  
+                <tr>
+                  <td>
+                    {{trans.created_at}}
+                  </td>
+                  <td>
+                    {{trans.amount}}
+                  </td>
+                  <td>
+                    {{trans.recipient}}
+                  </td>
+                  <td class="text-center">
+                    {{trans.status}}
+                  </td>
+                </tr>
+  
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <a href="{% url 'account:mpesa_withrawal' %}" >
+      <button class="btn btn-secondary">
+        <i class="tim-icons icon-refresh-01"></i>                    
+        Refresh 
+      </button>
+
+    </a> -->
+  </div> {% endcomment %}
+
+
+{% endblock content %} 
