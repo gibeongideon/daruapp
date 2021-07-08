@@ -161,10 +161,9 @@ DEFAULT_FROM_EMAIL = "Darius Team <noreply@darispin.com>"
 
 # login/logout redirect
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/user/login"
+LOGOUT_REDIRECT_URL = "/"
 
 ##### Channels-specific settings
-
 
 # redis_host = os.environ.get('REDIS_HOST', 'localhost')
 # Channel layer definitions
