@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Static assets -->
+{% load static %}
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="forntEnd-Developer" content="Mamunur Rashid">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Darispin - Gaming</title>
+
+	<!-- Nucleo Icons -->
+	<link href="{% static 'assets/css/nucleo-icons.css' %}" rel="stylesheet" />
+	<!-- CSS Files -->
+	<link href="{% static 'assets/css/black-dashboard.css' %}" rel="stylesheet" />
+
+	<link href="{% static 'assets/images/favicon.html' %}" rel="shortcut icon"  type="image/x-icon"/>
+	<link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/plugin.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/style.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet" />
+
+{% block stylesheets %}{% endblock stylesheets %}
+</head>
+
+<body>
+	<!-- preloader area start -->
+	<div class="preloader" id="preloader">
+		<div class="loader loader-1">
+			<div class="loader-outter"></div>
+			<div class="loader-inner"></div>
+		</div>
+	</div>
+	<!-- preloader area end -->
+
+
+
+{% include 'dashboard/includes/headerd.html' %}
+{% block content %}{% endblock content %}
+{% include 'dashboard/includes/footerd.html' %}
+
+{% include 'dashboard/includes/scripts.html' %}
+
+	<!-- Back to Top Start -->
+	<div class="bottomtotop">
+		<i class="fas fa-chevron-right"></i>
+	</div>
+	<!-- Back to Top End -->
+
+	<!-- Login Area Start -->
+	<div class="modal fade login-modal" id="login" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-body">
+					<div class="logo-area">
+							<img class="logo" src="assets/images/logo.png" alt="">
+					</div>
+					<div class="header-area">
+						<h4 class="title">Great to have you back!</h4>
+						<p class="sub-title">Enter your details below.</p>
+					</div>
+					<div class="form-area">
+						<form role="form" method="POST" action="{% url 'users:login' %}">
+						    {% csrf_token %}
+							<div class="form-group">
+									<label for="login-input-email">username*</label>
+									<input type="text"  class="input-field" name="username" id="username" placeholder="Phone number you sign up with" required autofocus>
+							</div>
+							<div class="form-group">
+									<label for="login-input-password">Password*</label>
+									<input type="password" class="input-field" name="password" class="form-control" id="password" placeholder="Password" required>
+							</div>
+							<div class="form-group">
+								<div class="box">
+									<div class="left">
+											<input type="checkbox" class="check-box-field" id="input-save-password" checked>
+										<label for="input-save-password">Remember Password</label>
+									</div>
+									<div class="right">
+										<a href="{% url 'users:password_reset' %}">
+											Forgot Password?
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								   <button type="submit" class="mybtn1">Log In</button>
+							</div>
+						</form>
+					</div>
+					<div class="form-footer">
+						<p>Not a member? 
+								{% comment %} <a href="#">Create account <i class="fas fa-angle-double-right"></i></a> {% endcomment %}
+								<a href="#" class="mybtn1"  data-toggle="modal" data-target="#signin"> Join us</a>
+								{% comment %} <a href="{% url 'users:register' %}"  data-toggle="modal" data-target="#signin"> Join us</a> {% endcomment %}
+						</p>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+		<!-- Login Area End -->
+	
+		<!-- SignIn Area Start -->
+		<div class="modal fade login-modal sign-in" id="signin" tabindex="-1" role="dialog" aria-labelledby="signin" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered " role="document">
+				<div class="modal-content">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<div class="modal-body">
+						<div class="logo-area">
+								<img class="logo" src="assets/images/logo.png" alt="">
+						</div>
+						<div class="header-area">
+							<h4 class="title">Great to have you back!</h4>
+							<p class="sub-title">Enter your details below.</p>
+						</div>
+						<div class="form-area">
+							<form role="form" method="POST" action="{% url 'users:register' %}">
+							    {% csrf_token %}
+								<div class="form-group">
+										<label for="input-name">Mobile No*>
+										<input type="text" class="input-field" id="input-name"  placeholder="Enter your Name">
+								</div>
+								<div class="form-group">
+										<label for="input-email">Email*</label>
+										<input type="email" class="input-field" id="input-email"  placeholder="Enter your Email">
+								</div>
+								<div class="form-group">
+										<label for="input-password">Password*</label>
+										<input type="password" class="input-field" id="input-password"  placeholder="Enter your password">
+								</div>
+								<div class="form-group">
+										<label for="input-con-password">Confirm Password*</label>
+										<input type="password" class="input-field" id="input-con-password"  placeholder="Enter your Confirm Password">
+								</div>
+
+								<div class="form-group">
+									<div class="check-group">
+											<input type="checkbox" class="check-box-field" id="input-terms" checked>
+											<label for="input-terms">
+													I agree with <a href="#">terms and Conditions</a> and  <a href="#">privacy policy</a>
+											</label>
+									</div>
+								</div>
+								<div class="form-group">
+									<button type="submit" class="mybtn1">Signup and Take Bonus</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+		<!-- SignIn Area End -->
+
+  {% include 'dashboard/includes/dscripts.html' %}
+  {% block javascripts %}{% endblock javascripts %}
+</body>
+
+
+</html>
