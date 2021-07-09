@@ -77,14 +77,12 @@ class LoginPageTest(TestCase):
         )
         self.assertRedirects(response, "/")
 
-    # def test_user_cannot_login_with_invalid_password(self):
-    #     User.objects.create_user(username=self.TEST_USERNAME,
-    #                              email=self.TEST_EMAIL,
-    #                              password=self.TEST_PASSWORD)
-    #     response = self.client.post('/user/login', {
-    #         'username': self.TEST_USERNAME,
-    #         'password': (self.TEST_PASSWORD + '34334')
-    #     })
-    #     print('RESS',response)
-    #     self.assertContains(response,
-    #                         "Please fill in this field.")
+    def test_user_cannot_login_with_invalid_password(self):
+        User.objects.create_user(username=self.TEST_USERNAME,
+                                 email=self.TEST_EMAIL,
+                                 password=self.TEST_PASSWORD)
+        response = self.client.post('/user/login', {
+            'username': self.TEST_USERNAME,
+            'password': (self.TEST_PASSWORD + '34334')
+        })
+        self.assertEqual(response.status_code, 200)
