@@ -3,12 +3,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.http import HttpResponse
 from django import template
+from random import randint
 
 
 # @login_required(login_url="/user/login")
 def index(request):
     print(request.user)
-    return render(request, "dashboard/index.html")
+    spin_players_no = randint(800, 1200)
+    return render(request, "dashboard/index.html",{
+        "spin_players_no": spin_players_no})
 
 
 @login_required(login_url="user/login")
