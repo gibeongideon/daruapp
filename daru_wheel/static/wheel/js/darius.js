@@ -12,7 +12,7 @@
 
         // console.log(data.ipointer)
         if (data.ipointer == 777){
-            alert('Place a Bet to Spin!Select Red or Yellow, Enter amount and click Bet.Deposit money to bet real by clicking bet real button then click SPIN.');
+            alert('Place a Bet to Spin!Select RED or YELLOW, Enter amount and click BET.Click on Real Cash button to use real money.Finally click SPIN.');
         }
 
         if (data.ipointer<30){
