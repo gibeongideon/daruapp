@@ -41,6 +41,10 @@ def deposit_withraw(request):
     return render(request, "dashboard/deposit_withraw.html")
 
 
+# @login_required(login_url="/user/login")
+def affiliate(request):
+    return render(request, "dashboard/affiliate.html")
+
 @login_required(login_url="/user/login")
 def maps(request):
     return render(request, "dashboard/ui-maps.html")
