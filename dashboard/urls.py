@@ -13,6 +13,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     # path('', views.index, name='index'),
     path("deposit_withraw", views.deposit_withraw, name="deposit_withraw"),
+    path("affiliate", views.affiliate, name="affiliate"),
     # path("maps", views.maps, name="maps"),
     # path("topo", views.topo, name="topo"),
     # path("support", views.support, name="support"),

@@ -33,8 +33,14 @@
 	<!-- preloader area end -->
 
 
-
+	<!-- Header Area Start  -->
+<header class="header">
 {% include 'dashboard/includes/headerd.html' %}
+
+{% block mainmenu %}{% endblock mainmenu %}
+</header>
+<!-- Header Area End  -->
+
 {% block content %}{% endblock content %}
 {% include 'dashboard/includes/footerd.html' %}
 
